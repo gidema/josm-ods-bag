@@ -1,14 +1,18 @@
 package org.openstreetmap.josm.plugins.openservices.bag;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.openstreetmap.josm.plugins.openservices.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.openservices.entities.buildings.ImportAddress;
+import org.openstreetmap.josm.plugins.openservices.entities.imprt.ImportAddress;
 
 import com.vividsolutions.jts.geom.Point;
 
 public class BagAddress extends ImportAddress {
+	private final static DateFormat dateFormat= new SimpleDateFormat("YYYY-MM-dd");
 	private Long identificatie;
 	private Integer huisnummer;
 	private String houseNumber;
@@ -22,7 +26,7 @@ public class BagAddress extends ImportAddress {
 	private Point geometry;
 	
 	public Serializable getId() {
-		return identificatie;
+		return getIdentificatie();
 	}
 
 	public Long getIdentificatie() {
@@ -111,7 +115,12 @@ public class BagAddress extends ImportAddress {
 
 	@Override
 	public String getStreetName() {
-		return openbareRuimte;
+		return getOpenbareRuimte();
+	}
+
+	@Override
+	public String getPlaceName() {
+		return getWoonplaats();
 	}
 
 	public Date getBagExtract() {
@@ -128,4 +137,16 @@ public class BagAddress extends ImportAddress {
 		}
 		return geometry;
 	}
+
+	@Override
+	protected Map<String, String> getKeys() {
+		Map<String, String> keys = super.getKeys();
+		keys.put("source", "BAG");
+		keys.put("ref:bagid", getIdentificatie().toString());
+		keys.put("bag:status", getStatus());
+		keys.put("bag:extract", dateFormat.format(getBagExtract()));
+        return keys;
+	}
+	
+	
 }

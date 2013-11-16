@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import org.openstreetmap.josm.plugins.openservices.entities.buildings.ImportBuilding;
+import org.openstreetmap.josm.plugins.openservices.entities.imprt.ImportBuilding;
 
 public class BagBuilding extends ImportBuilding {
 	private final static DateFormat dateFormat= new SimpleDateFormat("YYYY-MM-dd");

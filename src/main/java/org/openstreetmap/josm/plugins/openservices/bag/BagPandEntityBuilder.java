@@ -6,7 +6,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.openservices.MappingException;
 import org.openstreetmap.josm.plugins.openservices.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.openservices.entities.ImportEntityBuilder;
-import org.openstreetmap.josm.plugins.openservices.entities.buildings.ImportBuilding;
+import org.openstreetmap.josm.plugins.openservices.entities.imprt.ImportBuilding;
 import org.openstreetmap.josm.plugins.openservices.metadata.MetaData;
 import org.openstreetmap.josm.plugins.openservices.metadata.MetaDataException;
 
