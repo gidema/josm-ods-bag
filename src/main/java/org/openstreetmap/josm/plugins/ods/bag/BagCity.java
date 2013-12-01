@@ -20,7 +20,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 
 public class BagCity extends ImportedCity {
 	private final static DateFormat dateFormat = new SimpleDateFormat(
-			"YYYY-MM-dd");
+			"yyyy-MM-dd");
 	private Long identificatie;
 	private Date bagExtract;
 

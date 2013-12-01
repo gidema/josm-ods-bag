@@ -19,7 +19,7 @@ import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 public class BagBuilding extends ImportedBuilding {
-	private final static DateFormat dateFormat= new SimpleDateFormat("YYYY-MM-dd");
+	private final static DateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
 	private Long identificatie;
 	private Integer bouwjaar;
 	private String status;

@@ -2,7 +2,7 @@
 <ods version="0.2">
   <import name="BagBuilding" type="entity" class="org.openstreetmap.josm.plugins.ods.bag.BagBuilding"/>
   <import name="BagAddress" type="entity" class="org.openstreetmap.josm.plugins.ods.bag.BagAddress"/>
-  <import name="BagCity" type="entity" class="org.openstreetmap.josm.plugins.ods.bag.BagCity"/>
+  <import name="BagCity" type="entity" class="org.openstreetmap.josm.plugins.ods.bag.BagCity"/>-->
   <!-- TODO use csw to retreive data about hosts and services -->
   <host name="bagviewer" type="WFS" url="http://geodata.nationaalgeoregister.nl/bagviewer/wfs">
     <meta url="http://nationaalgeoregister.nl/geonetwork/srv/eng/csw?SERVICE=CSW&amp;VERSION=2.0.2&amp;REQUEST=GetRecords&amp;constraintLanguage=CQL_TEXT&amp;constraint_language_version=1.1.0&amp;namespace=xmlns%28csw=http://www.opengis.net/cat/csw%29&amp;resultType=results&amp;constraint=Title+EQ+%27%25Tijdelijke%20BAG%20WFS%25%27&amp;elementSetName=full">
@@ -17,6 +17,7 @@
     </meta>-->
   </host>
   <layer name="BAG Panden">
+    <factory name="BagFactory"/>
     <datasource host="bagviewer" feature="pand" entity="BagBuilding">
       <filter>status NEQ 'Niet gerealiseerd' AND status NEQ 'Bouwvergunning verleend'</filter>
       <id attribute="identificatie"/>
@@ -35,7 +36,7 @@
       (._;>;)
      ]]>
     </osm_query>-->
-    <action name="nearestWay" type="nearestWay"/>
+    <!--<action name="nearestWay" type="nearestWay"/>-->
   </layer>
   <!--<layer name="BAG Woonplaatsen">
     <datasource host="bagviewer" feature="woonplaats"/>
@@ -45,36 +46,4 @@
       ]]>
     </osm_query>
   </layer>-->
-  <map feature="bagviewer:pand">
-    <geometry map-to="WAY"/>
-    <tag key="bag:status" property="status"/>
-    <!--<tag key="bag:extract" meta="bag.source.date" format="%1$tY%1$tm%1$td"/>-->
-    <tag key="bag:extract" value="bag.source.date" format="%1$tY%1$tm%1$td"/>-->
-    <tag key="bag:bouwjaar" expression="convert(bouwjaar,int)"/>
-    <tag key="bag:gebruiksdoel" property="gebruiksdoel"/>
-    <tag key="ref:bagid" property="identificatie" format="%016.0f"/>
-    <tag key="building" value="yes"/>
-    <tag key="source" value="BAG"/>
-  </map>
-  <map feature="bagviewer:verblijfsobject">
-    <geometry map-to="NODE" merge="false"/>
-    <tag key="bag:status" property="status"/>
-    <!--<tag key="bag:extract" meta="bag.source.date" format="%1$tY%1$tm%1$td"/>-->
-    <tag key="addr:housenumber" expression="strTrim(Concatenate(roundDouble(huisnummer),huisletter,' ',toevoeging))"/>
-    <tag key="addr:street" property="openbare_ruimte"/>
-    <tag key="addr:postcode" property="postcode"/>
-    <tag key="addr:city" property="woonplaats"/>
-    <tag key="bag:gebruiksdoel" property="gebruiksdoel"/>
-    <tag key="ref:bagid" property="identificatie" format="%016.0f"/>
-    <tag key="source" value="BAG"/>
-  </map>
-  <map feature="bagviewer:woonplaats">
-    <geometry map-to="MULTIPOLYGON" merge="true"/>
-    <tag key="bag:status" property="status"/>
-    <tag key="bag:extract" meta="bag.source.date"/>
-    <tag key="name" property="woonplaats"/>
-    <tag key="type" value="boundary"/>
-    <tag key="bag:woonplaatscode" property="identificatie" format="%04.0f"/>
-    <tag key="source" value="BAG"/>
-  </map>
 </ods>

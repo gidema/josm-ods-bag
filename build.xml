@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="ods-bag"  default="dist" basedir="." 
+  xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+  <artifact:pom id="mypom" file="pom.xml" />
+	<property name="plugin.build.dir" value="build" />
+	<property name="plugin.src.dir" value="src" />
+	<!-- this is the directory where the plugin jar is copied to -->
+  <property name="maven.target.dir" value="${mypom.build.directory}" />
+	<property name="plugin.dist.dir" value="dist" />
+	<property name="ant.build.javac.target" value="1.6" />
+	<property name="ant.build.javac.source" value="1.6" />
+	<property name="plugin.jar" value="${plugin.dist.dir}/${ant.project.name}.jar" />
+	<!--
+    **********************************************************
+    ** init - initializes the build
+    **********************************************************
+    -->
+	<target name="init">
+		<mkdir dir="${plugin.build.dir}" />
+	</target>
+
+	<!--
+    **********************************************************
+    ** dist - creates the jar
+    **********************************************************
+    -->
+	<target name="dist" depends="init">
+		<echo message="creating ${ant.project.name}.jar ... " />
+    <copy todir="${plugin.build.dir}">
+    	<fileset dir="${maven.target.dir}/classes"/>
+    </copy>
+		<jar destfile="${plugin.jar}" basedir="${plugin.build.dir}">
+			<manifest>
+				<attribute name="Author" value="Gertjan Idema &lt;mail@gertjanidema.nl&gt;" />
+			</manifest>
+		</jar>
+	</target>
+	<!--
+    **********************************************************
+    ** clean - clean up the build environment
+    **********************************************************
+    -->
+	<target name="clean">
+		<delete dir="${plugin.build.dir}" />
+		<delete file="${plugin.jar}" />
+	</target>
+	<!--
+    **********************************************************
+    ** install - install the plugin in your local JOSM installation
+    **********************************************************
+    -->
+	<target name="install" depends="dist">
+		<property environment="env" />
+		<condition property="josm.plugins.dir" value="${env.APPDATA}/JOSM/plugins" else="${user.home}/.josm/plugins">
+			<and>
+				<os family="windows" />
+			</and>
+		</condition>
+		<copy file="${plugin.jar}" todir="${josm.plugins.dir}/opendataservices" />
+	</target>
+	
+  <!--
+   **********************************************************
+   ** install4debug - install the debug plugin in the JOSM debug environment
+   **********************************************************
+   -->
+   <target name="install4debug" depends="dist">
+     <property environment="env"/>
+     <condition property="josm.plugins.dir" value="${env.APPDATA}/JOSM_ECLIPSE/plugins" else="${user.home}/.josm_eclipse/plugins">
+       <and>
+         <os family="windows"/>
+       </and>
+     </condition>
+     <copy file="${plugin.jar}" todir="${josm.plugins.dir}/opendataservices"/>
+  </target>
+</project>

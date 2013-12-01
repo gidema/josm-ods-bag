@@ -19,8 +19,7 @@ import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 import com.vividsolutions.jts.geom.Point;
 
 public class BagAddress extends ImportedAddress {
-	private final static DateFormat dateFormat = new SimpleDateFormat(
-			"YYYY-MM-dd");
+	private final static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private Long identificatie;
 	private Integer huisnummer;
 	private String huisletter;
