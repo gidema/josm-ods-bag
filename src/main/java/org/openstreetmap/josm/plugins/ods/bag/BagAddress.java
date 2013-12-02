@@ -84,13 +84,9 @@ public class BagAddress extends ImportedAddress {
 	public String getStatus() {
 		return status;
 	}
-
+	
 	public String getGebruiksdoel() {
 		return gebruiksdoel;
-	}
-
-	public Long getGerelateerdPand() {
-		return gerelateerdPand;
 	}
 
 	public Serializable getBuildingRef() {
@@ -152,7 +148,9 @@ public class BagAddress extends ImportedAddress {
 		keys.put("source:date", dateFormat.format(getBagExtract()));
 		// keys.put("ref:bagid", getIdentificatie().toString());
 		// keys.put("bag:status", getStatus());
-		keys.put("bag:function", getGebruiksdoel());
+		if (!"woonfunctie".equalsIgnoreCase(gebruiksdoel)) {
+		    keys.put("bag:function", gebruiksdoel);
+		}
 		return keys;
 	}
 

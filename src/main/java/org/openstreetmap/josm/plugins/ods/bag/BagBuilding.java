@@ -3,7 +3,9 @@ package org.openstreetmap.josm.plugins.ods.bag;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -19,6 +21,11 @@ import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 public class BagBuilding extends ImportedBuilding {
+	private final static List<String> trafo =
+		Arrays.asList("TRAF","TRAN","TRFO","TRNS");
+	private final static List<String> garage =
+			Arrays.asList("GAR","GRG");
+	
 	private final static DateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
 	private Long identificatie;
 	private Integer bouwjaar;
@@ -140,8 +147,53 @@ public class BagBuilding extends ImportedBuilding {
 		keys.put("source:date", dateFormat.format(getBagExtract()));
 		keys.put("start_date", getStartDate().toString());
 		keys.put("ref:bag", getIdentificatie().toString());
-//		keys.put("bag:status", getStatus());
+		analyzeBuildingType(keys);
 		return keys;
 	}
+	
+	private void analyzeBuildingType(Map<String, String> keys) {
+		if (getAddresses().isEmpty()) {
+			return;
+		}
+		if (getAddresses().size() == 1) {
+			analyzeBuildingType((BagAddress) getAddresses().toArray()[0], keys);
+		}
+		return;
+	}
+
+	private void analyzeBuildingType(BagAddress address, Map<String, String> keys) {
+		String type;
+		switch (address.getGebruiksdoel().toLowerCase()) {
+		case "woonfunctie":
+			type = "house";
+			break;
+		case "overige gebruiksfunctie":
+			type = "yes";
+			break;
+		case "industriefunctie":
+			type = "industrial";
+			break;
+		case "winkelfunctie":
+			type = "retail";
+			break;
+		case "kantoorfunctie":
+			type = "commercial";
+			break;
+		default: 
+			type = "yes";
+		}
+		String extra = address.getHuisNummerToevoeging();
+		if (extra != null) {
+			extra = extra.toUpperCase();
+			if (trafo.contains(extra)) {
+				keys.put("power", "sub_station");
+			}
+			else if (garage.contains(extra)) {
+				type = "garage";
+			}
+		}
+		keys.put("building", type);
+	}
+	
 	
 }
