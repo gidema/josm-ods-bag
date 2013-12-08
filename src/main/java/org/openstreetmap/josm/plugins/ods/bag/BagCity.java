@@ -10,7 +10,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;
-import org.openstreetmap.josm.plugins.ods.entities.imported.ImportedCity;
+import org.openstreetmap.josm.plugins.ods.entities.external.ExternalCity;
 import org.openstreetmap.josm.plugins.ods.issue.ImportIssue;
 import org.openstreetmap.josm.plugins.ods.issue.Issue;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
@@ -18,7 +18,7 @@ import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-public class BagCity extends ImportedCity {
+public class BagCity extends ExternalCity {
 	private final static DateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd");
 	private Long identificatie;

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ods version="0.2">
-  <import name="BagBuilding" type="entity" class="org.openstreetmap.josm.plugins.ods.bag.BagBuilding"/>
-  <import name="BagAddress" type="entity" class="org.openstreetmap.josm.plugins.ods.bag.BagAddress"/>
-  <import name="BagCity" type="entity" class="org.openstreetmap.josm.plugins.ods.bag.BagCity"/>-->
+  <import name="BagFactory" type="entityFactory" class="org.openstreetmap.josm.plugins.ods.bag.BagEntityFactory"/>
   <!-- TODO use csw to retreive data about hosts and services -->
   <host name="bagviewer" type="WFS" url="http://geodata.nationaalgeoregister.nl/bagviewer/wfs">
     <meta url="http://nationaalgeoregister.nl/geonetwork/srv/eng/csw?SERVICE=CSW&amp;VERSION=2.0.2&amp;REQUEST=GetRecords&amp;constraintLanguage=CQL_TEXT&amp;constraint_language_version=1.1.0&amp;namespace=xmlns%28csw=http://www.opengis.net/cat/csw%29&amp;resultType=results&amp;constraint=Title+EQ+%27%25Tijdelijke%20BAG%20WFS%25%27&amp;elementSetName=full">
@@ -18,15 +16,15 @@
   </host>
   <layer name="BAG Panden">
     <factory name="BagFactory"/>
-    <datasource host="bagviewer" feature="pand" entity="BagBuilding">
+    <datasource host="bagviewer" feature="pand" entitytype="ods:building">
       <filter>status NEQ 'Niet gerealiseerd' AND status NEQ 'Bouwvergunning verleend'</filter>
       <id attribute="identificatie"/>
     </datasource>
-    <datasource host="bagviewer" feature="verblijfsobject" entity="BagAddress">
+    <datasource host="bagviewer" feature="verblijfsobject" entitytype="ods:address">
       <filter>status EQ 'Verblijfsobject in gebruik' OR status EQ 'Verblijfsobject in gebruik (niet ingemeten)'</filter> 
       <id attribute="identificatie"/>
     </datasource>
-    <!--<datasource host="bagviewer" feature="woonplaats" entity="BagCity">
+    <!--<datasource host="bagviewer" feature="woonplaats" entitytype="ods:city">
       <filter>status EQ 'Woonplaats aangewezen'</filter>
     </datasource>-->
     <!--<osm_query><![CDATA[
