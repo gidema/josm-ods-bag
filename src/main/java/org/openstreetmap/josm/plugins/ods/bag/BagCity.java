@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
 import org.opengis.feature.simple.SimpleFeature;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;
@@ -55,11 +55,13 @@ public class BagCity extends ExternalCity {
 	}
 
 	@Override
-	protected Map<String, String> getKeys() {
-		Map<String, String> keys = super.getKeys();
-		keys.put("source", "BAG");
-  		keys.put("source:date", dateFormat.format(bagExtract));
-		return keys;
+	protected void buildTags(OsmPrimitive primitive) {
+		super.buildTags(primitive);
+		primitive.put("ref:woonplaatscode", getIdentificatie().toString());
+        primitive.put("admin_level", "10");
+        primitive.put("authoritative", "yes");
+		primitive.put("source", "BAG");
+		primitive.put("source:date", dateFormat.format(bagExtract));
 	}
 
 }

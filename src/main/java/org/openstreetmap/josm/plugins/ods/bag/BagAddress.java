@@ -1,25 +1,13 @@
 package org.openstreetmap.josm.plugins.ods.bag;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.openstreetmap.josm.plugins.ods.crs.CRSException;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;
 import org.openstreetmap.josm.plugins.ods.entities.external.ExternalAddress;
-import org.openstreetmap.josm.plugins.ods.issue.ImportIssue;
-import org.openstreetmap.josm.plugins.ods.issue.Issue;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
-import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
-
-import com.vividsolutions.jts.geom.Point;
 
 public class BagAddress extends ExternalAddress {
-	private final static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private Long identificatie;
 	private Integer huisnummer;
 	private String huisletter;
@@ -30,9 +18,11 @@ public class BagAddress extends ExternalAddress {
 	private Long gerelateerdPand;
 	private String openbareRuimte;
 	private String woonplaats;
-	private Date bagExtract;
 	private String houseNumber;
-	private Point geometry;
+
+	public BagAddress(SimpleFeature feature) {
+		super(feature);
+	}
 
 	public void init(MetaData metaData) throws BuildException {
 		SimpleFeature feature = getFeature();
@@ -46,23 +36,10 @@ public class BagAddress extends ExternalAddress {
 		openbareRuimte = (String) feature.getProperty("openbare_ruimte").getValue();
 		woonplaats = (String) feature.getProperty("woonplaats").getValue();
 		postcode = (String) feature.getProperty("postcode").getValue();
-		try {
-			geometry = (Point) CRSUtil.getInstance().transform(feature);
-		} catch (CRSException e) {
-		// TODO Auto-generated catch block
-			Issue issue = new ImportIssue(feature.getID(), e);
-		    throw new BuildException(issue);
-		}
-		try {
-			setBagExtract((Date) metaData.get("bag.source.date"));
-		} catch (MetaDataException e) {
-			Issue issue = new ImportIssue(feature.getID(), e);
-			throw new BuildException(issue);
-		}
 	}
 
 	public Serializable getId() {
-		return getIdentificatie();
+		return identificatie;
 	}
 
 	public Long getIdentificatie() {
@@ -108,13 +85,15 @@ public class BagAddress extends ExternalAddress {
 	@Override
 	public String getHouseNumber() {
 		if (houseNumber == null) {
-			houseNumber = getHuisnummer().toString();
+			StringBuilder sb = new StringBuilder(10);
+			sb.append(getHuisnummer());
 			if (getHuisLetter() != null) {
-				houseNumber += getHuisLetter();
+				sb.append(getHuisLetter());
 			}
 			if (getHuisNummerToevoeging() != null) {
-				houseNumber += getHuisNummerToevoeging();
+				sb.append('-').append(getHuisNummerToevoeging());
 			}
+			houseNumber = sb.toString();
 		}
 		return houseNumber;
 	}
@@ -128,30 +107,4 @@ public class BagAddress extends ExternalAddress {
 	public String getPlaceName() {
 		return getWoonplaats();
 	}
-
-	public Date getBagExtract() {
-		return bagExtract;
-	}
-
-	public void setBagExtract(Date bagExtract) {
-		this.bagExtract = bagExtract;
-	}
-
-	public Point getGeometry() {
-		return geometry;
-	}
-
-	@Override
-	protected Map<String, String> getKeys() {
-		Map<String, String> keys = super.getKeys();
-		keys.put("source", "BAG");
-		keys.put("source:date", dateFormat.format(getBagExtract()));
-		// keys.put("ref:bagid", getIdentificatie().toString());
-		// keys.put("bag:status", getStatus());
-		if (!"woonfunctie".equalsIgnoreCase(gebruiksdoel)) {
-		    keys.put("bag:function", gebruiksdoel);
-		}
-		return keys;
-	}
-
 }

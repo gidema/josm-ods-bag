@@ -6,9 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.opengis.feature.simple.SimpleFeature;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;
@@ -140,28 +140,26 @@ public class BagBuilding extends ExternalBuilding {
 	}
 
 	@Override
-	protected Map<String, String> getKeys() {
-		Map<String, String> keys = super.getKeys();
-		// TODO skip null values
-		keys.put("source", "BAG");
-		keys.put("source:date", dateFormat.format(getBagExtract()));
-		keys.put("start_date", getStartDate().toString());
-		keys.put("ref:bag", getIdentificatie().toString());
-		analyzeBuildingType(keys);
-		return keys;
+	protected void buildTags(OsmPrimitive primitive) {
+		super.buildTags(primitive);
+		primitive.put("source", "BAG");
+		primitive.put("source:date", dateFormat.format(getBagExtract()));
+		primitive.put("start_date", getStartDate().toString());
+		primitive.put("ref:bag", getIdentificatie().toString());
+    	analyzeBuildingType(primitive);
 	}
 	
-	private void analyzeBuildingType(Map<String, String> keys) {
+	private void analyzeBuildingType(OsmPrimitive primitive) {
 		if (getAddresses().isEmpty()) {
 			return;
 		}
 		if (getAddresses().size() == 1) {
-			analyzeBuildingType((BagAddress) getAddresses().toArray()[0], keys);
+			analyzeBuildingType((BagAddressNode) getAddresses().toArray()[0], primitive);
 		}
 		return;
 	}
 
-	private void analyzeBuildingType(BagAddress address, Map<String, String> keys) {
+	private void analyzeBuildingType(BagAddressNode address, OsmPrimitive primitive) {
 		String type;
 		switch (address.getGebruiksdoel().toLowerCase()) {
 		case "woonfunctie":
@@ -182,18 +180,16 @@ public class BagBuilding extends ExternalBuilding {
 		default: 
 			type = "yes";
 		}
-		String extra = address.getHuisNummerToevoeging();
+		String extra = address.getAddress().getHuisNummerToevoeging();
 		if (extra != null) {
 			extra = extra.toUpperCase();
 			if (trafo.contains(extra)) {
-				keys.put("power", "sub_station");
+				primitive.put("power", "sub_station");
 			}
 			else if (garage.contains(extra)) {
 				type = "garage";
 			}
 		}
-		keys.put("building", type);
+		primitive.put("building", type);
 	}
-	
-	
 }

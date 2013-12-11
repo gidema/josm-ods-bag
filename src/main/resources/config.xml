@@ -16,15 +16,23 @@
   </host>
   <layer name="BAG Panden">
     <factory name="BagFactory"/>
-    <datasource host="bagviewer" feature="pand" entitytype="ods:building">
+    <datasource host="bagviewer" feature="pand" entitytype="building">
       <filter>status NEQ 'Niet gerealiseerd' AND status NEQ 'Bouwvergunning verleend'</filter>
       <id attribute="identificatie"/>
     </datasource>
-    <datasource host="bagviewer" feature="verblijfsobject" entitytype="ods:address">
+    <datasource host="bagviewer" feature="verblijfsobject" entitytype="address">
       <filter>status EQ 'Verblijfsobject in gebruik' OR status EQ 'Verblijfsobject in gebruik (niet ingemeten)'</filter> 
       <id attribute="identificatie"/>
     </datasource>
-    <!--<datasource host="bagviewer" feature="woonplaats" entitytype="ods:city">
+    <datasource host="bagviewer" feature="ligplaats" entitytype="houseboat">
+      <filter>status EQ 'Ligplaats aangewezen'</filter> 
+      <id attribute="identificatie"/>
+    </datasource>
+    <datasource host="bagviewer" feature="standplaats" entitytype="static_caravan">
+      <filter>status EQ 'Standplaats aangewezen'</filter> 
+      <id attribute="identificatie"/>
+    </datasource>
+    <!--<datasource host="bagviewer" feature="woonplaats" entitytype="city">
       <filter>status EQ 'Woonplaats aangewezen'</filter>
     </datasource>-->
     <!--<osm_query><![CDATA[
