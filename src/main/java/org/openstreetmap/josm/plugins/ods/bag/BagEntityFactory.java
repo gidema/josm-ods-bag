@@ -3,9 +3,7 @@ package org.openstreetmap.josm.plugins.ods.bag;
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;
 import org.openstreetmap.josm.plugins.ods.entities.EntityFactory;
-import org.openstreetmap.josm.plugins.ods.entities.external.ExternalBuiltEnvironmentAnalyzer;
 import org.openstreetmap.josm.plugins.ods.entities.external.ExternalEntity;
-import org.openstreetmap.josm.plugins.ods.entities.external.ExternalEntityAnalyzer;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 
 public class BagEntityFactory implements EntityFactory {
@@ -20,11 +18,11 @@ public class BagEntityFactory implements EntityFactory {
 			entity = new BagBuilding();
 			break;
 		case "houseboat":
-			entity = new BagHouseboat();
+			entity = new BagLigplaats();
 			break;
-//		case "static_caravan":
-//			entity = new BagBuilding(BagBuildingType.static_caravan);
-//			break;
+		case "static_caravan":
+			entity = new BagStandplaats();
+			break;
 		case "city":
 			entity = new BagCity();
 			break;
@@ -35,10 +33,4 @@ public class BagEntityFactory implements EntityFactory {
 		entity.init(metaData);
 		return entity;
 	}
-	
-	@Override
-	public ExternalEntityAnalyzer getEntityAnalyzer() {
-		return new ExternalBuiltEnvironmentAnalyzer();
-	}
-
 }

@@ -14,8 +14,6 @@ public class BagAddress extends ExternalAddress {
 	private String huisnummertoevoeging;
 	private String postcode;
 	private String status;
-	private String gebruiksdoel;
-	private Long gerelateerdPand;
 	private String openbareRuimte;
 	private String woonplaats;
 	private String houseNumber;
@@ -31,8 +29,6 @@ public class BagAddress extends ExternalAddress {
 		huisletter = (String) feature.getProperty("huisletter").getValue();
 		huisnummertoevoeging = (String) feature.getProperty("toevoeging").getValue();
 		status = (String) feature.getProperty("status").getValue();
-		gebruiksdoel = (String) feature.getProperty("gebruiksdoel").getValue();
-		gerelateerdPand = ((Double) feature.getProperty("pandidentificatie").getValue()).longValue();
 		openbareRuimte = (String) feature.getProperty("openbare_ruimte").getValue();
 		woonplaats = (String) feature.getProperty("woonplaats").getValue();
 		postcode = (String) feature.getProperty("postcode").getValue();
@@ -62,14 +58,6 @@ public class BagAddress extends ExternalAddress {
 		return status;
 	}
 	
-	public String getGebruiksdoel() {
-		return gebruiksdoel;
-	}
-
-	public Serializable getBuildingRef() {
-		return gerelateerdPand;
-	}
-
 	public String getOpenbareRuimte() {
 		return openbareRuimte;
 	}

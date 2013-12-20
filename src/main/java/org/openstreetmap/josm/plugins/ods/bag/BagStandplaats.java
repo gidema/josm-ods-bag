@@ -10,38 +10,32 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;
-import org.openstreetmap.josm.plugins.ods.entities.external.ExternalAddressNode;
+import org.openstreetmap.josm.plugins.ods.entities.external.ExternalBuilding;
 import org.openstreetmap.josm.plugins.ods.issue.ImportIssue;
 import org.openstreetmap.josm.plugins.ods.issue.Issue;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.MultiPolygon;
 
-public class BagAddressNode extends ExternalAddressNode {
-	private final static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+public class BagStandplaats extends ExternalBuilding {
+	private BagAddress address;
+	private final static DateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
 	private Long identificatie;
 	private String status;
-	private String gebruiksdoel;
-	private Long gerelateerdPand;
 	private Date bagExtract;
-	private Point geometry;
-
+	
 	public void init(MetaData metaData) throws BuildException {
 		SimpleFeature feature = getFeature();
-		BagAddress address = new BagAddress(feature);
+		address = new BagAddress(feature);
 		address.init(metaData);
-		setAddress(address);
-		identificatie = ((Double) feature.getProperty("identificatie").getValue()).longValue();
-		status = (String) feature.getProperty("status").getValue();
-		gebruiksdoel = (String) feature.getProperty("gebruiksdoel").getValue();
-		gerelateerdPand = ((Double) feature.getProperty("pandidentificatie").getValue()).longValue();
+		identificatie = ((Double)feature.getProperty("identificatie").getValue()).longValue();
+		status = (String)feature.getProperty("status").getValue();
 		try {
-			geometry = (Point) CRSUtil.getInstance().transform(feature);
+			setGeometry((MultiPolygon) CRSUtil.getInstance().transform((SimpleFeature) feature));
 		} catch (CRSException e) {
-		// TODO Auto-generated catch block
 			Issue issue = new ImportIssue(feature.getID(), e);
-		    throw new BuildException(issue);
+			throw new BuildException(issue);
 		}
 		try {
 			setBagExtract((Date) metaData.get("bag.source.date"));
@@ -50,30 +44,28 @@ public class BagAddressNode extends ExternalAddressNode {
 			throw new BuildException(issue);
 		}
 	}
-
-	@Override
-	public BagAddress getAddress() {
-		return (BagAddress) super.getAddress();
+	
+	public void build() {
 	}
-
+	
 	public Serializable getId() {
-		return getIdentificatie();
+		return identificatie;
 	}
-
+	
 	public Long getIdentificatie() {
 		return identificatie;
+	}
+
+	public void setIdentificatie(Long identificatie) {
+		this.identificatie = identificatie;
 	}
 
 	public String getStatus() {
 		return status;
 	}
-	
-	public String getGebruiksdoel() {
-		return gebruiksdoel;
-	}
 
-	public Serializable getBuildingRef() {
-		return gerelateerdPand;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Date getBagExtract() {
@@ -84,20 +76,22 @@ public class BagAddressNode extends ExternalAddressNode {
 		this.bagExtract = bagExtract;
 	}
 
-	public Point getGeometry() {
-		return geometry;
+	@Override
+	public String getStartDate() {
+		return null;
+	}
+
+	public boolean isUnderConstruction() {
+		return false;
 	}
 
 	@Override
 	protected void buildTags(OsmPrimitive primitive) {
 		super.buildTags(primitive);
+		address.buildTags(primitive);
 		primitive.put("source", "BAG");
 		primitive.put("source:date", dateFormat.format(getBagExtract()));
-		// keys.put("ref:bagid", getIdentificatie().toString());
-		// keys.put("bag:status", getStatus());
-//		if (!"woonfunctie".equalsIgnoreCase(gebruiksdoel)) {
-//		    keys.put("bag:function", gebruiksdoel);
-//		}
+		primitive.put("ref:bag", getIdentificatie().toString());
+    	primitive.put("building", "static_caravan");
 	}
-
 }

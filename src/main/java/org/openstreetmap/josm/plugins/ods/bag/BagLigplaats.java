@@ -18,7 +18,7 @@ import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-public class BagHouseboat extends ExternalBuilding {
+public class BagLigplaats extends ExternalBuilding {
 	private BagAddress address;
 	private final static DateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
 	private Long identificatie;
@@ -91,7 +91,6 @@ public class BagHouseboat extends ExternalBuilding {
 		address.buildTags(primitive);
 		primitive.put("source", "BAG");
 		primitive.put("source:date", dateFormat.format(getBagExtract()));
-		primitive.put("start_date", getStartDate().toString());
 		primitive.put("ref:bag", getIdentificatie().toString());
     	primitive.put("building", "houseboat");
 	}

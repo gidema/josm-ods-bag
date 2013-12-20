@@ -14,7 +14,7 @@
       <property name="bag.source.date" query="srv|extent gml|end gml|timePosition" type="date" pattern="yyyy-MM-dd"/>
     </meta>-->
   </host>
-  <layer name="BAG Panden">
+  <layer name="BAG" description="BAG panden, ligplaatsen, standplaatsen en adressen">
     <factory name="BagFactory"/>
     <datasource host="bagviewer" feature="pand" entitytype="building">
       <filter>status NEQ 'Niet gerealiseerd' AND status NEQ 'Bouwvergunning verleend'</filter>
@@ -25,11 +25,11 @@
       <id attribute="identificatie"/>
     </datasource>
     <datasource host="bagviewer" feature="ligplaats" entitytype="houseboat">
-      <filter>status EQ 'Ligplaats aangewezen'</filter> 
+      <filter>status EQ 'Plaats aangewezen'</filter> 
       <id attribute="identificatie"/>
     </datasource>
     <datasource host="bagviewer" feature="standplaats" entitytype="static_caravan">
-      <filter>status EQ 'Standplaats aangewezen'</filter> 
+      <filter>status EQ 'Plaats aangewezen'</filter> 
       <id attribute="identificatie"/>
     </datasource>
     <!--<datasource host="bagviewer" feature="woonplaats" entitytype="city">
