@@ -41,6 +41,25 @@ public abstract class ExternalBagEntity implements ExternalEntity {
 		}
 	}
 	
+    @Override
+    public Object getId() {
+        // Use identificatie instead of feature.getID() because the BAG
+        // WFS may return several records per building which differ only
+        // in 'gebruiksfunctie'
+        return identificatie;
+    }	
+	
+    @Override
+    public boolean hasReferenceId() {
+        return true;
+    }
+
+    @Override
+    public Object getReferenceId() {
+        return identificatie;
+    }
+
+
 	public Geometry getGeometry() {
 		return geometry;
 	}
@@ -62,11 +81,6 @@ public abstract class ExternalBagEntity implements ExternalEntity {
 	@Override
 	public boolean isInternal() {
 		return false;
-	}
-
-	@Override
-	public Object getId() {
-		return identificatie;
 	}
 
     @Override

@@ -100,6 +100,16 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
     }
 
     @Override
+    public boolean hasGeometry() {
+        return true;
+    }
+
+    @Override
+    public boolean hasName() {
+        return false;
+    }
+
+    @Override
     public String getName() {
         return null;
     }
@@ -108,7 +118,7 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
         return gebruiksdoel;
     }
 
-    public Object getBuildingRef() {
+    public Long getBuildingRef() {
         return gerelateerdPand;
     }
 

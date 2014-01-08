@@ -20,8 +20,7 @@ public abstract class InternalBagEntity implements InternalEntity {
 	protected Geometry geometry;
     protected String source;
     protected String sourceDate;
-    protected Object id;
-    protected String name;
+    protected Long referenceId;
     private Map<String, String> otherKeys;
     
 	public InternalBagEntity(OsmPrimitive primitive) {
@@ -29,7 +28,16 @@ public abstract class InternalBagEntity implements InternalEntity {
 		this.primitive = primitive;
 	}
 
-	@Override
+	public Object getId() {
+	    return primitive.getId();
+	}
+	
+    @Override
+    public Long getReferenceId() {
+        return referenceId;
+    }
+
+    @Override
 	public String getSource() {
 		return source;
 	}
@@ -44,18 +52,23 @@ public abstract class InternalBagEntity implements InternalEntity {
 	}
 
 	@Override
+    public boolean isDeleted() {
+        return false;
+    }
+
+    @Override
 	public Geometry getGeometry() {
 		return geometry;
 	}
 
 	@Override
-	public Object getId() {
-		return id;
-	}
+    public boolean hasName() {
+        return false;
+    }
 
-	@Override
+    @Override
 	public String getName() {
-		return name;
+		return null;
 	}
 
 	@Override
@@ -127,7 +140,7 @@ public abstract class InternalBagEntity implements InternalEntity {
         if ("ref:bagid".equals(key) || "bag:id".equals(key) ||
                 "ref:bag".equals(key) || "bag:pand_id".equals(key) ||
                 "ref:vbo_id".equals(key)) {
-            id = value;
+            referenceId = Long.parseLong(value);
             return true;
         }
         if ("bag:extract".equals(key)) {

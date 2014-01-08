@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidGeometryException;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidMultiPolygonException;
+import org.openstreetmap.josm.plugins.ods.entities.BuildException;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Block;
@@ -38,6 +39,16 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
     @Override
     public void setIncomplete(boolean incomplete) {
         this.incomplete = incomplete; 
+    }
+    
+    @Override
+    public boolean hasGeometry() {
+        return true;
+    }
+
+    @Override
+    public boolean hasReferenceId() {
+        return true;
     }
 
     @Override
@@ -78,10 +89,16 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
        }
        if ("addr:housenumber".equals(key)) {
             InternalBagAddressNode address = new InternalBagAddressNode(primitive);
-            address.build();
-            getAddresses().add(address);
-            hasAddress = true;
-            return true;
+            try {
+                address.build();
+                getAddresses().add(address);
+                hasAddress = true;
+                return true;
+            } catch (BuildException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return true;
+            }
         }
         if ("address:street".equals(key) ||
               "address:housename".equals(key) ||

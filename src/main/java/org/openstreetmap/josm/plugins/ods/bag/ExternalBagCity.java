@@ -31,30 +31,35 @@ public class ExternalBagCity extends ExternalBagEntity {
 		}
 	}
 	
-	
 	@Override
+    public boolean hasGeometry() {
+        return false;
+    }
+
+    @Override
 	public Class<? extends Entity> getType() {
 		return City.class;
 	}
-
 
 	@Override
 	public boolean isIncomplete() {
 		return true;
 	}
 
-
 	@Override
 	public boolean isDeleted() {
 		return false;
 	}
 
-
 	@Override
+    public boolean hasName() {
+        return true;
+    }
+
+    @Override
 	public String getName() {
 		return name;
 	}
-
 
 	public void build() throws BuildException {
 		
