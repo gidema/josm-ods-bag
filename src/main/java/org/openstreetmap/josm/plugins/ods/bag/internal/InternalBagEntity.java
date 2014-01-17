@@ -28,7 +28,8 @@ public abstract class InternalBagEntity implements InternalEntity {
 		this.primitive = primitive;
 	}
 
-	public Object getId() {
+	@SuppressWarnings("unchecked")
+    public Long getId() {
 	    return primitive.getId();
 	}
 	

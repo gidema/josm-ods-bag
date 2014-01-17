@@ -42,7 +42,7 @@ public abstract class ExternalBagEntity implements ExternalEntity {
 	}
 	
     @Override
-    public Object getId() {
+    public Long getId() {
         // Use identificatie instead of feature.getID() because the BAG
         // WFS may return several records per building which differ only
         // in 'gebruiksfunctie'
