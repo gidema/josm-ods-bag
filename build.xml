@@ -2,7 +2,14 @@
 <project name="ods-bag"  default="dist" basedir="." 
   xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <artifact:pom id="mypom" file="pom.xml" />
-	<property name="plugin.build.dir" value="build" />
+
+  <!-- enter the SVN commit message -->
+  <property name="commit.message" value="Commit message"/>
+  <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
+  <property name="plugin.main.version" value="6502"/>
+  <property name="plugin.class" value="org.openstreetmap.josm.plugins.ods.bag.BagImportPlugin"/>
+  <property name="plugin.version" value="${mypom.version}"/>
+  <property name="plugin.build.dir" value="build" />
 	<property name="plugin.src.dir" value="src" />
 	<!-- this is the directory where the plugin jar is copied to -->
   <property name="maven.target.dir" value="${mypom.build.directory}" />
@@ -10,6 +17,7 @@
 	<property name="ant.build.javac.target" value="1.6" />
 	<property name="ant.build.javac.source" value="1.6" />
 	<property name="plugin.jar" value="${plugin.dist.dir}/${ant.project.name}.jar" />
+
 	<!--
     **********************************************************
     ** init - initializes the build
@@ -30,9 +38,18 @@
     	<fileset dir="${maven.target.dir}/classes"/>
     </copy>
 		<jar destfile="${plugin.jar}" basedir="${plugin.build.dir}">
-			<manifest>
-				<attribute name="Author" value="Gertjan Idema &lt;mail@gertjanidema.nl&gt;" />
-			</manifest>
+      <manifest>
+        <attribute name="Author" value="Gertjan Idema &lt;mail@gertjanidema.nl&gt;"/>
+        <attribute name="Plugin-Class" value="${plugin.class}"/>
+        <attribute name="Plugin-Date" value="${time}"/>
+        <attribute name="Plugin-Description" value="Import buildings and addresses in The Netherlands from the BAG WFS"/>
+        <attribute name="Plugin-Icon" value="images/wfs.png"/>
+        <!--<attribute name="Plugin-Link" value="http://fixme.com"/>-->
+        <attribute name="Plugin-Mainversion" value="${plugin.main.version}"/>
+        <attribute name="Plugin-Version" value="${plugin.version}"/>
+        <attribute name="Plugin-Requires" value="opendataservices"/>
+        <attribute name="Plugin-Stage" value="40"/>
+      </manifest>
 		</jar>
 	</target>
 	<!--
@@ -56,7 +73,7 @@
 				<os family="windows" />
 			</and>
 		</condition>
-		<copy file="${plugin.jar}" todir="${josm.plugins.dir}/opendataservices" />
+		<copy file="${plugin.jar}" todir="${josm.plugins.dir}" />
 	</target>
 	
   <!--
@@ -71,6 +88,6 @@
          <os family="windows"/>
        </and>
      </condition>
-     <copy file="${plugin.jar}" todir="${josm.plugins.dir}/opendataservices"/>
+     <copy file="${plugin.jar}" todir="${josm.plugins.dir}"/>
   </target>
 </project>
