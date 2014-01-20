@@ -23,7 +23,7 @@
     ** init - initializes the build
     **********************************************************
     -->
-	<target name="init">
+	<target name="init" depends="clean">
 		<mkdir dir="${plugin.build.dir}" />
 	</target>
 
