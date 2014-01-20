@@ -14,18 +14,20 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ods.ConfigurationReader;
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
+import org.openstreetmap.josm.plugins.ods.OdsWorkingSet;
 import org.openstreetmap.josm.tools.I18n;
 
 public class BagImportPlugin extends Plugin implements OdsModule {
-
+    private OdsWorkingSet workingSet;
+    
     public BagImportPlugin(PluginInformation info) {
         super(info);
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            URL configFile = classLoader.getResource("config.xml");
+            URL configFile = classLoader.getResource("bagconfig.xml");
             try {
                 ConfigurationReader configurationReader = new ConfigurationReader(
-                        classLoader);
+                        classLoader, this);
                 configurationReader.read(configFile);
             } catch (ConfigurationException e) {
                 Main.info("An error occured trying to registrate the odsFeatureSource types.");
@@ -46,5 +48,15 @@ public class BagImportPlugin extends Plugin implements OdsModule {
     @Override
     public String getDescription() {
         return I18n.tr("ODS module to import buildings and addresses in the Netherlands");
+    }
+
+    @Override
+    public OdsWorkingSet getWorkingSet() {
+        if (workingSet == null) {
+            workingSet = new OdsWorkingSet();
+            workingSet.setName(getName());
+            workingSet.setDescription(getDescription());
+        }
+        return workingSet;
     }
 }
