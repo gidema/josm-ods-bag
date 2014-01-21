@@ -95,7 +95,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
     }
 
     public boolean isUnderConstruction() {
-        return "bouw gestart".equals(status);
+        return "bouw gestart".equalsIgnoreCase(status);
     }
 
     public void setIncomplete(boolean incomplete) {
@@ -109,7 +109,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
 
     @Override
     public boolean isDeleted() {
-        return "Pand gesloopt".equals(status);
+        return "Pand gesloopt".equalsIgnoreCase(status);
     }
 
     @Override
@@ -141,19 +141,23 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
     }
     
     private void analyzeBuildingType(OsmPrimitive primitive) {
-        if (addresses.isEmpty()) {
-            return;
-        }
+        String type = "yes";
         if (addresses.size() == 1) {
-            analyzeBuildingType((ExternalBagAddressNode) addresses.toArray()[0], primitive);
+            type = getBuildingType((ExternalBagAddressNode) addresses.toArray()[0], primitive);
         }
         else {
-            analyzeBuildingType(addresses, primitive);
+            type = getBuildingType(addresses, primitive);
         }
-        return;
+        if (isUnderConstruction()) {
+            primitive.put("building", "construction");
+            primitive.put("construction", type);                
+        }
+        else {
+            primitive.put("building", type);
+        }
     }
 
-    private void analyzeBuildingType(Set<AddressNode> addresses, OsmPrimitive primitive) {
+    private String getBuildingType(Set<AddressNode> addresses, OsmPrimitive primitive) {
         Statistics stats = new Statistics();
         Iterator<AddressNode> it = addresses.iterator();
         while (it.hasNext()) {
@@ -161,8 +165,8 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
             stats.add(address.getGebruiksdoel(), address.getArea());
         }
         Stat largest = stats.getLargest();
+        String type = "yes";
         if (largest.percentage > 0.75) {
-            String type;
             switch (largest.name) {
             case "woonfunctie":
                 type = "apartments";
@@ -180,11 +184,11 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
             default:
                 type = "yes";
             }
-            primitive.put("building", type);
         }
+        return type;
     }
 
-    private void analyzeBuildingType(ExternalBagAddressNode address, OsmPrimitive primitive) {
+    private String getBuildingType(ExternalBagAddressNode address, OsmPrimitive primitive) {
         String type;
         switch (address.getGebruiksdoel().toLowerCase()) {
         case "woonfunctie":
@@ -215,7 +219,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
                 type = "garage";
             }
         }
-        primitive.put("building", type);
+        return type;
     }
 
     @Override
@@ -292,5 +296,15 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
                 this.count++;
             }
         }
+    }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Building ").append(getReferenceId());
+        sb.append(" (").append(getStatus()).append(")");
+        for (AddressNode address :addresses) {
+            sb.append("\n").append(address.toString());
+        }
+        return sb.toString();
     }
 }

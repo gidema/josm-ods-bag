@@ -135,4 +135,11 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
         super.buildTags(primitive);
         ((ExternalBagAddress) address).buildTags(primitive);
     }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getAddress()).append(" (");
+        sb.append(getStatus()).append(")");
+        return sb.toString();
+    }
 }

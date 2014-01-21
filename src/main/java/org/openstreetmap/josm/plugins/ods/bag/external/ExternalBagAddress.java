@@ -131,4 +131,13 @@ public class ExternalBagAddress implements Address {
 		primitive.put("addr:postcode", getPostcode());
 		primitive.put("addr:city", getPlaceName());
 	}
+	
+	public String toString() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append(getStreetName()).append(" ");
+	    sb.append(getHouseNumber()).append(" ");
+        sb.append(getPostcode()).append(" ");
+        sb.append(getPlaceName()).append(" ");	    
+	    return sb.toString();
+	}
 }
