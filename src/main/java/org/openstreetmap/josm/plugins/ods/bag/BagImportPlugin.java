@@ -9,17 +9,26 @@ import java.net.URL;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.plugins.Plugin;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ods.ConfigurationReader;
 import org.openstreetmap.josm.plugins.ods.ODS;
-import org.openstreetmap.josm.plugins.ods.OdsModule;
-import org.openstreetmap.josm.plugins.ods.OdsWorkingSet;
+import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
 import org.openstreetmap.josm.tools.I18n;
 
-public class BagImportPlugin extends Plugin implements OdsModule {
-    private OdsWorkingSet workingSet;
+public class BagImportPlugin extends OdsModulePlugin {
+    private final static Bounds BOUNDS = new Bounds(50.734, 3.206, 53.583, 7.245);
     
+    @Override
+    public boolean usePolygonFile() {
+        return true;
+    }
+
+    @Override
+    public Bounds getBounds() {
+        return BOUNDS;
+    }
+
     public BagImportPlugin(PluginInformation info) {
         super(info);
         try {
@@ -48,15 +57,5 @@ public class BagImportPlugin extends Plugin implements OdsModule {
     @Override
     public String getDescription() {
         return I18n.tr("ODS module to import buildings and addresses in the Netherlands");
-    }
-
-    @Override
-    public OdsWorkingSet getWorkingSet() {
-        if (workingSet == null) {
-            workingSet = new OdsWorkingSet();
-            workingSet.setName(getName());
-            workingSet.setDescription(getDescription());
-        }
-        return workingSet;
     }
 }
