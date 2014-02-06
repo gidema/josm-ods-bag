@@ -106,4 +106,14 @@ public class InternalBagAddress implements Address {
         this.street = street;
     }
 
+    @Override
+    public int compareTo(Address a) {
+        int result = getPlaceName().compareTo(a.getPlaceName());
+        if (result != 0) return result;
+        result = getPostcode().compareTo(a.getPostcode());
+        if (result != 0) return result;
+        result = getStreetName().compareTo(a.getStreetName());
+        if (result != 0) return result;
+        return getHouseNumber().compareTo(a.getHouseNumber());
+    }
 }

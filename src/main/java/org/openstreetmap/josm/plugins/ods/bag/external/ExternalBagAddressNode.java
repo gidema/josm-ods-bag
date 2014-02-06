@@ -38,6 +38,7 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
         return AddressNode.class;
     }
 
+    @Override
     public void init(MetaData metaData) throws BuildException {
         super.init(metaData);
         address = new ExternalBagAddress(feature);
@@ -48,7 +49,7 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
         gerelateerdPand = ((Double) feature.getProperty("pandidentificatie")
                 .getValue()).longValue();
         try {
-            geometry = (Point) CRSUtil.getInstance().transform(feature);
+            geometry = CRSUtil.getInstance().transform(feature);
         } catch (CRSException e) {
             // TODO Auto-generated catch block
             Issue issue = new ImportIssue(feature.getID(), e);
@@ -118,6 +119,7 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
         return gebruiksdoel;
     }
 
+    @Override
     public Long getBuildingRef() {
         return gerelateerdPand;
     }
@@ -126,6 +128,12 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
         return sourceDate;
     }
 
+    @Override
+    public void setGeometry(Point geometry) {
+        this.geometry = geometry;
+    }
+    
+    @Override
     public Point getGeometry() {
         return (Point) geometry;
     }
@@ -133,13 +141,21 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
     @Override
     public void buildTags(OsmPrimitive primitive) {
         super.buildTags(primitive);
-        ((ExternalBagAddress) address).buildTags(primitive);
+        address.buildTags(primitive);
     }
     
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getAddress()).append(" (");
         sb.append(getStatus()).append(")");
         return sb.toString();
     }
+
+    @Override
+    public int compareTo(AddressNode an) {
+        return getAddress().compareTo(an.getAddress());
+    }
+    
+    
 }

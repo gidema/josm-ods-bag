@@ -21,8 +21,6 @@ public class InternalBagAddressNode extends InternalBagEntity implements
     private Building building;
     private InternalBagAddress address;
 
-    private Point geometry;
-
     private Map<String, String> addressKeys = new HashMap<>();
 
     public InternalBagAddressNode(OsmPrimitive primitive) {
@@ -55,6 +53,7 @@ public class InternalBagAddressNode extends InternalBagEntity implements
         return false;
     }
 
+    @Override
     protected boolean parseKey(String key, String value) {
         if (super.parseKey(key, value)) {
             return true;
@@ -110,7 +109,19 @@ public class InternalBagAddressNode extends InternalBagEntity implements
     }
 
     @Override
-    public Point getGeometry() {
-        return geometry;
+    public void setGeometry(Point geometry) {
+        this.geometry = geometry;
     }
+    
+    @Override
+    public Point getGeometry() {
+        return (Point) geometry;
+    }
+
+    @Override
+    public int compareTo(AddressNode an) {
+        return getAddress().compareTo(an.getAddress());
+    }
+    
+    
 }

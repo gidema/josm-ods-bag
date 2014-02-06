@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.ods.bag.external;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;
@@ -27,7 +28,7 @@ public class ExternalBagAddress implements Address {
     private City city;
 
 	public ExternalBagAddress(SimpleFeature feature) {
-		this.feature = feature;;
+		this.feature = feature;
 	}
 
 	public void init(MetaData metaData) throws BuildException {
@@ -132,7 +133,8 @@ public class ExternalBagAddress implements Address {
 		primitive.put("addr:city", getPlaceName());
 	}
 	
-	public String toString() {
+    @Override
+    public String toString() {
 	    StringBuilder sb = new StringBuilder();
 	    sb.append(getStreetName()).append(" ");
 	    sb.append(getHouseNumber()).append(" ");
@@ -140,4 +142,25 @@ public class ExternalBagAddress implements Address {
         sb.append(getPlaceName()).append(" ");	    
 	    return sb.toString();
 	}
+
+    
+    @Override
+    public int compareTo(Address a) {
+        int result = getPlaceName().compareTo(a.getPlaceName());
+        if (result != 0) return result;
+        result = getPostcode().compareTo(a.getPostcode());
+        if (result != 0) return result;
+        result = getStreetName().compareTo(a.getStreetName());
+        if (result != 0) return result;
+        if (a instanceof ExternalBagAddress) {
+            ExternalBagAddress a1 = (ExternalBagAddress) a;
+            result = getHuisnummer().compareTo(a1.getHuisnummer());
+            if (result != 0) return result;
+            result = ObjectUtils.compare(getHuisLetter(), a1.getHuisLetter());
+            if (result != 0) return result;
+            return ObjectUtils.compare(getHuisNummerToevoeging(), a1.getHuisNummerToevoeging());
+        }
+        return getHouseNumber().compareTo(a.getHouseNumber());
+    }
+
 }

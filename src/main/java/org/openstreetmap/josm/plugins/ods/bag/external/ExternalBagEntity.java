@@ -31,7 +31,8 @@ public abstract class ExternalBagEntity implements ExternalEntity {
 		this.feature = feature;
 	}
 	
-	public void init(MetaData metaData) throws BuildException {
+	@Override
+    public void init(MetaData metaData) throws BuildException {
 		identificatie = FeatureUtil.getLong(feature, "identificatie");
 		try {
 			sourceDate = (Date) metaData.get("bag.source.date");
@@ -60,7 +61,8 @@ public abstract class ExternalBagEntity implements ExternalEntity {
     }
 
 
-	public Geometry getGeometry() {
+	@Override
+    public Geometry getGeometry() {
 		return geometry;
 	}
 
@@ -86,7 +88,7 @@ public abstract class ExternalBagEntity implements ExternalEntity {
     @Override
     public void createPrimitives(PrimitiveBuilder builder) {
         if (getPrimitives() == null && getGeometry() != null) {
-            Collection<OsmPrimitive> primitives = builder.build(getGeometry());
+            primitives = builder.build(getGeometry());
             for (OsmPrimitive primitive : primitives) {
                 buildTags(primitive);
             }
@@ -98,7 +100,8 @@ public abstract class ExternalBagEntity implements ExternalEntity {
 		return primitives;
 	}
 
-	public void buildTags(OsmPrimitive primitive) {
+	@Override
+    public void buildTags(OsmPrimitive primitive) {
 		primitive.put("source", getSource());
 		primitive.put("source:date", dateFormat.format(sourceDate));
 	}
