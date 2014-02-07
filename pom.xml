@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>josm-ods-bag</groupId>
   <artifactId>josm-ods-bag</artifactId>
-  <version>0.4.7-SNAPSHOT</version>
+  <version>0.4.7</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -20,7 +20,7 @@
   	<dependency>
   		<groupId>josm-plugins</groupId>
   		<artifactId>openservices</artifactId>
-  		<version>0.4.7-SNAPSHOT</version>
+  		<version>0.4.7</version>
   	</dependency>
   </dependencies>
   <properties>
