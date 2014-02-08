@@ -213,7 +213,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
         if (extra != null) {
             extra = extra.toUpperCase();
             if (trafo.contains(extra)) {
-                primitive.put("power", "sub_station");
+                primitive.put("power", "substation");
             }
             else if (garage.contains(extra)) {
                 type = "garage";
