@@ -9,11 +9,14 @@ import java.net.URL;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ods.ConfigurationReader;
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
+import org.openstreetmap.josm.plugins.ods.bag.actions.FixOverlappingNodesAction;
+import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingPassageAction;
 import org.openstreetmap.josm.tools.I18n;
 
 public class BagImportPlugin extends OdsModulePlugin {
@@ -47,6 +50,12 @@ public class BagImportPlugin extends OdsModulePlugin {
             e.printStackTrace();
         }
         ODS.registerModule(this);
+        JosmAction action = new FixOverlappingNodesAction();
+        action.setEnabled(false);
+        ODS.getMenu().add(action);
+//        action = new BuildingPassageAction();
+//        action.setEnabled(false);
+//        ODS.getMenu().add(action);        
     }
 
     @Override

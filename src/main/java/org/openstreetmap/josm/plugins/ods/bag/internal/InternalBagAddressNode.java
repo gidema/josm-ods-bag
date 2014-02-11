@@ -3,6 +3,9 @@ package org.openstreetmap.josm.plugins.ods.bag.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.MoveCommand;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -108,6 +111,19 @@ public class InternalBagAddressNode extends InternalBagEntity implements
         geometry = geoUtil.toPoint(node);
     }
 
+    @Override
+    public Command updateGeometry(Point point) {
+        this.geometry = point;
+        OsmPrimitive osm = this.getPrimitive();
+        if (osm.getType() == OsmPrimitiveType.NODE) {
+            Node node = (Node)osm;
+            LatLon latLon = GeoUtil.getInstance().toLatLon(point);
+            node.setCoor(latLon);
+            return new MoveCommand(node, latLon);
+        }
+        return null;
+    }
+    
     @Override
     public void setGeometry(Point geometry) {
         this.geometry = geometry;

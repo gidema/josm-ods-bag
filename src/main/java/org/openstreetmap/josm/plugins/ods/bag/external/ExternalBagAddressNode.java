@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
@@ -126,6 +127,14 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
 
     public Date getBagExtract() {
         return sourceDate;
+    }
+
+    @Override
+    public Command updateGeometry(Point point) {
+    	if (!point.equals(getGeometry())) {
+    	    setGeometry(point);
+    	}
+        return null;
     }
 
     @Override
