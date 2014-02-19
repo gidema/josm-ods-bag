@@ -89,15 +89,15 @@ public class BagAddressDataImpl extends AddressDataImpl implements BagAddressDat
 
     @Override
     public int compareTo(Address a) {
-        int result = getCityName().compareTo(a.getCityName());
+        int result = ObjectUtils.compare(getCityName(), a.getCityName());
         if (result != 0) return result;
-        result = getPostcode().compareTo(a.getPostcode());
+        result = ObjectUtils.compare(getPostcode(), a.getPostcode());
         if (result != 0) return result;
-        result = getStreetName().compareTo(a.getStreetName());
+        result = ObjectUtils.compare(getStreetName(), a.getStreetName());
         if (result != 0) return result;
         if (a instanceof BagAddressData) {
             BagAddressData a1 = (BagAddressData) a;
-            result = getHuisnummer().compareTo(a1.getHuisnummer());
+            result = ObjectUtils.compare(getHuisnummer(), a1.getHuisnummer());
             if (result != 0) return result;
             result = ObjectUtils.compare(getHuisLetter(), a1.getHuisLetter());
             if (result != 0) return result;

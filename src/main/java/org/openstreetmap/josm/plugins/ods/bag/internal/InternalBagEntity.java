@@ -28,7 +28,8 @@ public abstract class InternalBagEntity implements InternalEntity {
 		this.primitive = primitive;
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
     public Long getId() {
 	    return primitive.getId();
 	}
@@ -82,7 +83,8 @@ public abstract class InternalBagEntity implements InternalEntity {
 		return primitive;
 	}
 
-	public void build() throws BuildException {
+	@Override
+    public void build() throws BuildException {
         try {
             buildGeometry();
             parseKeys();
@@ -130,7 +132,7 @@ public abstract class InternalBagEntity implements InternalEntity {
                 catch (Exception e) {
                     // Something went wrong. Ignore the source date and print the stack trace
                     e.printStackTrace();
-                };
+                }
             }
             return true;
         }
@@ -141,7 +143,7 @@ public abstract class InternalBagEntity implements InternalEntity {
         if ("ref:bagid".equals(key) || "bag:id".equals(key) ||
                 "ref:bag".equals(key) || "bag:pand_id".equals(key) ||
                 "ref:vbo_id".equals(key)) {
-            referenceId = Long.parseLong(value);
+            referenceId = parseReference(value);
             return true;
         }
         if ("bag:extract".equals(key)) {
@@ -151,7 +153,7 @@ public abstract class InternalBagEntity implements InternalEntity {
         return false;
 	}
 	
-    private String parseBagExtract(String s) {
+    private static String parseBagExtract(String s) {
         if (s.startsWith("9999PND") || s.startsWith("9999LIG") || s.startsWith("9999STA")) {
             StringBuilder sb = new StringBuilder(10);
             sb.append(s.substring(11,15)).append("-").append(s.substring(9,11)).append("-").append(s.substring(7, 9));
@@ -160,4 +162,13 @@ public abstract class InternalBagEntity implements InternalEntity {
         return s;
     }
 
-}
+    private static Long parseReference(String value) {
+        if (value.length() == 0) return null;
+        int i=0;
+        while (i<value.length() && Character.isDigit(value.charAt(i))) {
+            i++;
+        }
+        if (i == 0) return null;
+        return new Long(value.substring(0, i));
+    }
+ }

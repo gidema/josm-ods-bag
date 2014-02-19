@@ -56,7 +56,8 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
         return Building.class;
     }
 
-	protected boolean parseKey(String key, String value) {
+	@Override
+    protected boolean parseKey(String key, String value) {
 		if (super.parseKey(key, value)) {
 			return true;
 		}
@@ -110,6 +111,7 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
         return false;
     }
 
+    @Override
     public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
     }
@@ -154,6 +156,7 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
         return source;
     }
 
+    @Override
     public boolean isUnderConstruction() {
         return underConstruction;
     }
@@ -167,6 +170,7 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
         return hasAddress;
     }
     
+    @Override
     protected void buildGeometry() throws InvalidGeometryException {
         if (primitive.getDisplayType() == OsmPrimitiveType.CLOSEDWAY) {
             buildGeometry((Way)primitive);
