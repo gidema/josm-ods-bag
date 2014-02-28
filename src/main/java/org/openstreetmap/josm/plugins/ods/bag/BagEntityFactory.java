@@ -4,6 +4,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagCity;
 import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagEntity;
 import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagLigplaats;
 import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagStandplaats;

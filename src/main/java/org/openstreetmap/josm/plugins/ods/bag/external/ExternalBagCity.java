@@ -1,8 +1,7 @@
-package org.openstreetmap.josm.plugins.ods.bag;
+package org.openstreetmap.josm.plugins.ods.bag.external;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagEntity;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;

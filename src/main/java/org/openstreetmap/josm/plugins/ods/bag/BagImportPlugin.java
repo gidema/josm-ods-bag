@@ -16,7 +16,8 @@ import org.openstreetmap.josm.plugins.ods.ConfigurationReader;
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
 import org.openstreetmap.josm.plugins.ods.bag.actions.FixOverlappingNodesAction;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingPassageAction;
+import org.openstreetmap.josm.plugins.ods.bag.actions.MarkObsoleteObjectsAction;
+import org.openstreetmap.josm.plugins.ods.bag.actions.RemoveAssociatedStreetsAction;
 import org.openstreetmap.josm.tools.I18n;
 
 public class BagImportPlugin extends OdsModulePlugin {
@@ -50,7 +51,14 @@ public class BagImportPlugin extends OdsModulePlugin {
             e.printStackTrace();
         }
         ODS.registerModule(this);
-        JosmAction action = new FixOverlappingNodesAction();
+
+        JosmAction action = new RemoveAssociatedStreetsAction();
+        action.setEnabled(false);
+        ODS.getMenu().add(action);       
+        action = new MarkObsoleteObjectsAction();
+        action.setEnabled(false);
+        ODS.getMenu().add(action);
+        action = new FixOverlappingNodesAction();
         action.setEnabled(false);
         ODS.getMenu().add(action);
 //        action = new BuildingPassageAction();

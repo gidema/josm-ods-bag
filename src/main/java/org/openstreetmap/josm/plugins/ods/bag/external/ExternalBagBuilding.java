@@ -16,6 +16,7 @@ import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.BuildException;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
+import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Block;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
@@ -228,7 +229,13 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
     }
 
     @Override
-    public Set<AddressNode> getAddresses() {
+    public Address getAddress() {
+        // No address information is associated with the building
+        return null;
+    }
+
+    @Override
+    public Set<AddressNode> getAddressNodes() {
         return addresses;
     }
 

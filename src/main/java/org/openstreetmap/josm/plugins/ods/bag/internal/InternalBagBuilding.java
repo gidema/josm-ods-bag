@@ -11,8 +11,8 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidGeometryException;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidMultiPolygonException;
-import org.openstreetmap.josm.plugins.ods.entities.BuildException;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
+import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Block;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
@@ -27,9 +27,10 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
     private String buildingType = "yes";
     private String startDate;
     private boolean underConstruction = false;
-    private Set<AddressNode> addresses = new HashSet<AddressNode>();
+    private InternalBagAddress address;
+    private Set<AddressNode> addresses = new HashSet<>();
     private Map<String, String> addressKeys = new HashMap<>();
-    private boolean hasAddress = false; // True if this building has address tags
+//    private boolean hasAddress = false; // True if this building has address tags
     private boolean incomplete = false;
 
     public InternalBagBuilding(OsmPrimitive primitive) {
@@ -89,24 +90,19 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
            return true;
        }
        if ("addr:housenumber".equals(key)) {
-            InternalBagAddressNode address = new InternalBagAddressNode(primitive);
-            try {
-                address.build();
-                getAddresses().add(address);
-                hasAddress = true;
-                return true;
-            } catch (BuildException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return true;
-            }
+            address = new InternalBagAddress(primitive);
+            address.build();
+//                getAddresses().add(address);
+//                hasAddress = true;
+            return true;
         }
-        if ("address:street".equals(key) ||
-              "address:housename".equals(key) ||
-              "address:city".equals(key) ||
-              "address:postcode".equals(key)) {
+        if ("addr:street".equals(key) ||
+              "addr:housename".equals(key) ||
+              "addr:city".equals(key) ||
+              "addr:postcode".equals(key)) {
               // Save other address keys in case address:housenumber is missing
               addressKeys.put(key, value);
+              return true;
         }
         return false;
     }
@@ -128,7 +124,12 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
     }
 
     @Override
-    public Set<AddressNode> getAddresses() {
+    public Address getAddress() {
+        return address;    
+    }
+    
+    @Override
+    public Set<AddressNode> getAddressNodes() {
         return addresses;
     }
 
@@ -166,9 +167,9 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
         return startDate;
     }
     
-    public boolean hasAddress() {
-        return hasAddress;
-    }
+//    public boolean hasAddress() {
+//        return hasAddress;
+//    }
     
     @Override
     protected void buildGeometry() throws InvalidGeometryException {
