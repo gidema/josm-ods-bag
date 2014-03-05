@@ -24,11 +24,11 @@
       <filter>status EQ 'Verblijfsobject in gebruik' OR status EQ 'Verblijfsobject in gebruik (niet ingemeten)'</filter> 
       <id attribute="identificatie"/>
     </datasource>
-    <datasource host="bagviewer" feature="ligplaats" entitytype="houseboat">
+    <datasource host="bagviewer" feature="ligplaats" entitytype="houseboat" required="false">
       <filter>status EQ 'Plaats aangewezen'</filter> 
       <id attribute="identificatie"/>
     </datasource>
-    <datasource host="bagviewer" feature="standplaats" entitytype="static_caravan">
+    <datasource host="bagviewer" feature="standplaats" entitytype="static_caravan" required="false">
       <filter>status EQ 'Plaats aangewezen'</filter> 
       <id attribute="identificatie"/>
     </datasource>
