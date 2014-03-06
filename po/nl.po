@@ -1,0 +1,64 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-03-06 17:37+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/DisconnectPoiFromBuildingAction.java:33
+msgid "Disconnect poi's"
+msgstr ""
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/DisconnectPoiFromBuildingAction.java:34
+msgid "Disconnect poi's from buildings."
+msgstr ""
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/DisconnectPoiFromBuildingAction.java:41
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/RemoveAssociatedStreetsAction.java:42
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/MarkObsoleteObjectsAction.java:41
+msgid "The OSM datalayer is missing"
+msgstr "De OSM laag ontbreekt"
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/DisconnectPoiFromBuildingAction.java:51
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/RemoveAssociatedStreetsAction.java:51
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/MarkObsoleteObjectsAction.java:54
+msgid "Please wait"
+msgstr "Even geduld aub"
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/RemoveAssociatedStreetsAction.java:34
+msgid "Remove associated streets"
+msgstr "Verwijder associated streets"
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/RemoveAssociatedStreetsAction.java:35
+msgid "Remove associated street relations."
+msgstr "Verwijder associated_street relaties"
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/MarkObsoleteObjectsAction.java:33
+msgid "Mark obsolete objects"
+msgstr ""
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/actions/MarkObsoleteObjectsAction.java:45
+msgid "The BAG datalayer is missing"
+msgstr "De bag gegevenslaag ontbreekt"
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/BagAddressDataImpl.java:68
+#, java-format
+msgid "Housenumber without a numeric part: {0}"
+msgstr "Huisnummer zonder numeriek gedeelte: {0}"
+
+#: src/main/java/org/openstreetmap/josm/plugins/ods/bag/BagImportPlugin.java:80
+msgid "ODS module to import buildings and addresses in the Netherlands"
+msgstr "ODS module om gebouwen en adressen uit de BAG te importeren"
+
