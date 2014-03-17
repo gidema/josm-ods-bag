@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -14,7 +16,6 @@ import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.issue.ImportIssue;
 import org.openstreetmap.josm.plugins.ods.issue.Issue;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
-import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -26,6 +27,7 @@ public abstract class ExternalBagEntity implements ExternalEntity {
 	protected SimpleFeature feature;
 	protected Collection<OsmPrimitive> primitives;
 	protected Geometry geometry;
+	private Map<String, String> otherTags = new HashMap<>();
 	
 	public ExternalBagEntity(SimpleFeature feature) {
 		this.feature = feature;
@@ -36,7 +38,7 @@ public abstract class ExternalBagEntity implements ExternalEntity {
 		identificatie = FeatureUtil.getLong(feature, "identificatie");
 		try {
 			sourceDate = (Date) metaData.get("bag.source.date");
-		} catch (MetaDataException e) {
+		} catch (ClassCastException e) {
 			Issue issue = new ImportIssue(feature.getID(), e);
 			throw new BuildException(issue);
 		}
@@ -60,14 +62,13 @@ public abstract class ExternalBagEntity implements ExternalEntity {
         return identificatie;
     }
 
+	public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
+    }
 
-	@Override
+    @Override
     public Geometry getGeometry() {
 		return geometry;
-	}
-
-	public void setGeometry(Geometry geometry) {
-		this.geometry = geometry;
 	}
 
 	@Override
@@ -94,13 +95,21 @@ public abstract class ExternalBagEntity implements ExternalEntity {
             }
         }
     }
+    
+    
 
 	@Override
 	public Collection<OsmPrimitive> getPrimitives() {
 		return primitives;
 	}
 
+	
 	@Override
+    public Map<String, String> getOtherTags() {
+        return otherTags;
+    }
+
+    @Override
     public void buildTags(OsmPrimitive primitive) {
 		primitive.put("source", getSource());
 		primitive.put("source:date", dateFormat.format(sourceDate));

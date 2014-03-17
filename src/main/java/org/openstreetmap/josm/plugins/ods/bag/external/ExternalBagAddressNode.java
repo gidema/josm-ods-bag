@@ -63,10 +63,10 @@ public class ExternalBagAddressNode extends ExternalBagEntity implements
         return address;
     }
 
-    @Override
-    public Block getBlock() {
-        return block;
-    }
+//    @Override
+//    public Block getBlock() {
+//        return block;
+//    }
 
     @Override
     public void setBuilding(Building building) {

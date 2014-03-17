@@ -18,7 +18,6 @@ import org.openstreetmap.josm.plugins.ods.entities.BuildException;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Block;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.City;
 import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
@@ -36,6 +35,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
     
     private Integer bouwjaar;
     private String status;
+    private String buildingType;
     private boolean incomplete;
     private String gebruiksdoel;
     private Double oppervlakte_min;
@@ -43,7 +43,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
     private Set<AddressNode> addresses = new HashSet<>();
     private Long aantal_verblijfsobjecten;
     private Set<Building> neighbours = new HashSet<>();
-    private Block block;
+//    private Block block;
     private City city;
     
     public ExternalBagBuilding(SimpleFeature feature) {
@@ -128,6 +128,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
         return true;
     }
 
+    @Override
     public String getStartDate() {
         return (bouwjaar == null ? null : bouwjaar.toString());
     }
@@ -142,19 +143,19 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
     }
     
     private void analyzeBuildingType(OsmPrimitive primitive) {
-        String type = "yes";
+        buildingType = "yes";
         if (addresses.size() == 1) {
-            type = getBuildingType((ExternalBagAddressNode) addresses.toArray()[0], primitive);
+            buildingType = getBuildingType((ExternalBagAddressNode) addresses.toArray()[0], primitive);
         }
         else {
-            type = getBuildingType(addresses, primitive);
+            buildingType = getBuildingType(addresses, primitive);
         }
         if (isUnderConstruction()) {
             primitive.put("building", "construction");
-            primitive.put("construction", type);                
+            primitive.put("construction", buildingType);                
         }
         else {
-            primitive.put("building", type);
+            primitive.put("building", buildingType);
         }
     }
 
@@ -189,6 +190,11 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
         return type;
     }
 
+    @Override
+    public String getBuildingType() {
+        return buildingType;
+    }
+    
     private String getBuildingType(ExternalBagAddressNode address, OsmPrimitive primitive) {
         String type;
         switch (address.getGebruiksdoel().toLowerCase()) {
@@ -239,15 +245,15 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
         return addresses;
     }
 
-    @Override
-    public void setBlock(Block block) {
-        this.block = block;
-    }
+//    @Override
+//    public void setBlock(Block block) {
+//        this.block = block;
+//    }
 
-    @Override
-    public Block getBlock() {
-        return block;
-    }
+//    @Override
+//    public Block getBlock() {
+//        return block;
+//    }
 
     @Override
     public Set<Building> getNeighbours() {

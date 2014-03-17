@@ -8,6 +8,8 @@ import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagCity;
 import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagEntity;
 import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagLigplaats;
 import org.openstreetmap.josm.plugins.ods.bag.external.ExternalBagStandplaats;
+import org.openstreetmap.josm.plugins.ods.bag.gt.BagAddressNodeBuilder;
+import org.openstreetmap.josm.plugins.ods.bag.gt.BagBuildingBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.internal.InternalBagAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.internal.InternalBagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.internal.InternalBagLigplaats;
@@ -17,30 +19,33 @@ import org.openstreetmap.josm.plugins.ods.entities.Entity;
 import org.openstreetmap.josm.plugins.ods.entities.EntityFactory;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 
-public class BagEntityFactory implements EntityFactory {
+public class _BagEntityFactory implements EntityFactory {
+    private BagBuildingBuilder buildingBuilder = new BagBuildingBuilder();
+    private BagAddressNodeBuilder addressNodeBuilder = new BagAddressNodeBuilder();
+    
 	@Override
 	public Entity buildEntity(String entityType, MetaData metaData, SimpleFeature feature) throws BuildException {
-		ExternalBagEntity entity;
+		BagEntity entity;
 		switch (entityType) {
 		case "address":
-			entity = new ExternalBagAddressNode(feature);
+			entity = addressNodeBuilder.build(feature, metaData);
 			break;
 		case "building":
-			entity = new ExternalBagBuilding(feature);
+			entity = buildingBuilder.build(feature, metaData);
 			break;
-		case "houseboat":
-			entity = new ExternalBagLigplaats(feature);
-			break;
-		case "static_caravan":
-			entity = new ExternalBagStandplaats(feature);
-			break;
-		case "city":
-			entity = new ExternalBagCity(feature);
-			break;
+//		case "houseboat":
+//			entity = new ExternalBagLigplaats(feature);
+//			break;
+//		case "static_caravan":
+//			entity = new ExternalBagStandplaats(feature);
+//			break;
+//		case "city":
+//			entity = new ExternalBagCity(feature);
+//			break;
 		default:
 			return null;
 		}
-		entity.init(metaData);
+//		entity.init(metaData);
 		return entity;
 	}
 	

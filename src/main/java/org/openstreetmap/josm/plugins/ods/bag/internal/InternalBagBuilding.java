@@ -133,15 +133,15 @@ public class InternalBagBuilding extends InternalBagEntity implements Building {
         return addresses;
     }
 
-    @Override
-    public void setBlock(Block block) {
-        this.block = block;
-    }
+//    @Override
+//    public void setBlock(Block block) {
+//        this.block = block;
+//    }
 
-    @Override
-    public Block getBlock() {
-        return block;
-    }
+//    @Override
+//    public Block getBlock() {
+//        return block;
+//    }
 
     public String getBuildingType() {
         return buildingType;

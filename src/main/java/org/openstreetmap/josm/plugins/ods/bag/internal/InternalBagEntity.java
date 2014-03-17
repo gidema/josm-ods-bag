@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.ods.bag.internal;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,7 +22,7 @@ public abstract class InternalBagEntity implements InternalEntity {
     protected String source;
     protected String sourceDate;
     protected Long referenceId;
-    private Map<String, String> otherKeys;
+    private Map<String, String> otherTags = new HashMap<>();
     
 	public InternalBagEntity(OsmPrimitive primitive) {
 		super();
@@ -58,6 +59,10 @@ public abstract class InternalBagEntity implements InternalEntity {
         return false;
     }
 
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
+    }
+
     @Override
 	public Geometry getGeometry() {
 		return geometry;
@@ -79,6 +84,11 @@ public abstract class InternalBagEntity implements InternalEntity {
 	}
 	
     @Override
+    public Map<String, String> getOtherTags() {
+        return otherTags;
+    }
+
+    @Override
 	public OsmPrimitive getPrimitive() {
 		return primitive;
 	}
@@ -96,12 +106,6 @@ public abstract class InternalBagEntity implements InternalEntity {
     
     protected abstract void buildGeometry() throws InvalidGeometryException;
     
-    
-    @Override
-	public Map<String, String> getOtherKeys() {
-		return otherKeys;
-	}
-
 	protected void parseKeys() {
 		Map<String, String> keys = primitive.getKeys();
 		Iterator<Entry<String, String>> it = 
@@ -114,7 +118,7 @@ public abstract class InternalBagEntity implements InternalEntity {
 				it.remove();
 			}
 		}
-		otherKeys = keys;
+		otherTags.putAll(keys);
 	}
 
 	protected boolean parseKey(String key, String value) {

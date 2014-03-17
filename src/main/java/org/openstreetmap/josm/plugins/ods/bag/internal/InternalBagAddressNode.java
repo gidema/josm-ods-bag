@@ -13,7 +13,6 @@ import org.openstreetmap.josm.plugins.ods.crs.InvalidGeometryException;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Block;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 
@@ -75,11 +74,11 @@ public class InternalBagAddressNode extends InternalBagEntity implements
         return false;
     }
 
-    @Override
-    public Block getBlock() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    @Override
+//    public Block getBlock() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     @Override
     public Object getBuildingRef() {
@@ -138,6 +137,4 @@ public class InternalBagAddressNode extends InternalBagEntity implements
     public int compareTo(AddressNode an) {
         return getAddress().compareTo(an.getAddress());
     }
-    
-    
 }

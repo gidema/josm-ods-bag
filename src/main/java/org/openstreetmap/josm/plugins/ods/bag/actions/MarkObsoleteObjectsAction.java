@@ -6,11 +6,9 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.OdsWorkingSet;
@@ -71,7 +69,7 @@ public class MarkObsoleteObjectsAction extends JosmAction {
                 InternalBagBuilding building = (InternalBagBuilding)it.next();
                 OsmPrimitive primitive = building.getPrimitive();
                 if (primitive != null) {
-                    if ("3dshapes".equals(building.getSource()) && building.getOtherKeys().isEmpty()) {
+                    if ("3dshapes".equals(building.getSource()) && building.getOtherTags().isEmpty()) {
                          primitive.put("ods:obsolete", "yes");
                      }
                      else {
