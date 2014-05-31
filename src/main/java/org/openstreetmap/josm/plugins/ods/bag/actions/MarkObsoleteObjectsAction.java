@@ -6,16 +6,14 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.OdsWorkingSet;
-import org.openstreetmap.josm.plugins.ods.bag.internal.InternalBagBuilding;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.Building;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.BuiltEnvironment;
 import org.openstreetmap.josm.plugins.ods.entities.EntitySet;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuiltEnvironment;
 import org.openstreetmap.josm.tools.I18n;
 import org.xml.sax.SAXException;
 
@@ -66,16 +64,17 @@ public class MarkObsoleteObjectsAction extends JosmAction {
             BuiltEnvironment be = new BuiltEnvironment(entitySet);
             Iterator<Building> it = be.getBuildings().iterator();
             while (it.hasNext()) {
-                InternalBagBuilding building = (InternalBagBuilding)it.next();
-                OsmPrimitive primitive = building.getPrimitive();
-                if (primitive != null) {
-                    if ("3dshapes".equals(building.getSource()) && building.getOtherTags().isEmpty()) {
-                         primitive.put("ods:obsolete", "yes");
-                     }
-                     else {
-                         primitive.put("bag", "conversie");
-                     }
-                }
+                Building building = it.next();
+                // TODO implement this
+//                OsmPrimitive primitive = building.getPrimitive();
+//                if (primitive != null) {
+//                    if ("3dshapes".equals(building.getSource()) && building.getOtherTags().isEmpty()) {
+//                         primitive.put("ods:obsolete", "yes");
+//                     }
+//                     else {
+//                         primitive.put("bag", "conversie");
+//                     }
+//                }
             }
         }
 

@@ -3,11 +3,10 @@ package org.openstreetmap.josm.plugins.ods.bag;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.openstreetmap.josm.plugins.ods.builtenvironment.AddressNode;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.Building;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.City;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.City;
 
 public class BagBuilding extends BagEntity implements Building {
     private Integer bouwjaar;
@@ -16,8 +15,8 @@ public class BagBuilding extends BagEntity implements Building {
     private String gebruiksdoel;
     private Double oppervlakteMin;
     private Double oppervlakteMax;
-    private Address address;
-    private Set<AddressNode> addresses = new HashSet<>();
+    private BagAddress address;
+    private Set<AddressNode> addressNodes = new HashSet<>();
     private Long aantalVerblijfsobjecten;
     private String buildingType;
     private boolean underConstruction;
@@ -102,7 +101,6 @@ public class BagBuilding extends BagEntity implements Building {
         this.incomplete = incomplete;
     }
     
-    
     @Override
     public boolean isIncomplete() {
         return incomplete;
@@ -142,18 +140,18 @@ public class BagBuilding extends BagEntity implements Building {
         return city;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(BagAddress address) {
         this.address = address;
     }
     
     @Override
-    public Address getAddress() {
+    public BagAddress getAddress() {
         return address;
     }
 
     @Override
     public Set<AddressNode> getAddressNodes() {
-        return addresses;
+        return addressNodes;
     }
 
     @Override
@@ -171,7 +169,7 @@ public class BagBuilding extends BagEntity implements Building {
         StringBuilder sb = new StringBuilder();
         sb.append("Building ").append(getReferenceId());
         sb.append(" (").append(getStatus()).append(")");
-        for (AddressNode a :addresses) {
+        for (AddressNode a :addressNodes) {
             sb.append("\n").append(a.toString());
         }
         return sb.toString();

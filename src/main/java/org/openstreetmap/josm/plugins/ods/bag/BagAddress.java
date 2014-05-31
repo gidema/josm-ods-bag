@@ -2,11 +2,11 @@ package org.openstreetmap.josm.plugins.ods.bag;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressDataImpl;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.Address;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.AddressImpl;
 import org.openstreetmap.josm.tools.I18n;
 
-public class BagAddress extends AddressDataImpl {
+public class BagAddress extends AddressImpl {
     private Integer huisnummer;
     private String huisletter;
     private String huisnummertoevoeging;
@@ -89,8 +89,8 @@ public class BagAddress extends AddressDataImpl {
         if (result != 0) return result;
         result = ObjectUtils.compare(getStreetName(), a.getStreetName());
         if (result != 0) return result;
-        if (a instanceof BagAddressData) {
-            BagAddressData a1 = (BagAddressData) a;
+        if (a instanceof BagAddress) {
+            BagAddress a1 = (BagAddress) a;
             result = ObjectUtils.compare(getHuisnummer(), a1.getHuisnummer());
             if (result != 0) return result;
             result = ObjectUtils.compare(getHuisLetter(), a1.getHuisLetter());
@@ -98,5 +98,15 @@ public class BagAddress extends AddressDataImpl {
             return ObjectUtils.compare(getHuisNummerToevoeging(), a1.getHuisNummerToevoeging());
         }
         return getHouseNumber().compareTo(a.getHouseNumber());
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getStreetName()).append(" ");
+        sb.append(getHouseNumber()).append(" ");
+        sb.append(getPostcode()).append(" ");
+        sb.append(getCityName()).append(" ");       
+        return sb.toString();
     }
 }

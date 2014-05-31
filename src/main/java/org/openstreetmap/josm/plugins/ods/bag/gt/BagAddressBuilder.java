@@ -2,7 +2,7 @@ package org.openstreetmap.josm.plugins.ods.bag.gt;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.BagAddress;
-import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
+import org.openstreetmap.josm.plugins.ods.geotools.FeatureUtil;
 
 public class BagAddressBuilder {
     public static BagAddress build(SimpleFeature feature) {

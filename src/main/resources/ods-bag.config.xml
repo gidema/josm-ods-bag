@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ods version="0.5">
+  <!-- TODO use csw to retrieve data about hosts and services -->
+  <host name="bag" type="WFS" maxFeatures="15000" url="http://geodata.nationaalgeoregister.nl/bag/wfs"/>
+  <layer name="BAG" description="BAG panden, ligplaatsen, standplaatsen en adressen">
+    <!-- <factory name="BagFactory"/>-->
+    <datasource host="bag" feature="bag:pand" entitytype="building">
+      <filter>status NEQ 'Niet gerealiseerd' AND status NEQ 'Bouwvergunning verleend'</filter>
+      <id attribute="identificatie"/>
+    </datasource>
+    <datasource host="bag" feature="bag:verblijfsobject" entitytype="address">
+      <filter>status EQ 'Verblijfsobject in gebruik' OR status EQ 'Verblijfsobject in gebruik (niet ingemeten)'</filter> 
+      <id attribute="identificatie"/>
+    </datasource>
+    <datasource host="bag" feature="bag:ligplaats" entitytype="houseboat" required="false">
+      <filter>status EQ 'Plaats aangewezen'</filter> 
+      <id attribute="identificatie"/>
+    </datasource>
+    <datasource host="bag" feature="bag:standplaats" entitytype="static_caravan" required="false">
+      <filter>status EQ 'Plaats aangewezen'</filter> 
+      <id attribute="identificatie"/>
+    </datasource>
+  </layer>
+</ods>

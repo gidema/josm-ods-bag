@@ -1,16 +1,16 @@
 package org.openstreetmap.josm.plugins.ods.bag;
 
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.Address;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.AddressNode;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.Building;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
 
 import com.vividsolutions.jts.geom.Point;
 
 public class BagAddressNode extends BagEntity implements AddressNode {
     private BagAddress address;
-    private Object buildingRef;
+    private Long buildingRef;
     private Building building;
     
     @Override
@@ -18,11 +18,15 @@ public class BagAddressNode extends BagEntity implements AddressNode {
         return AddressNode.class;
     }
 
+    
     @Override
-    public int compareTo(AddressNode o) {
-        // TODO Auto-generated method stub
-        return 0;
+    public boolean isIncomplete() {
+        if (building != null) {
+            return building.isIncomplete();
+        }
+        return super.isIncomplete();
     }
+
 
     public void setAddress(BagAddress address) {
         this.address = address;
@@ -40,11 +44,11 @@ public class BagAddressNode extends BagEntity implements AddressNode {
 //    }
 
     @Override
-    public Object getBuildingRef() {
+    public Long getBuildingRef() {
         return buildingRef;
     }
 
-    public void setBuildingRef(Object buildingRef) {
+    public void setBuildingRef(Long buildingRef) {
         this.buildingRef = buildingRef;
     }
 
@@ -72,5 +76,10 @@ public class BagAddressNode extends BagEntity implements AddressNode {
     @Override
     public Point getGeometry() {
         return (Point) super.getGeometry();
+    }
+    
+    @Override
+    public String toString() {
+        return getAddress().toString();
     }
 }

@@ -1,19 +1,17 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.BagEntity;
 import org.openstreetmap.josm.plugins.ods.entities.EntityBuilder;
-import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
+import org.openstreetmap.josm.plugins.ods.geotools.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
+import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
 
 public abstract class BagEntityBuilder<T extends BagEntity> implements EntityBuilder<SimpleFeature, T> {
     private final static String SOURCE_BAG = "BAG";
-    private final static DateFormat DATE_FORMAT = 
-        new SimpleDateFormat("yyyy-MM-dd");
+    private final static DateTimeFormatter DATETIMEFORMATTER = 
+        DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
     @Override
     public final T build(SimpleFeature feature, MetaData metaData) {
@@ -28,9 +26,9 @@ public abstract class BagEntityBuilder<T extends BagEntity> implements EntityBui
     
     protected void parseMetaData(T entity, MetaData metaData) {
         try {
-            Date sourceDate = (Date) metaData.get("bag.source.date");
+            ZonedDateTime sourceDate = (ZonedDateTime) metaData.get("downloadDateTime");
             if (sourceDate != null) {
-                entity.setSourceDate(DATE_FORMAT.format(sourceDate));
+                entity.setSourceDate(sourceDate.format(DATETIMEFORMATTER));
             }
         } catch (ClassCastException e) {
             throw new RuntimeException("Invalid value for source Date");

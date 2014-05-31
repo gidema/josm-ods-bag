@@ -6,7 +6,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.OdsWorkingSet;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNodeDistributor;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.AddressNodeDistributor;
 
 public class FixOverlappingNodesAction extends JosmAction {
 

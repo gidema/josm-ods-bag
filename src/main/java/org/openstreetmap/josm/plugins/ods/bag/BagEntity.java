@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.plugins.ods.entities.BuildException;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -24,11 +23,6 @@ public abstract class BagEntity implements Entity {
     private Collection<OsmPrimitive> primitives;
     private Map<String, String> otherTags = new HashMap<>();
 
-    @Override
-    public void build() throws BuildException {
-        throw new UnsupportedOperationException("Deprecated");
-    }
-
     public void setInternal(boolean internal) {
         this.internal = internal;
     }
@@ -45,6 +39,7 @@ public abstract class BagEntity implements Entity {
         this.sourceDate = string;
     }
 
+    @Override
     public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
     }
@@ -116,7 +111,6 @@ public abstract class BagEntity implements Entity {
 
     @Override
     public Collection<OsmPrimitive> getPrimitives() {
-        // TODO Auto-generated method stub
-        return null;
+        return primitives;
     }
 }
