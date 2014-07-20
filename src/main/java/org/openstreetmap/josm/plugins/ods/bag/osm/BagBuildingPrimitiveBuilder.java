@@ -118,7 +118,7 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<BagBuilding
                 type = "retail";
                 break;
             case "kantoorfunctie":
-                type = "commercial";
+                type = "office";
                 break;
             default:
                 type = "yes";
