@@ -180,7 +180,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
                 type = "retail";
                 break;
             case "kantoorfunctie":
-                type = "commercial";
+                type = "office";
                 break;
             default:
                 type = "yes";
@@ -199,7 +199,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
             type = "yes";
             break;
         case "industriefunctie":
-            type = "industrial";
+            type = "office";
             break;
         case "winkelfunctie":
             type = "retail";
