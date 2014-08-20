@@ -59,7 +59,7 @@ public class ExternalBagBuilding extends ExternalBagEntity implements Building {
         oppervlakte_max = FeatureUtil.getDouble(feature, "oppervlakte_max");
         aantal_verblijfsobjecten = FeatureUtil.getLong(feature, "aantal_verblijfsobjecten");
         try {
-            setGeometry((MultiPolygon) CRSUtil.getInstance().transform((SimpleFeature) feature));
+            setGeometry(CRSUtil.getInstance().transform(feature));
         } catch (CRSException e) {
             Issue issue = new ImportIssue(feature.getID(), e);
             throw new BuildException(issue);

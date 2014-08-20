@@ -6,14 +6,12 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.plugins.ods.ODS;
-import org.openstreetmap.josm.plugins.ods.OdsWorkingSet;
+import org.openstreetmap.josm.plugins.ods.OdsModule;
+import org.openstreetmap.josm.plugins.ods.OpenDataServices;
 import org.openstreetmap.josm.plugins.ods.bag.internal.InternalBagBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntitySet;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
@@ -36,12 +34,12 @@ public class MarkObsoleteObjectsAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        OdsWorkingSet workingSet =ODS.getModule().getWorkingSet();
-        if (workingSet.getInternalDataLayer() == null) {
+        OdsModule module = OpenDataServices.INSTANCE.getActiveModule();
+        if (module.getInternalDataLayer() == null) {
             new Notification(I18n.tr("The OSM datalayer is missing")).show();
             return;
         }
-        if (workingSet.getExternalDataLayer() == null) {
+        if (module.getExternalDataLayer() == null) {
             new Notification(I18n.tr("The BAG datalayer is missing")).show();
             return;
         }
@@ -63,8 +61,8 @@ public class MarkObsoleteObjectsAction extends JosmAction {
         @Override
         protected void realRun() throws SAXException, IOException,
                 OsmTransferException {
-            OdsWorkingSet workingSet = ODS.getModule().getWorkingSet();
-            EntitySet entitySet = workingSet.getInternalDataLayer().getEntitySet();
+            OdsModule module =  OpenDataServices.INSTANCE.getActiveModule();
+            EntitySet entitySet = module.getInternalDataLayer().getEntitySet();
             BuiltEnvironment be = new BuiltEnvironment(entitySet);
             Iterator<Building> it = be.getBuildings().iterator();
             while (it.hasNext()) {

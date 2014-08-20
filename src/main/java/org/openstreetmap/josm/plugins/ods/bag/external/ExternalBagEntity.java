@@ -103,6 +103,6 @@ public abstract class ExternalBagEntity implements ExternalEntity {
 	@Override
     public void buildTags(OsmPrimitive primitive) {
 		primitive.put("source", getSource());
-		primitive.put("source:date", dateFormat.format(sourceDate));
+//		primitive.put("source:date", dateFormat.format(sourceDate));
 	}
 }

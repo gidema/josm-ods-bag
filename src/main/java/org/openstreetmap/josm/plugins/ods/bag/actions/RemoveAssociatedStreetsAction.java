@@ -6,8 +6,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -18,27 +19,29 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.plugins.ods.ODS;
-import org.openstreetmap.josm.plugins.ods.OdsWorkingSet;
+import org.openstreetmap.josm.plugins.ods.OdsModule;
+import org.openstreetmap.josm.plugins.ods.OpenDataServices;
+import org.openstreetmap.josm.plugins.ods.gui.OdsAction;
 import org.openstreetmap.josm.tools.I18n;
 import org.xml.sax.SAXException;
 
-public class RemoveAssociatedStreetsAction extends JosmAction {
+public class RemoveAssociatedStreetsAction extends OdsAction {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    public RemoveAssociatedStreetsAction() {
-        super(I18n.tr("Remove associated streets"), null, I18n
-                .tr("Remove associated street relations."), null, false);
+    @Inject
+    public RemoveAssociatedStreetsAction(OdsModule module) {
+        super(module, I18n.tr("Remove associated streets"), I18n
+                .tr("Remove associated street relations."));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        OdsWorkingSet workingSet = ODS.getModule().getWorkingSet();
-        if (workingSet.getInternalDataLayer() == null) {
+        OdsModule module = OpenDataServices.INSTANCE.getActiveModule();
+        if (module.getInternalDataLayer() == null) {
             new Notification(I18n.tr("The OSM datalayer is missing")).show();
             return;
         }
@@ -60,8 +63,8 @@ public class RemoveAssociatedStreetsAction extends JosmAction {
         @Override
         protected void realRun() throws SAXException, IOException,
                 OsmTransferException {
-            OdsWorkingSet workingSet = ODS.getModule().getWorkingSet();
-            OsmDataLayer dataLayer = workingSet.getInternalDataLayer()
+            OdsModule module = OpenDataServices.INSTANCE.getActiveModule();
+            OsmDataLayer dataLayer = module.getInternalDataLayer()
                     .getOsmDataLayer();
             for (Relation relation : dataLayer.data.getRelations()) {
                 if ("associatedStreet".equals(relation.get("type"))) {

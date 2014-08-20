@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.plugins.ods.ODS;
-import org.openstreetmap.josm.plugins.ods.OdsWorkingSet;
+import org.openstreetmap.josm.plugins.ods.OdsModule;
+import org.openstreetmap.josm.plugins.ods.OpenDataServices;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNodeDistributor;
 
 public class FixOverlappingNodesAction extends JosmAction {
@@ -23,9 +23,9 @@ public class FixOverlappingNodesAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        OdsWorkingSet workingSet =ODS.getModule().getWorkingSet();
+        OdsModule module = OpenDataServices.INSTANCE.getActiveModule();
         AddressNodeDistributor distributor = new AddressNodeDistributor();
-        distributor.analyze(workingSet.getInternalDataLayer(), null);
+        distributor.analyze(module.getInternalDataLayer(), null);
         Main.map.repaint();
     }
 

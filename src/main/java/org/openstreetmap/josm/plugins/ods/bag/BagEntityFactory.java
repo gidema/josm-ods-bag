@@ -19,22 +19,22 @@ import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 
 public class BagEntityFactory implements EntityFactory {
 	@Override
-	public Entity buildEntity(String entityType, MetaData metaData, SimpleFeature feature) throws BuildException {
+	public Entity buildEntity(MetaData metaData, SimpleFeature feature) throws BuildException {
 		ExternalBagEntity entity;
-		switch (entityType) {
-		case "address":
+		switch (feature.getFeatureType().getName().getLocalPart()) {
+		case "bag:verblijfsobject":
 			entity = new ExternalBagAddressNode(feature);
 			break;
-		case "building":
+		case "bag:pand":
 			entity = new ExternalBagBuilding(feature);
 			break;
-		case "houseboat":
+		case "bag:ligplaats":
 			entity = new ExternalBagLigplaats(feature);
 			break;
-		case "static_caravan":
+		case "bag:standplaats":
 			entity = new ExternalBagStandplaats(feature);
 			break;
-		case "city":
+		case "bag:woonplaats":
 			entity = new ExternalBagCity(feature);
 			break;
 		default:
