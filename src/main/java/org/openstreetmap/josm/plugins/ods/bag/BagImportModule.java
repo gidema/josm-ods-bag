@@ -14,7 +14,6 @@ import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.plugins.ods.OdsDownloader;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
 import org.openstreetmap.josm.plugins.ods.bag.actions.RemoveAssociatedStreetsAction;
@@ -29,7 +28,7 @@ public class BagImportModule extends OdsModule {
     private List<OdsAction> actions = new LinkedList<>();
 
     @Inject
-    public BagImportModule(OdsModulePlugin plugin, OdsDownloader downloader, 
+    public BagImportModule(OdsModulePlugin plugin, org.openstreetmap.josm.plugins.ods.io.OdsDownloader downloader, 
             ExternalDataLayer externalDataLayer, InternalDataLayer internalDataLayer) {
         super(plugin, downloader, externalDataLayer, internalDataLayer);
         actions.add(new OdsDownloadAction(this));
