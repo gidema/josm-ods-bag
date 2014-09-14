@@ -1,21 +1,21 @@
 package org.openstreetmap.josm.plugins.ods.bag;
 
 import org.openstreetmap.josm.plugins.PluginInformation;
-import org.openstreetmap.josm.plugins.ods.OdsModuleConfig;
+import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
 
 public class BagImportPlugin extends OdsModulePlugin {
-    private OdsModuleConfig moduleConfig;
+    private OdsModule module;
     
     public BagImportPlugin(PluginInformation info) throws Exception {
         super(info);
     }
 
     @Override
-    public OdsModuleConfig getModuleConfig() {
-        if (moduleConfig == null) {
-            this.moduleConfig = new BagImportModuleConfig(this);
+    public OdsModule getModule() {
+        if (module == null) {
+            this.module = new BagImportModuleConfig(this).createModule();
         }
-        return moduleConfig;
+        return module;
     }
 }

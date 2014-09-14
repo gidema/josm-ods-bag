@@ -1,42 +1,27 @@
-package org.openstreetmap.josm.plugins.ods.bag;
+package org.openstreetmap.josm.plugins.ods.bag.entity;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressDataImpl;
+import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressImpl;
 import org.openstreetmap.josm.tools.I18n;
 
-public class BagAddressDataImpl extends AddressDataImpl implements BagAddressData {
-    private Integer huisnummer;
+public class BagAddress extends AddressImpl {
     private String huisletter;
     private String huisnummertoevoeging;
 
-    @Override
-    public void setHuisnummer(Integer huisnummer) {
-        this.huisnummer = huisnummer;
-    }
-
-    @Override
-    public Integer getHuisnummer() {
-        return huisnummer;
-    }
-
-    @Override
     public void setHuisletter(String huisletter) {
         this.huisletter = huisletter;
     }
 
-    @Override
     public String getHuisLetter() {
         return huisletter;
     }
 
-    @Override
     public void setHuisnummerToevoeging(String toevoeging) {
         this.huisnummertoevoeging = toevoeging;
     }
 
-    @Override
     public String getHuisNummerToevoeging() {
         return huisnummertoevoeging;
     }
@@ -44,7 +29,7 @@ public class BagAddressDataImpl extends AddressDataImpl implements BagAddressDat
     @Override
     public String formatHouseNumber() {
         StringBuilder sb = new StringBuilder(10);
-        sb.append(getHuisnummer());
+        sb.append(getHouseNumber());
         if (getHuisLetter() != null) {
             sb.append(getHuisLetter());
         }
@@ -56,7 +41,7 @@ public class BagAddressDataImpl extends AddressDataImpl implements BagAddressDat
 
     @Override
     public void parseHouseNumber() {
-        String number = getHouseNumber().trim();
+        String number = getFullHouseNumber().trim();
         // Parse the numeric part
         int s=0; // start index
         int e=s; // end index
@@ -69,7 +54,7 @@ public class BagAddressDataImpl extends AddressDataImpl implements BagAddressDat
             //this.setHuisnummer(null);
         }
         else {
-            setHuisnummer(Integer.parseInt(number.substring(0, e)));
+            setHouseNumber(Integer.parseInt(number.substring(0, e)));
         }
         s = e;
         if (s >= number.length()) return;
@@ -95,9 +80,9 @@ public class BagAddressDataImpl extends AddressDataImpl implements BagAddressDat
         if (result != 0) return result;
         result = ObjectUtils.compare(getStreetName(), a.getStreetName());
         if (result != 0) return result;
-        if (a instanceof BagAddressData) {
-            BagAddressData a1 = (BagAddressData) a;
-            result = ObjectUtils.compare(getHuisnummer(), a1.getHuisnummer());
+        if (a instanceof BagAddress) {
+            BagAddress a1 = (BagAddress) a;
+            result = ObjectUtils.compare(getHouseNumber(), a1.getHouseNumber());
             if (result != 0) return result;
             result = ObjectUtils.compare(getHuisLetter(), a1.getHuisLetter());
             if (result != 0) return result;
