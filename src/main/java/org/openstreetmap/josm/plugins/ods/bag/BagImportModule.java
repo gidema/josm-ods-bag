@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -27,7 +26,6 @@ public class BagImportModule extends OdsModule {
     private final static Bounds BOUNDS = new Bounds(50.734, 3.206, 53.583, 7.245);
     private List<OdsAction> actions = new LinkedList<>();
 
-    @Inject
     public BagImportModule(OdsModulePlugin plugin, org.openstreetmap.josm.plugins.ods.io.OdsDownloader downloader, 
             ExternalDataLayer externalDataLayer, InternalDataLayer internalDataLayer) {
         super(plugin, downloader, externalDataLayer, internalDataLayer);
