@@ -1,12 +1,12 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagCity;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.CityImpl;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.GtCityStore;
 import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
 
-public class BagGtCityBuilder extends BagGtEntityBuilder<BagCity> {
+public class BagGtCityBuilder extends BagGtEntityBuilder<CityImpl> {
     public GtCityStore cityStore;
     
     public BagGtCityBuilder(CRSUtil crsUtil, GtCityStore cityStore) {
@@ -16,7 +16,7 @@ public class BagGtCityBuilder extends BagGtEntityBuilder<BagCity> {
 
     @Override
     public void buildGtEntity(SimpleFeature feature) {
-        BagCity city = new BagCity();
+        CityImpl city = new CityImpl();
         super.build(city, feature);
         city.setName(FeatureUtil.getString(feature, "woonplaats"));
         cityStore.add(city);

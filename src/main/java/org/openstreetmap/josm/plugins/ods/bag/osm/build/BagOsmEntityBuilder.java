@@ -3,10 +3,7 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.plugins.ods.crs.InvalidGeometryException;
 import org.openstreetmap.josm.plugins.ods.entities.AbstractEntity;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class BagOsmEntityBuilder {
     
@@ -72,16 +69,20 @@ public abstract class BagOsmEntityBuilder {
     }
     
     public static void parseKeys(AbstractEntity entity, Map<String, String> tags) {
-        try {
-            entity.setReferenceId(Long.parseLong(tags.remove("ref:bag")));
-        }
-        catch (NumberFormatException e) {
-            // Ignore the id
-        }
+        entity.setReferenceId(getReferenceId(tags.remove("ref:bag")));
         entity.setSource(tags.remove("source"));
         String sourceDate = tags.remove("source:date");
         if (sourceDate != null) {
             entity.setSourceDate(sourceDate);
         }
+    }
+    
+    private static Long getReferenceId(String s) {
+        if (s == null || s.length() == 0) return null;
+        int i=0;
+        while (i<s.length() && Character.isDigit(s.charAt(i))) {
+            i++;
+        }
+        return Long.valueOf(s.substring(0, i));
     }
 }

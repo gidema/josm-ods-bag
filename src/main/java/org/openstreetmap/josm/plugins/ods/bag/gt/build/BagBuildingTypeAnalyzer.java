@@ -60,7 +60,7 @@ public class BagBuildingTypeAnalyzer implements Task {
             stats.add(type, addressNode.getArea());
         }
         Stat largest = stats.getLargest();
-        BuildingType type = null;
+        BuildingType type = BuildingType.UNCLASSIFIED;
         if (largest.percentage > 0.75) {
             switch (largest.type) {
             case HOUSE:

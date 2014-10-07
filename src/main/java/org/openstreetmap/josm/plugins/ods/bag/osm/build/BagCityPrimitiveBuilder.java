@@ -15,9 +15,9 @@ public class BagCityPrimitiveBuilder extends BagPrimitiveBuilder<City> {
         primitive.put("source", "BAG");
         primitive.put("source:date", city.getSourceDate());
         primitive.put("boundary",  "administrative");
-        primitive.put("admin_level", "8");
+        primitive.put("admin_level", "10");
         primitive.put("type", "boundary");
         primitive.put("name", city.getName());
-        primitive.put("ref:gemeentecode", city.getReferenceId().toString());
+        primitive.put("ref:woonplaatscode", city.getReferenceId().toString());
     }
 }

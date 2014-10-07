@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -38,6 +39,7 @@ public class BagOsmBuildingBuilder implements OsmEntityBuilder<Building> {
                 primitive.getDisplayType() == OsmPrimitiveType.RELATION)) {
             normalizeKeys(primitive);
             BagBuilding building = new BagBuilding();
+            building.setPrimitives(Collections.singletonList(primitive));
             Map<String, String> tags = primitive.getKeys();
             parseKeys(building, tags);
             building.setOtherTags(tags);

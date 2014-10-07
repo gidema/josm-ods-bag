@@ -19,6 +19,7 @@ import org.openstreetmap.josm.plugins.ods.entities.MergeTask;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AlignBuildingsTask;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
+import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingMatcher;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingSimplifier;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.CheckBuildingCompletenessTask;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.CreateAddressNodePrimitivesTask;
@@ -75,7 +76,9 @@ public class BagImportModuleConfig {
     }
     
     private OdsDownloader createOdsDownloader() {
-        List<Task> tasks = new ArrayList<>(0);
+        Task buildingMatcher = new BuildingMatcher(gtBuildingStore, osmBuildingStore);
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(buildingMatcher);
         return new OdsDownloader(createOsmDownloadJob(), createGeotoolsDownloadJob(), tasks);
     }
     

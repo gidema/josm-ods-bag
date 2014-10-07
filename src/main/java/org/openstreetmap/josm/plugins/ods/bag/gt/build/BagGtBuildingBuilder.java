@@ -51,6 +51,9 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<BagBuilding> {
             else if (type.equals("bag:standplaats")) {
                 building.setBuildingType(BuildingType.STATIC_CARAVAN);
             }
+            else {
+                building.setBuildingType(BuildingType.UNCLASSIFIED);
+            }
         }
         buildingStore.add(building);
     }
