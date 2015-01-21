@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.openstreetmap.josm.plugins.ods.Context;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagBuildingTypeAnalyzer.Statistics.Stat;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
@@ -29,11 +30,10 @@ public class BagBuildingTypeAnalyzer implements Task {
     }
 
     @Override
-    public void run() {
+    public void run(Context ctx) {
         for (Building building : buildingStore) {
             analyzeBuildingType(building);
         }
-        
     }
 
     public void analyzeBuildingType(Building building) {

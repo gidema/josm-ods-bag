@@ -80,14 +80,6 @@ public class BagAddress extends AddressImpl {
         if (result != 0) return result;
         result = ObjectUtils.compare(getStreetName(), a.getStreetName());
         if (result != 0) return result;
-        if (a instanceof BagAddress) {
-            BagAddress a1 = (BagAddress) a;
-            result = ObjectUtils.compare(getHouseNumber(), a1.getHouseNumber());
-            if (result != 0) return result;
-            result = ObjectUtils.compare(getHuisLetter(), a1.getHuisLetter());
-            if (result != 0) return result;
-            return ObjectUtils.compare(getHuisNummerToevoeging(), a1.getHuisNummerToevoeging());
-        }
-        return getHouseNumber().compareTo(a.getHouseNumber());
+        return getFullHouseNumber().compareTo(a.getFullHouseNumber());
     }
 }

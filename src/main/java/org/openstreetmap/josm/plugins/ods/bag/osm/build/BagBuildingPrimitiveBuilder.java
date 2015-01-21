@@ -1,26 +1,31 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import java.util.Map;
+
+import org.openstreetmap.josm.plugins.ods.DataLayer;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
 import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
 import org.openstreetmap.josm.plugins.ods.osm.build.AddressPrimitiveBuilder;
 
 public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
 
-    public BagBuildingPrimitiveBuilder(DataSet targetDataSet) {
-        super(targetDataSet);
+    public BagBuildingPrimitiveBuilder(DataLayer dataLayer) {
+        super(dataLayer);
     }
 
     @Override
-    protected void buildTags(Building building, OsmPrimitive primitive) {
+    protected void buildTags(Building building, Map<String, String> tags) {
         Address address = building.getAddress();
         if (address != null) {
-            AddressPrimitiveBuilder.buildTags(address, primitive);
+            AddressPrimitiveBuilder.buildTags(address, tags);
         }
-        primitive.put("source", "BAG");
-        primitive.put("source:date", building.getSourceDate());
-        primitive.put("ref:bag", building.getReferenceId().toString());
+        tags.put("source", "BAG");
+        tags.put("source:date", building.getSourceDate());
+        tags.put("ref:bag", building.getReferenceId().toString());
+        tags.put("start_date", building.getStartDate());
+        if ("Sloopvergunning verleend".equals(building.getStatus())) {
+            tags.put("note", "Sloopvergunning verleend");
+        }
         String type = "yes";
         switch (building.getBuildingType()) {
         case APARTMENTS:
@@ -34,7 +39,7 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
             break;
         case HOUSEBOAT:
             type = "houseboat";
-            primitive.put("floating", "yes");
+            tags.put("floating", "yes");
             break;
         case INDUSTRIAL:
             type = "industrial";
@@ -43,7 +48,7 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
             type = "office";
             break;
         case PRISON:
-            primitive.put("amenity", "prison");
+            tags.put("amenity", "prison");
             break;
         case RETAIL:
             type = "retail";
@@ -52,7 +57,7 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
             type = "static_caravan";
             break;
         case SUBSTATION:
-            primitive.put("power", "substation");
+            tags.put("power", "substation");
             break;
         case OTHER:
             type = building.getBuildingType().getSubType();
@@ -63,11 +68,11 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
         }
         
         if (building.isUnderConstruction()) {
-            primitive.put("building", "construction");
-            primitive.put("construction", type);                
+            tags.put("building", "construction");
+            tags.put("construction", type);                
         }
         else {
-            primitive.put("building", type);
+            tags.put("building", type);
         }
     }
 }

@@ -15,7 +15,9 @@ import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
-import org.openstreetmap.josm.plugins.ods.bag.actions.RemoveAssociatedStreetsAction;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.actions.AlignBuildingsAction;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.actions.RemoveAssociatedStreetsAction;
+import org.openstreetmap.josm.plugins.ods.builtenvironment.actions.RemoveShortSegmentsAction;
 import org.openstreetmap.josm.plugins.ods.entities.external.ExternalDataLayer;
 import org.openstreetmap.josm.plugins.ods.entities.internal.InternalDataLayer;
 import org.openstreetmap.josm.plugins.ods.gui.OdsAction;
@@ -31,6 +33,8 @@ public class BagImportModule extends OdsModule {
         super(plugin, downloader, externalDataLayer, internalDataLayer);
         actions.add(new OdsDownloadAction(this));
         actions.add(new RemoveAssociatedStreetsAction(this));
+        actions.add(new AlignBuildingsAction(this));
+        actions.add(new RemoveShortSegmentsAction(this));
     }
 
     @Override
