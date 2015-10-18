@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -10,25 +11,23 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidGeometryException;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidMultiPolygonException;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Building;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingImpl;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingType;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.OsmBuildingStore;
+import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
+import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
 import org.openstreetmap.josm.plugins.ods.entities.internal.OsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
-import org.openstreetmap.josm.plugins.ods.osm.build.OsmAddressEntityBuilder;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public class BagOsmBuildingBuilder implements OsmEntityBuilder<Building> {
 
     private GeoUtil geoUtil;
-    private OsmBuildingStore buildingStore;
+    private Consumer<Building> buildingConsumer;
 
-    public BagOsmBuildingBuilder(GeoUtil geoUtil, OsmBuildingStore buildingStore) {
+    public BagOsmBuildingBuilder(GeoUtil geoUtil, Consumer<Building> buildingConsumer) {
         super();
         this.geoUtil = geoUtil;
-        this.buildingStore = buildingStore;
+        this.buildingConsumer = buildingConsumer;
     }
 
     @Override
@@ -49,7 +48,7 @@ public class BagOsmBuildingBuilder implements OsmEntityBuilder<Building> {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            buildingStore.add(building);
+            buildingConsumer.accept(building);
         }
         return;
     }
@@ -83,7 +82,7 @@ public class BagOsmBuildingBuilder implements OsmEntityBuilder<Building> {
         building.setStartDate(tags.remove("start_date"));
         if (tags.containsKey("addr:housenumber")) {
             BagAddress address = new BagAddress();
-            OsmAddressEntityBuilder.parseKeys(address, tags);
+            BagOsmAddressEntityBuilder.parseKeys(address, tags);
             building.setAddress(address);
         }
         return;

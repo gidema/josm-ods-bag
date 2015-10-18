@@ -2,8 +2,8 @@ package org.openstreetmap.josm.plugins.ods.bag.entity;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressImpl;
+import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.AddressImpl;
 import org.openstreetmap.josm.tools.I18n;
 
 public class BagAddress extends AddressImpl {

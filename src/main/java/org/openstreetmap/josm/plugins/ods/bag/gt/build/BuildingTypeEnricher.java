@@ -6,37 +6,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
-import org.openstreetmap.josm.plugins.ods.Context;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
-import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagBuildingTypeAnalyzer.Statistics.Stat;
+import org.openstreetmap.josm.plugins.ods.bag.gt.build.BuildingTypeEnricher.Statistics.Stat;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.foreign.OpenDataBuildingStore;
-import org.openstreetmap.josm.plugins.ods.tasks.Task;
 
-public class BagBuildingTypeAnalyzer implements Task {
+public class BuildingTypeEnricher implements Consumer<Building> {
     private final static List<String> trafo =
             Arrays.asList("TRAF","TRAN","TRFO","TRNS");
     private final static List<String> garage =
             Arrays.asList("GAR","GRG");
     
-    private final OpenDataBuildingStore buildingStore;
-    
-    public BagBuildingTypeAnalyzer(OpenDataBuildingStore buildingStore) {
+    public BuildingTypeEnricher() {
         super();
-        this.buildingStore = buildingStore;
     }
 
     @Override
-    public void run(Context ctx) {
-        for (Building building : buildingStore) {
-            analyzeBuildingType(building);
-        }
-    }
-
-    public void analyzeBuildingType(Building building) {
+    public void accept(Building building) {
         if (BuildingType.HOUSEBOAT.equals(building.getBuildingType()) ||
                 BuildingType.STATIC_CARAVAN.equals(building.getBuildingType())) {
             return;

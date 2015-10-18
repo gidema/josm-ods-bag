@@ -1,18 +1,20 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
+import java.util.function.Consumer;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.GtAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
 
 public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<BagAddressNode> {
-    private GtAddressNodeStore addressNodeStore;
+    private Consumer<AddressNode> addressNodeConsumer;
     
-    public BagGtAddressNodeBuilder(CRSUtil crsUtil, GtAddressNodeStore addressNodeStore) {
+    public BagGtAddressNodeBuilder(CRSUtil crsUtil, Consumer<AddressNode> addressNodeConsumer) {
         super(crsUtil);
-        this.addressNodeStore = addressNodeStore;
+        this.addressNodeConsumer = addressNodeConsumer;
     }
 
     @Override
@@ -23,13 +25,17 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<BagAddressNode> 
         address.setHuisnummerToevoeging(FeatureUtil.getString(feature, "toevoeging"));
         address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
         address.setCityName(FeatureUtil.getString(feature, "woonplaats"));
-        address.setPostcode(FeatureUtil.getString(feature, "postcode"));
-        BagAddressNode addressNode = new BagAddressNode(address);
+        String postcode = FeatureUtil.getString(feature, "postcode");
+        if (postcode != null) {
+            address.setPostcode(FeatureUtil.getString(feature, "postcode"));
+        }
+        BagAddressNode addressNode = new BagAddressNode();
         super.build(addressNode, feature);
+        addressNode.setAddress(address);
         addressNode.setStatus(FeatureUtil.getString(feature, "status"));
         addressNode.setGebruiksdoel(FeatureUtil.getString(feature, "gebruiksdoel"));
         addressNode.setArea(FeatureUtil.getDouble(feature, "oppervlakte"));
         addressNode.setBuildingRef(FeatureUtil.getLong(feature, "pandidentificatie"));
-        addressNodeStore.add(addressNode);
+        addressNodeConsumer.accept(addressNode);
     }
 }

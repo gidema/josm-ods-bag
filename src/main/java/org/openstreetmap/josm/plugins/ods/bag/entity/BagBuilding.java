@@ -1,16 +1,28 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingImpl;
+import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
 
 public class BagBuilding extends BuildingImpl {
     private String status;
     private Long aantalVerblijfsobjecten;
+    private BagAddress bagAddress;
+    
+    public void setAddress(BagAddress address) {
+        super.setAddress(address);
+        this.bagAddress = address;
+    }
+    
+    @Override
+    public BagAddress getAddress() {
+        return bagAddress;
+    }
     
     public void setStatus(String status) {
         this.status = status;
     }
 
+    @Override
     public String getStatus() {
         return status;
     }

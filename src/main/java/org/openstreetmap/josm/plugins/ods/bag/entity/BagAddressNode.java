@@ -1,7 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.Address;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNodeImpl;
+import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.AddressNodeImpl;
 
 public class BagAddressNode extends AddressNodeImpl {
     private String gebruiksdoel;
@@ -10,11 +10,16 @@ public class BagAddressNode extends AddressNodeImpl {
     private BagAddress bagAddress;
     
     
-    public BagAddressNode(BagAddress address) {
-        super(address);
+    public void setAddress(BagAddress address) {
+        super.setAddress(address);
         this.bagAddress = address;
     }
 
+    @Override
+    public BagAddress getAddress() {
+        return bagAddress;
+    }
+    
     @Override
     public boolean isIncomplete() {
         if (getBuilding() != null) {

@@ -3,8 +3,7 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 import java.util.Map;
 
 import org.openstreetmap.josm.plugins.ods.DataLayer;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.AddressNode;
-import org.openstreetmap.josm.plugins.ods.osm.build.AddressPrimitiveBuilder;
+import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 
 public class BagAddressNodePrimitiveBuilder extends BagPrimitiveBuilder<AddressNode> {
 

@@ -1,19 +1,21 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
+import java.util.function.Consumer;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingType;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.GtBuildingStore;
+import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
+import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
 
 public class BagGtBuildingBuilder extends BagGtEntityBuilder<BagBuilding> {
-    private GtBuildingStore buildingStore;
+    private Consumer<Building> consumer;
     
-    public BagGtBuildingBuilder(CRSUtil crsUtil, GtBuildingStore buildingStore) {
+    public BagGtBuildingBuilder(CRSUtil crsUtil, Consumer<Building> consumer) {
         super(crsUtil);
-        this.buildingStore = buildingStore;
+        this.consumer = consumer;
     }
 
     @Override
@@ -55,6 +57,6 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<BagBuilding> {
                 building.setBuildingType(BuildingType.UNCLASSIFIED);
             }
         }
-        buildingStore.add(building);
+        consumer.accept(building);
     }
 }
