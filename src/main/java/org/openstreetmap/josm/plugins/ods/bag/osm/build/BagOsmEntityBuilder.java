@@ -13,7 +13,7 @@ public abstract class BagOsmEntityBuilder {
      * This method translates these tags into their current equivalent and
      * remove the old tags.
      */   
-    public static void normalizeKeys(OsmPrimitive primitive) {
+    public static void normalizeTags(OsmPrimitive primitive) {
         String source = primitive.get("source");
         if (source != null && source.toUpperCase().startsWith("BAG")) {
             primitive.put("source", "BAG");

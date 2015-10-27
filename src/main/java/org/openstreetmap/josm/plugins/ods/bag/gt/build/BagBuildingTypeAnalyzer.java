@@ -13,7 +13,7 @@ import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagBuildingTypeAnalyzer.S
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.foreign.OpenDataBuildingStore;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataBuildingStore;
 import org.openstreetmap.josm.plugins.ods.tasks.Task;
 
 public class BagBuildingTypeAnalyzer implements Task {

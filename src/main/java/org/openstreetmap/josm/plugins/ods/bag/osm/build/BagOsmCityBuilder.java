@@ -6,7 +6,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagCity;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.osm.OsmCityStore;
-import org.openstreetmap.josm.plugins.ods.entities.internal.OsmEntityBuilder;
+import org.openstreetmap.josm.plugins.ods.entities.osm.OsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 
 public class BagOsmCityBuilder implements OsmEntityBuilder<BagCity> {

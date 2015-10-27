@@ -5,12 +5,12 @@ import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.AbstractPrimitiveBuilder;
-import org.openstreetmap.josm.plugins.ods.DataLayer;
+import org.openstreetmap.josm.plugins.ods.LayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
 
 public abstract class BagPrimitiveBuilder<T extends Entity> extends AbstractPrimitiveBuilder<T> {
     
-    public BagPrimitiveBuilder(DataLayer dataLayer) {
+    public BagPrimitiveBuilder(LayerManager dataLayer) {
         super(dataLayer);
     }
 

@@ -16,8 +16,8 @@ import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
 import org.openstreetmap.josm.plugins.ods.builtenvironment.actions.RemoveAssociatedStreetsAction;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
-import org.openstreetmap.josm.plugins.ods.entities.external.ExternalDataLayer;
-import org.openstreetmap.josm.plugins.ods.entities.internal.InternalDataLayer;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerManager;
+import org.openstreetmap.josm.plugins.ods.entities.osm.InternalDataLayer;
 import org.openstreetmap.josm.plugins.ods.gui.OdsDownloadAction;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
@@ -33,7 +33,7 @@ public class BagImportModule extends OdsModule {
     private CRSUtil crsUtil = new CRSUtilProj4j();
 
     public BagImportModule(OdsModulePlugin plugin) {
-        super(plugin, new ExternalDataLayer("BAG ODS"), 
+        super(plugin, new OpenDataLayerManager("BAG ODS"), 
             new InternalDataLayer("BAG OSM"));
         this.mainDownloader = new BagDownloader(this);
 //        this.odsDownloader = new BagWfsDownloader(this);

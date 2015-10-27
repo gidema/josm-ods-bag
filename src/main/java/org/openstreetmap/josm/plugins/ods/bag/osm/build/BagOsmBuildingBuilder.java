@@ -1,7 +1,6 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -11,10 +10,11 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidGeometryException;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidMultiPolygonException;
+import org.openstreetmap.josm.plugins.ods.entities.EntityStore;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
-import org.openstreetmap.josm.plugins.ods.entities.internal.OsmEntityBuilder;
+import org.openstreetmap.josm.plugins.ods.entities.osm.OsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -22,12 +22,12 @@ import com.vividsolutions.jts.geom.Geometry;
 public class BagOsmBuildingBuilder implements OsmEntityBuilder<Building> {
 
     private GeoUtil geoUtil;
-    private Consumer<Building> buildingConsumer;
+    private EntityStore<Building> buildingStore;
 
-    public BagOsmBuildingBuilder(GeoUtil geoUtil, Consumer<Building> buildingConsumer) {
+    public BagOsmBuildingBuilder(GeoUtil geoUtil, EntityStore<Building> buildingStore) {
         super();
         this.geoUtil = geoUtil;
-        this.buildingConsumer = buildingConsumer;
+        this.buildingStore = buildingStore;
     }
 
     @Override
@@ -35,29 +35,31 @@ public class BagOsmBuildingBuilder implements OsmEntityBuilder<Building> {
         if ((primitive.hasKey("building") || primitive.hasKey("building:part")) &&
                 (primitive.getDisplayType() == OsmPrimitiveType.CLOSEDWAY ||
                 primitive.getDisplayType() == OsmPrimitiveType.RELATION)) {
-            normalizeKeys(primitive);
-            BagBuilding building = new BagBuilding();
-            building.setPrimitive(primitive);
-            Map<String, String> tags = primitive.getKeys();
-            parseKeys(building, tags);
-            building.setOtherTags(tags);
-            try {
-                Geometry geometry = buildGeometry(primitive);
-                building.setGeometry(geometry);
-            } catch (InvalidGeometryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            if (!buildingStore.contains(primitive.getId())) {
+                normalizeTags(primitive);
+                BagBuilding building = new BagBuilding();
+                building.setPrimitive(primitive);
+                Map<String, String> tags = primitive.getKeys();
+                parseKeys(building, tags);
+                building.setOtherTags(tags);
+                try {
+                    Geometry geometry = buildGeometry(primitive);
+                    building.setGeometry(geometry);
+                } catch (InvalidGeometryException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                buildingStore.add(building);
             }
-            buildingConsumer.accept(building);
         }
         return;
     }
     
-    public static void normalizeKeys(OsmPrimitive primitive) {
-        BagOsmEntityBuilder.normalizeKeys(primitive);
+    public static void normalizeTags(OsmPrimitive primitive) {
+        BagOsmEntityBuilder.normalizeTags(primitive);
         String bouwjaar = primitive.get("bag:bouwjaar");
         if (bouwjaar != null) {
-            primitive.put("start_date",  bouwjaar);
+            primitive.put("start_date", bouwjaar);
             primitive.remove("bag:bouwjaar");
         }
     }

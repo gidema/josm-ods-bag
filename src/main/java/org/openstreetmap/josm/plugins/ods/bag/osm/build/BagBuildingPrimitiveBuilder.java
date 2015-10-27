@@ -2,13 +2,14 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
 import java.util.Map;
 
-import org.openstreetmap.josm.plugins.ods.DataLayer;
+import org.openstreetmap.josm.plugins.ods.LayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
+import org.openstreetmap.josm.plugins.ods.matching.Match;
 
 public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
 
-    public BagBuildingPrimitiveBuilder(DataLayer dataLayer) {
+    public BagBuildingPrimitiveBuilder(LayerManager dataLayer) {
         super(dataLayer);
     }
 
@@ -68,7 +69,7 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
         
         if (building.isUnderConstruction()) {
             tags.put("building", "construction");
-            tags.put("construction", type);                
+            tags.put("construction", type);
         }
         else {
             tags.put("building", type);

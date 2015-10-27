@@ -2,12 +2,12 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
 import java.util.Map;
 
-import org.openstreetmap.josm.plugins.ods.DataLayer;
+import org.openstreetmap.josm.plugins.ods.LayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.actual.City;
 
 public class BagCityPrimitiveBuilder extends BagPrimitiveBuilder<City> {
 
-    public BagCityPrimitiveBuilder(DataLayer dataLayer) {
+    public BagCityPrimitiveBuilder(LayerManager dataLayer) {
         super(dataLayer);
     }
 
