@@ -5,13 +5,24 @@ import java.util.Map;
 import org.openstreetmap.josm.plugins.ods.LayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
 
 public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
 
     public BagBuildingPrimitiveBuilder(LayerManager dataLayer) {
         super(dataLayer);
     }
+
+    @Override
+    public void createPrimitive(Building building) {
+        // Ignore buildings with status "Bouwvergunning verleend"
+        // Make an exception for buildings that already exist in OSM. In that case, the building permit is for reconstruction
+        if ("Bouwvergunning verleend".equals(building.getStatus())
+                && building.getMatch() == null) {
+            return;
+        }
+        super.createPrimitive(building);
+    }
+
 
     @Override
     protected void buildTags(Building building, Map<String, String> tags) {

@@ -5,32 +5,26 @@ import java.util.Map;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStore;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.MutableAddress;
-import org.openstreetmap.josm.plugins.ods.entities.osm.OsmEntityBuilder;
-import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
+import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
 import com.vividsolutions.jts.geom.Point;
 
-public class BagOsmAddressNodeBuilder implements OsmEntityBuilder<AddressNode> {
-
-    private GeoUtil geoUtil;
-    private EntityStore<AddressNode> addressNodeStore;
+public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<AddressNode> {
     
-    public BagOsmAddressNodeBuilder(GeoUtil geoUtil, EntityStore<AddressNode> addressNodeStore) {
-        super();
-        this.geoUtil = geoUtil;
-        this.addressNodeStore = addressNodeStore;
+    public BagOsmAddressNodeBuilder(OdsModule module) {
+        super(module, AddressNode.class);
     }
 
     @Override
     public void buildOsmEntity(OsmPrimitive primitive) {
         if (primitive.hasKey("addr:housenumber") &&
                 (primitive.getDisplayType() == OsmPrimitiveType.NODE)) {
-            if (!addressNodeStore.contains(primitive.getId())) {
+            if (!getEntityStore().contains(primitive.getId())) {
                 normalizeKeys(primitive);
                 MutableAddress address = new BagAddress();
                 BagAddressNode addressNode = new BagAddressNode();
@@ -40,7 +34,7 @@ public class BagOsmAddressNodeBuilder implements OsmEntityBuilder<AddressNode> {
                 parseKeys(addressNode, tags);
                 addressNode.setOtherTags(tags);
                 addressNode.setGeometry(buildGeometry(primitive));
-                addressNodeStore.add(addressNode);
+                register(primitive, addressNode);
             }
         }
         return;
@@ -56,7 +50,7 @@ public class BagOsmAddressNodeBuilder implements OsmEntityBuilder<AddressNode> {
     
     private Point buildGeometry(OsmPrimitive primitive) {
         if (primitive.getDisplayType() == OsmPrimitiveType.NODE) {
-            return geoUtil.toPoint((Node) primitive);
+            return getGeoUtil().toPoint((Node) primitive);
         }
         return null;
     }

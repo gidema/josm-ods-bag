@@ -16,8 +16,14 @@ import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
 import org.openstreetmap.josm.plugins.ods.builtenvironment.actions.RemoveAssociatedStreetsAction;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
+import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
+import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataBuildingStore;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.osm.OsmAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.osm.OsmBuildingStore;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerManager;
-import org.openstreetmap.josm.plugins.ods.entities.osm.InternalDataLayer;
+import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
 import org.openstreetmap.josm.plugins.ods.gui.OdsDownloadAction;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
@@ -28,19 +34,30 @@ public class BagImportModule extends OdsModule {
     private final static Bounds BOUNDS = new Bounds(50.734, 3.206, 53.583, 7.245);
 //    private final OdsDownloader odsDownloader;
     private final MainDownloader mainDownloader;
-    private BagPrimitiveBuilder bagPrimitiveBuilder = new BagPrimitiveBuilder(this);
     private GeoUtil geoUtil = new GeoUtil();
     private CRSUtil crsUtil = new CRSUtilProj4j();
 
     public BagImportModule(OdsModulePlugin plugin) {
-        super(plugin, new OpenDataLayerManager("BAG ODS"), 
-            new InternalDataLayer("BAG OSM"));
+        super(plugin, createOsmLayerManager(), createOpenDataLayerManager());
         this.mainDownloader = new BagDownloader(this);
-//        this.odsDownloader = new BagWfsDownloader(this);
         addAction(new OdsDownloadAction(this));
         addAction(new RemoveAssociatedStreetsAction(this));
 //        actions.add(new AlignBuildingsAction(this));
 //        actions.add(new RemoveShortSegmentsAction(this));
+    }
+
+    public static OsmLayerManager createOsmLayerManager() {
+        OsmLayerManager manager = new OsmLayerManager("BAG OSM");
+        manager.addEntityStore(Building.class, new OsmBuildingStore());
+        manager.addEntityStore(AddressNode.class, new OsmAddressNodeStore());
+        return manager;
+    }
+
+    public static OpenDataLayerManager createOpenDataLayerManager() {
+        OpenDataLayerManager manager = new OpenDataLayerManager("BAG OSM");
+        manager.addEntityStore(Building.class, new OpenDataBuildingStore());
+        manager.addEntityStore(AddressNode.class, new OpenDataAddressNodeStore());
+        return manager;
     }
 
     @Override

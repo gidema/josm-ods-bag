@@ -8,19 +8,21 @@ import org.openstreetmap.josm.plugins.ods.AbstractPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.LayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
 
-public abstract class BagPrimitiveBuilder<T extends Entity> extends AbstractPrimitiveBuilder<T> {
-    
-    public BagPrimitiveBuilder(LayerManager dataLayer) {
-        super(dataLayer);
+public abstract class BagPrimitiveBuilder<T extends Entity>
+        extends AbstractPrimitiveBuilder<T> {
+
+    public BagPrimitiveBuilder(LayerManager layerManager) {
+        super(layerManager);
     }
 
     @Override
     public void createPrimitive(T entity) {
         if (entity.getPrimitive() == null && entity.getGeometry() != null) {
-        	Map<String, String> tags = new HashMap<>();
-        	buildTags(entity, tags);
+            Map<String, String> tags = new HashMap<>();
+            buildTags(entity, tags);
             OsmPrimitive primitive = build(entity.getGeometry(), tags);
             entity.setPrimitive(primitive);
+            getLayerManager().register(primitive, entity);
         }
     }
 

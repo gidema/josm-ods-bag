@@ -2,14 +2,15 @@ package org.openstreetmap.josm.plugins.ods.bag;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
+import org.openstreetmap.josm.plugins.ods.entities.EntityStore;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.io.LayerDownloader;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
+import org.openstreetmap.josm.plugins.ods.matching.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.matching.BuildingMatcher;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
 
 public class BagDownloader extends MainDownloader {
     final private OdsModule module;
@@ -21,7 +22,7 @@ public class BagDownloader extends MainDownloader {
         this.module = module;
         this.openDataLayerDownloader = new BagWfsLayerDownloader(module);
         this.osmLayerDownloader = new BagOsmLayerDownloader(module);
-        this.buildingMatcher = new BuildingMatcher(module.getDataManager());
+        this.buildingMatcher = new BuildingMatcher(module);
     }
 
     @Override
@@ -41,22 +42,25 @@ public class BagDownloader extends MainDownloader {
         updateOdsTags();
     }
 
+    // TODO move this functionality to a logical place
     private void updateOdsTags() {
-        for (Building building : module.getDataManager().getOpenDataEntityStore(Building.class)) {
-            @SuppressWarnings("unchecked")
-            Match<Building> match = (Match<Building>) building.getMatch();
+        EntityStore<Building> buildingStore = module.getOpenDataLayerManager().getEntityStore(Building.class);
+        for (Building building : buildingStore) {
+            BuildingMatch match = building.getMatch();
             if (match == null) {
                 OsmPrimitive osm = building.getPrimitive();
                 if (osm != null) {
-                    osm.put("ods:nomatch", "");
+                    osm.put("ODS:nomatch", "");
                 }
             }
             else if (match.isSimple()) {
                 OsmPrimitive osm = building.getPrimitive();
                 if (osm != null) {
-                    osm.put("ods:match", "");
+                    osm.put("ODS:idMatch", "true");
+                    osm.put("ODS:geometryMatch", (match.isGeometryMatch() ? "true" : "false"));
+                    osm.put("ODS:attributeMatch", (match.isAttributeMatch() ? "true" : "false"));
                 }
             }
-        };
+        }
     }
 }
