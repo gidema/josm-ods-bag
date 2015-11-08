@@ -8,8 +8,6 @@ import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerDownloader;
 public class BagOsmLayerDownloader extends OsmLayerDownloader {
 
     public BagOsmLayerDownloader(OdsModule module) {
-        super(module.getOsmLayerManager());
-        addEntityBuilder(new BagOsmBuildingBuilder(module));
-        addEntityBuilder(new BagOsmAddressNodeBuilder(module));
+        super(module);
     }
 }

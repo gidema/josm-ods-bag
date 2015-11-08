@@ -14,6 +14,7 @@ import org.openstreetmap.josm.plugins.ods.crs.InvalidMultiPolygonException;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingEntityType;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -21,15 +22,12 @@ import com.vividsolutions.jts.geom.Geometry;
 public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
 
     public BagOsmBuildingBuilder(OdsModule module) {
-        super(module, Building.class);
+        super(module, BuildingEntityType.getInstance());
     }
 
     @Override
     public void buildOsmEntity(OsmPrimitive primitive) {
-        if ((primitive.hasKey("building") || primitive.hasKey("building:part")) &&
-                (primitive.getDisplayType() == OsmPrimitiveType.CLOSEDWAY
-                || primitive.getDisplayType() == OsmPrimitiveType.MULTIPOLYGON 
-                || primitive.getDisplayType() == OsmPrimitiveType.RELATION)) {
+        if (getEntityType().recognize(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeTags(primitive);
                 BagBuilding building = new BagBuilding();

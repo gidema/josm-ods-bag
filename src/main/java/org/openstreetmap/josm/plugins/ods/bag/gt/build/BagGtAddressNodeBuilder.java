@@ -25,8 +25,14 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<AddressNode, Bag
         BagAddressNode addressNode = super.build(feature, metaData, response);
         BagAddress address = new BagAddress();
         address.setHouseNumber(FeatureUtil.getInteger(feature, "huisnummer"));
-        address.setHuisletter(FeatureUtil.getString(feature, "huisletter"));
-        address.setHuisnummerToevoeging(FeatureUtil.getString(feature, "toevoeging"));
+        String houseLetter = FeatureUtil.getString(feature, "huisletter");
+        if (houseLetter != null) {
+            address.setHuisletter(houseLetter);
+            address.setHouseLetter(houseLetter.charAt(0));
+        }
+        String houseNumberExtra = FeatureUtil.getString(feature, "toevoeging");
+        address.setHuisnummerToevoeging(houseNumberExtra);
+        address.setHouseNumberExtra(houseNumberExtra);
         address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
         address.setCityName(FeatureUtil.getString(feature, "woonplaats"));
         String postcode = FeatureUtil.getString(feature, "postcode");

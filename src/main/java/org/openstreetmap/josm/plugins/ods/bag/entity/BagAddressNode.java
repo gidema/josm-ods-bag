@@ -7,17 +7,10 @@ public class BagAddressNode extends AddressNodeImpl {
     private String gebruiksdoel;
     private String status;
     private Double area;
-    private BagAddress bagAddress;
     
-    
-    public void setAddress(BagAddress address) {
-        super.setAddress(address);
-        this.bagAddress = address;
-    }
-
     @Override
     public BagAddress getAddress() {
-        return bagAddress;
+        return (BagAddress) super.getAddress();
     }
     
     @Override
@@ -29,19 +22,12 @@ public class BagAddressNode extends AddressNodeImpl {
     }
     
     public String getHuisLetter() {
-        return bagAddress.getHuisLetter();
+        return getAddress().getHuisLetter();
     }
 
     public String getHuisNummerToevoeging() {
-        return bagAddress.getHuisNummerToevoeging();
+        return getAddress().getHuisNummerToevoeging();
     }
-
-
-//    @Override
-//    public Block getBlock() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
 
     public String getGebruiksdoel() {
         return gebruiksdoel;
@@ -69,14 +55,16 @@ public class BagAddressNode extends AddressNodeImpl {
 
     @Override
     public int compareTo(Address o) {
-        return bagAddress.compareTo(o);
+        return getAddress().compareTo(o);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(bagAddress).append(" (");
-        sb.append(getStatus()).append(")");
+        sb.append(getAddress());
+        if (getStatus() != null) {
+            sb.append(" (").append(getStatus()).append(")");
+        }
         return sb.toString();
     }
 }

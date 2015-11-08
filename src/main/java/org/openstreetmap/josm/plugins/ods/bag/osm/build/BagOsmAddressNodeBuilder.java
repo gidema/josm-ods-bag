@@ -10,6 +10,7 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.MutableAddress;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.AddressNodeEntityType;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
 import com.vividsolutions.jts.geom.Point;
@@ -17,17 +18,24 @@ import com.vividsolutions.jts.geom.Point;
 public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<AddressNode> {
     
     public BagOsmAddressNodeBuilder(OdsModule module) {
-        super(module, AddressNode.class);
+        super(module, AddressNodeEntityType.getInstance());
     }
 
     @Override
+    public Class<AddressNode> getEntityClass() {
+        return AddressNode.class;
+    }
+
+
+    @Override
     public void buildOsmEntity(OsmPrimitive primitive) {
-        if (primitive.hasKey("addr:housenumber") &&
-                (primitive.getDisplayType() == OsmPrimitiveType.NODE)) {
+        if (getEntityType().recognize(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeKeys(primitive);
                 MutableAddress address = new BagAddress();
                 BagAddressNode addressNode = new BagAddressNode();
+                addressNode.setPrimaryId(primitive.getUniqueId());
+                addressNode.setPrimitive(primitive);
                 addressNode.setAddress(address);
                 Map<String, String> tags = primitive.getKeys();
                 BagOsmAddressEntityBuilder.parseKeys(address, tags);

@@ -1,8 +1,10 @@
 package org.openstreetmap.josm.plugins.ods.bag;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
+import org.geotools.data.Query;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtAddressNodeBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtBuildingBuilder;
@@ -16,6 +18,7 @@ import org.openstreetmap.josm.plugins.ods.entities.enrichment.DistributeAddressN
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureDownloader;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerManager;
+import org.openstreetmap.josm.plugins.ods.geotools.GroupByQuery;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDataSource;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDownloader;
 import org.openstreetmap.josm.plugins.ods.geotools.GtFeatureSource;
@@ -24,7 +27,7 @@ import org.openstreetmap.josm.plugins.ods.matching.OpenDataAddressNodeToBuilding
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
-    private static WFSHost wfsHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs", 15000);
+    private static WFSHost wfsHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=1.1.0", 15000);
     private final OdsModule module;
     private final OpenDataLayerManager layerManager;
     private BagPrimitiveBuilder primitiveBuilder;
@@ -87,7 +90,8 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     private FeatureDownloader createVerblijfsobjectDownloader() {
         BagGtAddressNodeBuilder entityBuilder = new BagGtAddressNodeBuilder(module.getCrsUtil());
         GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:verblijfsobject", "identificatie");
-        GtDataSource dataSource = new GtDataSource(featureSource, null);
+        Query query = new GroupByQuery("bag:verblijfsobject", Arrays.asList("identificatie"));
+        GtDataSource dataSource = new GtDataSource(featureSource, query);
         return new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
             layerManager.getEntityStore(AddressNode.class));
     }
@@ -95,7 +99,8 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     private FeatureDownloader createBuildingDownloader(String featureType) {
         BagGtBuildingBuilder entityBuilder = new BagGtBuildingBuilder(module.getCrsUtil());
         GtFeatureSource featureSource = new GtFeatureSource(wfsHost, featureType, "identificatie");
-        GtDataSource dataSource = new GtDataSource(featureSource, null);
+        Query query = new GroupByQuery(featureType, Arrays.asList("identificatie"));
+        GtDataSource dataSource = new GtDataSource(featureSource, query);
         return new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
             layerManager.getEntityStore(Building.class));
     }

@@ -4,13 +4,13 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.actual.City;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.CityImpl;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.ForeignCityStore;
+import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataCityStore;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 
 public class BagGtCityBuilder extends BagGtEntityBuilder<City, CityImpl> {
-    public ForeignCityStore cityStore;
+    public OpenDataCityStore cityStore;
     
     public BagGtCityBuilder(CRSUtil crsUtil) {
         super(crsUtil);

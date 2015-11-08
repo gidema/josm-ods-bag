@@ -17,23 +17,12 @@ import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 public abstract class BagGtEntityBuilder<T extends Entity, T2 extends T> implements GeotoolsEntityBuilder<T> {
     private final static DateFormat sourceDateFormat = new SimpleDateFormat("YYYY-MM-dd");
     private final CRSUtil crsUtil;
-//    protected MetaData metaData;
     
     public BagGtEntityBuilder(CRSUtil crsUtil) {
         super();
         this.crsUtil = crsUtil;
     }
 
-    //    @Override
-//    public void setContext(Context ctx) {
-//        this.entitySource = (EntitySource) ctx.get("entitySource");
-//    }
-//    
-//    @Override
-//    public void setMetaData(MetaData metaData) {
-//        this.metaData = metaData;
-//    }
-//    
     @Override
     public Object getReferenceId(SimpleFeature feature) {
         return FeatureUtil.getLong(feature, "identificatie");
