@@ -1,28 +1,30 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.plugins.ods.AbstractPrimitiveBuilder;
+import org.openstreetmap.josm.plugins.ods.LayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
 
-public abstract class BagPrimitiveBuilder<T extends Entity> extends AbstractPrimitiveBuilder<T> {
-    
-    public BagPrimitiveBuilder(DataSet targetDataSet) {
-        super(targetDataSet);
+public abstract class BagPrimitiveBuilder<T extends Entity>
+        extends AbstractPrimitiveBuilder<T> {
+
+    public BagPrimitiveBuilder(LayerManager layerManager) {
+        super(layerManager);
     }
 
     @Override
-    public void createPrimitives(T entity) {
-        if (entity.getPrimitives() == null && entity.getGeometry() != null) {
-            List<OsmPrimitive> primitives = build(entity.getGeometry());
-            for (OsmPrimitive primitive : primitives) {
-                buildTags(entity, primitive);
-            }
-            entity.setPrimitives(primitives);
+    public void createPrimitive(T entity) {
+        if (entity.getPrimitive() == null && entity.getGeometry() != null) {
+            Map<String, String> tags = new HashMap<>();
+            buildTags(entity, tags);
+            OsmPrimitive primitive = build(entity.getGeometry(), tags);
+            entity.setPrimitive(primitive);
+            getLayerManager().register(primitive, entity);
         }
     }
 
-    protected abstract void buildTags(T entity, OsmPrimitive primitive);
+    protected abstract void buildTags(T entity, Map<String, String> tags);
 }

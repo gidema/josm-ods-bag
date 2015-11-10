@@ -6,7 +6,7 @@
   <!-- enter the SVN commit message -->
   <property name="commit.message" value="Commit message"/>
   <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-  <property name="plugin.main.version" value="7588"/>
+  <property name="plugin.main.version" value="8964"/>
   <property name="plugin.class" value="org.openstreetmap.josm.plugins.ods.bag.BagImportPlugin"/>
   <property name="plugin.version" value="${mypom.version}"/>
   <property name="plugin.build.dir" value="build" />
@@ -14,8 +14,8 @@
 	<!-- this is the directory where the plugin jar is copied to -->
   <property name="maven.target.dir" value="${mypom.build.directory}" />
 	<property name="plugin.dist.dir" value="dist" />
-	<property name="ant.build.javac.target" value="1.6" />
-	<property name="ant.build.javac.source" value="1.6" />
+	<property name="ant.build.javac.target" value="1.8" />
+	<property name="ant.build.javac.source" value="1.8" />
 	<property name="plugin.jar" value="${plugin.dist.dir}/${ant.project.name}.jar" />
 
 	<!--

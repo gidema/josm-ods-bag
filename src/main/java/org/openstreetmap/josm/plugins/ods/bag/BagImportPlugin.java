@@ -14,7 +14,7 @@ public class BagImportPlugin extends OdsModulePlugin {
     @Override
     public OdsModule getModule() {
         if (module == null) {
-            this.module = new BagImportModuleConfig(this).createModule();
+            this.module = new BagImportModule(this);
         }
         return module;
     }

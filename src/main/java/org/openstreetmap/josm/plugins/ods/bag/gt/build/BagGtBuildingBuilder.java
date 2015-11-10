@@ -4,23 +4,27 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.BuildingType;
-import org.openstreetmap.josm.plugins.ods.entities.builtenvironment.GtBuildingStore;
-import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
+import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
+import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
+import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
+import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 
-public class BagGtBuildingBuilder extends BagGtEntityBuilder<BagBuilding> {
-    private GtBuildingStore buildingStore;
+public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuilding> {
     
-    public BagGtBuildingBuilder(CRSUtil crsUtil, GtBuildingStore buildingStore) {
+    public BagGtBuildingBuilder(CRSUtil crsUtil) {
         super(crsUtil);
-        this.buildingStore = buildingStore;
     }
 
     @Override
-    public void buildGtEntity(SimpleFeature feature) {
+    protected BagBuilding newInstance() {
+        return new BagBuilding();
+    }
+
+    @Override
+    public BagBuilding build(SimpleFeature feature, MetaData metaData, DownloadResponse response) {
+        BagBuilding building = super.build(feature, metaData, response);
         String type = feature.getName().getLocalPart();
-        BagBuilding building = new BagBuilding();
-        super.build(building, feature);
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");
         if (bouwjaar != null) {
             building.setStartDate(bouwjaar.toString());
@@ -55,6 +59,6 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<BagBuilding> {
                 building.setBuildingType(BuildingType.UNCLASSIFIED);
             }
         }
-        buildingStore.add(building);
+        return building;
     }
 }

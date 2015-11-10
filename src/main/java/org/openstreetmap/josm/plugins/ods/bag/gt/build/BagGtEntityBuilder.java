@@ -7,16 +7,16 @@ import java.util.Date;
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.ods.entities.AbstractEntity;
-import org.openstreetmap.josm.plugins.ods.entities.external.FeatureUtil;
-import org.openstreetmap.josm.plugins.ods.entities.external.GeotoolsEntityBuilder;
+import org.openstreetmap.josm.plugins.ods.entities.Entity;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.GeotoolsEntityBuilder;
+import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 
-public abstract class BagGtEntityBuilder<T extends AbstractEntity> implements GeotoolsEntityBuilder<T>{
+public abstract class BagGtEntityBuilder<T extends Entity, T2 extends T> implements GeotoolsEntityBuilder<T> {
     private final static DateFormat sourceDateFormat = new SimpleDateFormat("YYYY-MM-dd");
     private final CRSUtil crsUtil;
-    protected MetaData metaData;
     
     public BagGtEntityBuilder(CRSUtil crsUtil) {
         super();
@@ -24,14 +24,18 @@ public abstract class BagGtEntityBuilder<T extends AbstractEntity> implements Ge
     }
 
     @Override
-    public void setMetaData(MetaData metaData) {
-        this.metaData = metaData;
+    public Object getReferenceId(SimpleFeature feature) {
+        return FeatureUtil.getLong(feature, "identificatie");
     }
-    
-    public void build(T entity, SimpleFeature feature) {
-        entity.setReferenceId(FeatureUtil.getLong(feature, "identificatie"));
+
+    @Override
+    public T2 build(SimpleFeature feature, MetaData metaData, DownloadResponse response) {
+        T2 entity = newInstance();
+        entity.setDownloadResponse(response);
+        entity.setReferenceId(getReferenceId(feature));
+        entity.setPrimaryId(feature.getID());
         try {
-            Date date = (Date) metaData.get("bag.source.date");
+            Date date = (Date) metaData.get("source.date");
             if (date != null) {
                 entity.setSourceDate(sourceDateFormat.format(date));
             }
@@ -40,6 +44,10 @@ public abstract class BagGtEntityBuilder<T extends AbstractEntity> implements Ge
         } catch (MetaDataException | CRSException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            return null;
         }
+        return entity;
     }
+
+    protected abstract T2 newInstance();
 }
