@@ -4,6 +4,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
@@ -29,13 +30,7 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuildi
         if (bouwjaar != null) {
             building.setStartDate(bouwjaar.toString());
         }
-        building.setStatus(FeatureUtil.getString(feature, "status"));
-        if ("Bouw gestart".equalsIgnoreCase(building.getStatus())) {
-            building.setUnderConstruction(true);
-        }
-        else if ("Pand gesloopt".equalsIgnoreCase(building.getStatus())) {
-            building.setDeleted(true);
-        } 
+        building.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
         if (type.equals("bag:pand")) {
             building.setBuildingType(BuildingType.UNCLASSIFIED);
             building.setAantalVerblijfsobjecten(FeatureUtil.getLong(feature, "aantal_verblijfsobjecten"));
@@ -60,5 +55,26 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuildi
             }
         }
         return building;
+    }
+
+    private static EntityStatus parseStatus(String status) {
+        switch (status) {
+        case "Bouwvergunning verleend":
+            return EntityStatus.PLANNED;
+        case "Bouw gestart":
+            return EntityStatus.CONSTRUCTION;
+        case "Pand in gebruik":
+        case "Pand in gebruik (niet ingemeten)":
+        case "Pand buiten gebruik":
+            return EntityStatus.IN_USE;
+        case "Niet gerealiseerd pand":
+            return EntityStatus.NOT_REALIZED;
+        case "Sloopvergunning verleend":
+            return EntityStatus.REMOVAL_DUE;
+        case "Pand gesloopt":
+            return EntityStatus.REMOVED;
+        default:
+            return EntityStatus.UNKNOWN;
+        }
     }
 }

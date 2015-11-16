@@ -33,6 +33,7 @@ public abstract class BagOsmEntityBuilder {
         }
         primitive.remove("bag:status");
         primitive.remove("bag:begindatum");
+        normalizeReference(primitive, "ref:bag");
         normalizeReference(primitive, "ref:bagid");
         normalizeReference(primitive, "bag:id");
         normalizeReference(primitive, "bag:pand_id");

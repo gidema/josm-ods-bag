@@ -4,7 +4,6 @@ import org.openstreetmap.josm.plugins.ods.entities.AbstractEntity;
 
 public abstract class BagEntityImpl extends AbstractEntity {
     private boolean incomplete;
-    private boolean deleted;
     private Long identificatie;
 
 //    public void setInternal(boolean internal) {
@@ -25,10 +24,6 @@ public abstract class BagEntityImpl extends AbstractEntity {
         return incomplete;
     }
 
-    @Override
-    public boolean isDeleted() {
-        return deleted;
-    }
 
 //    @Override
 //    public boolean hasReferenceId() {

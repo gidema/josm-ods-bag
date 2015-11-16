@@ -14,8 +14,6 @@ import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmAddressNodeBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmBuildingBuilder;
-//import org.openstreetmap.josm.plugins.ods.builtenvironment.actions.AlignBuildingsAction;
-import org.openstreetmap.josm.plugins.ods.builtenvironment.actions.RemoveAssociatedStreetsAction;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
@@ -30,6 +28,7 @@ import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerManager
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
 import org.openstreetmap.josm.plugins.ods.gui.OdsDownloadAction;
 import org.openstreetmap.josm.plugins.ods.gui.OdsImportAction;
+import org.openstreetmap.josm.plugins.ods.gui.OdsUpdateAction;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 import org.openstreetmap.josm.tools.I18n;
@@ -50,8 +49,9 @@ public class BagImportModule extends OdsModule {
         addOsmEntityBuilder(new BagOsmBuildingBuilder(this));
         addOsmEntityBuilder(new BagOsmAddressNodeBuilder(this));
         addAction(new OdsDownloadAction(this));
-        addAction(new RemoveAssociatedStreetsAction(this));
+//        addAction(new RemoveAssociatedStreetsAction(this));
         addAction(new OdsImportAction(this));
+        addAction(new OdsUpdateAction(this));
 //        actions.add(new AlignBuildingsAction(this));
 //        actions.add(new RemoveShortSegmentsAction(this));
     }
@@ -108,9 +108,10 @@ public class BagImportModule extends OdsModule {
         return true;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public boolean activate() {
-        if (!checkUser()) {
+        if (false && !checkUser()) { // Disabled, but kept the code in case we need it
             int answer = JOptionPane.showConfirmDialog(Main.parent, 
                  "Je gebruikersnaam eindigt niet op _BAG en is daarom niet geschikt " +
                  "voor de BAG import.\nWeet je zeker dat je door wilt gaan?",

@@ -11,6 +11,7 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidGeometryException;
 import org.openstreetmap.josm.plugins.ods.crs.InvalidMultiPolygonException;
+import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
@@ -63,11 +64,12 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
             type = tags.remove("building:part");
         }
         if (type.equals("construction")) {
-            building.setUnderConstruction(true);
+            building.setStatus(EntityStatus.CONSTRUCTION);
             String construction = tags.remove("construction");
-            if (construction != null) {
-                 type = construction;
-            }
+            type = (construction == null ? "yes" : construction);
+        }
+        else {
+            building.setStatus(EntityStatus.IN_USE);
         }
         building.setBuildingType(getBuildingType(type, tags));
         if (tags.remove("3dshapes:ggmodelk") != null) {

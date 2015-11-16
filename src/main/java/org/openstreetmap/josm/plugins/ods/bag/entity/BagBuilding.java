@@ -4,7 +4,6 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
 
 public class BagBuilding extends BuildingImpl {
-    private String status;
     private Long aantalVerblijfsobjecten;
     private BagAddress bagAddress;
     
@@ -18,15 +17,6 @@ public class BagBuilding extends BuildingImpl {
         return bagAddress;
     }
     
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Override
-    public String getStatus() {
-        return status;
-    }
-
     public void setAantalVerblijfsobjecten(Long aantalVerblijfsobjecten) {
         this.aantalVerblijfsobjecten = aantalVerblijfsobjecten;
     }

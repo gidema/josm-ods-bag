@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 import java.util.Map;
 
 import org.openstreetmap.josm.plugins.ods.LayerManager;
+import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 
@@ -33,7 +34,9 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
         tags.put("source", "BAG");
         tags.put("source:date", building.getSourceDate());
         tags.put("ref:bag", building.getReferenceId().toString());
-        tags.put("start_date", building.getStartDate());
+        if (building.getStartDate() != null) {
+            tags.put("start_date", building.getStartDate());
+        }
         if ("Sloopvergunning verleend".equals(building.getStatus())) {
             tags.put("note", "Sloopvergunning verleend");
         }
@@ -78,7 +81,7 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
             break;
         }
         
-        if (building.isUnderConstruction()) {
+        if (building.getStatus().equals(EntityStatus.CONSTRUCTION)) {
             tags.put("building", "construction");
             tags.put("construction", type);
         }

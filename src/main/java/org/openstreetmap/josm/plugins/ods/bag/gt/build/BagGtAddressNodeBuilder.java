@@ -4,6 +4,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
@@ -40,10 +41,26 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<AddressNode, Bag
             address.setPostcode(FeatureUtil.getString(feature, "postcode"));
         }
         addressNode.setAddress(address);
-        addressNode.setStatus(FeatureUtil.getString(feature, "status"));
+        addressNode.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
         addressNode.setGebruiksdoel(FeatureUtil.getString(feature, "gebruiksdoel"));
         addressNode.setArea(FeatureUtil.getDouble(feature, "oppervlakte"));
         addressNode.setBuildingRef(FeatureUtil.getLong(feature, "pandidentificatie"));
         return addressNode;
+    }
+
+    private static EntityStatus parseStatus(String status) {
+        switch (status) {
+        case "Verblijfsobject gevormd":
+            return EntityStatus.CONSTRUCTION;
+        case "Verblijfsobject in gebruik":
+        case "Verblijfsobject buiten gebruik":
+        case "Verblijfsobject in gebruik (niet ingemeten)":
+            return EntityStatus.IN_USE;
+        case "Verblijfsobject ingetrokken":
+        case "Niet gerealiseerd verblijfsobject":
+            return EntityStatus.REMOVED;
+        default:
+            return EntityStatus.IN_USE;
+        }
     }
 }

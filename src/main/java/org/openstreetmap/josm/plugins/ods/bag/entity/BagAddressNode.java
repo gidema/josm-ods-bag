@@ -5,7 +5,6 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.impl.AddressNodeImpl;
 
 public class BagAddressNode extends AddressNodeImpl {
     private String gebruiksdoel;
-    private String status;
     private Double area;
     
     @Override
@@ -45,14 +44,6 @@ public class BagAddressNode extends AddressNodeImpl {
         return area;
     }
     
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     @Override
     public int compareTo(Address o) {
         return getAddress().compareTo(o);
