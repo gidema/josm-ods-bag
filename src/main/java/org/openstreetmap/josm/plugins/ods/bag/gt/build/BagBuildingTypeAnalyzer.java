@@ -7,16 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openstreetmap.josm.plugins.ods.Context;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagBuildingTypeAnalyzer.Statistics.Stat;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataBuildingStore;
-import org.openstreetmap.josm.plugins.ods.tasks.Task;
 
-public class BagBuildingTypeAnalyzer implements Task {
+public class BagBuildingTypeAnalyzer {
     private final static List<String> trafo =
             Arrays.asList("TRAF","TRAN","TRFO","TRNS");
     private final static List<String> garage =
@@ -29,8 +27,7 @@ public class BagBuildingTypeAnalyzer implements Task {
         this.buildingStore = buildingStore;
     }
 
-    @Override
-    public void run(Context ctx) {
+    public void run() {
         for (Building building : buildingStore) {
             analyzeBuildingType(building);
         }

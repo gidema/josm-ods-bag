@@ -66,6 +66,7 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuildi
         case "Pand in gebruik":
         case "Pand in gebruik (niet ingemeten)":
         case "Pand buiten gebruik":
+        case "Plaats aangewezen":
             return EntityStatus.IN_USE;
         case "Niet gerealiseerd pand":
             return EntityStatus.NOT_REALIZED;

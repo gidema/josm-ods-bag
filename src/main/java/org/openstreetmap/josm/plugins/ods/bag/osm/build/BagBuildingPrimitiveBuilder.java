@@ -81,7 +81,8 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
             break;
         }
         
-        if (building.getStatus().equals(EntityStatus.CONSTRUCTION)) {
+        if (building.getStatus().equals(EntityStatus.CONSTRUCTION) ||
+                building.getStatus().equals(EntityStatus.PLANNED)) {
             tags.put("building", "construction");
             tags.put("construction", type);
         }
