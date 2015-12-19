@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.function.Consumer;
 
 import org.geotools.data.Query;
+import org.openstreetmap.josm.plugins.ods.Normalisation;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtAddressNodeBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtBuildingBuilder;
@@ -67,7 +68,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
             checkBuildingCompleteness();
             distributeAddressNodes();
             analyzeBuildingTypes();
-            findBuildingNeighbours(getResponse());
+//            findBuildingNeighbours(getResponse());
             primitiveBuilder.run(getResponse());
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,8 +102,13 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         GtFeatureSource featureSource = new GtFeatureSource(wfsHost, featureType, "identificatie");
         Query query = new GroupByQuery(featureType, Arrays.asList("identificatie"));
         GtDataSource dataSource = new GtDataSource(featureSource, query);
-        return new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
+        FeatureDownloader downloader = new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
             layerManager.getEntityStore(Building.class));
+        // The original BAG import partially normalised the building geometries,
+        // by making the (outer) rings clockwise. For fast comparison of geometries,
+        // I choose to override the default normalisation here.
+        downloader.setNormalisation(Normalisation.CLOCKWISE);
+        return downloader;
     }
     
     /**
@@ -134,6 +140,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         buildingStore.forEach(enricher);
     }
     
+    @Deprecated
     private void findBuildingNeighbours(DownloadResponse response) {
         OpenDataBuildingStore buildingStore = (OpenDataBuildingStore) layerManager.getEntityStore(Building.class);
         Consumer<Building> enricher = new BuildingNeighboursEnricher(buildingStore, module.getGeoUtil());
