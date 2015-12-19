@@ -26,7 +26,7 @@ public class BagPrimitiveBuilder {
         addressNodePrimitiveBuilder = new BagAddressNodePrimitiveBuilder(odLayerManager);
         // TODO pass tolerance as a configurable parameter at a higher level.
         segmentSimplifier = new BuildingSegmentSimplifier(1e-5);
-        buildingAligner = new BuildingAligner(module, 1e-5);
+        buildingAligner = new BuildingAligner(module, odLayerManager.getEntityStore(Building.class));
     }
     
     public void run(DownloadResponse response) {
@@ -42,8 +42,8 @@ public class BagPrimitiveBuilder {
             .filter(building->building.getPrimitive() == null)
             .filter(building->!building.isIncomplete())
             .forEach(buildingPrimitiveBuilder::createPrimitive);
-        buildingStore.stream().filter(building->building.getDownloadResponse() == response)
-            .forEach(segmentSimplifier::simplify);
+//        buildingStore.stream().filter(building->building.getDownloadResponse() == response)
+//            .forEach(segmentSimplifier::simplify);
         buildingStore.forEach(buildingAligner::align);
     }
 }

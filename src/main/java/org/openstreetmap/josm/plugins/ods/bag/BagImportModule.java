@@ -124,6 +124,11 @@ public class BagImportModule extends OdsModule {
         return super.activate();
     }
     
+    @Override
+    public Double getTolerance() {
+        return 1e-5;
+    }
+
     private static boolean checkUser() {
         try {
             final UserInfo userInfo = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE);
