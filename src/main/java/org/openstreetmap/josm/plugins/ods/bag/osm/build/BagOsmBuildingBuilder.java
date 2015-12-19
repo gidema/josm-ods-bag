@@ -17,18 +17,20 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingEntityType;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
+import org.openstreetmap.josm.tools.Predicate;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
-
+    private Predicate<OsmPrimitive> isBuilding = BuildingEntityType.IsBuilding;
+    
     public BagOsmBuildingBuilder(OdsModule module) {
         super(module, BuildingEntityType.getInstance());
     }
 
     @Override
     public void buildOsmEntity(OsmPrimitive primitive) {
-        if (getEntityType().recognize(primitive)) {
+        if (isBuilding.evaluate(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeTags(primitive);
                 BagBuilding building = new BagBuilding();
@@ -72,9 +74,6 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
             building.setStatus(EntityStatus.IN_USE);
         }
         building.setBuildingType(getBuildingType(type, tags));
-        if (tags.remove("3dshapes:ggmodelk") != null) {
-            building.setSource("3dshapes");
-        }
         building.setStartDate(tags.remove("start_date"));
         if (tags.containsKey("addr:housenumber")) {
             BagAddress address = new BagAddress();
