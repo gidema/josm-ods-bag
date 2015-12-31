@@ -11,7 +11,6 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
-import org.openstreetmap.josm.plugins.ods.OdsModulePlugin;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmAddressNodeBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmBuildingBuilder;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
@@ -41,9 +40,14 @@ public class BagImportModule extends OdsModule {
     private GeoUtil geoUtil = new GeoUtil();
     private CRSUtil crsUtil = new CRSUtilProj4j();
 
-    public BagImportModule(OdsModulePlugin plugin) {
-        super(plugin);
+    public BagImportModule() {
         this.mainDownloader = new BagDownloader(this);
+    }
+    
+    @Override
+    public void initialize() throws Exception {
+        super.initialize();
+        mainDownloader.initialize();
         addEntityType(BuildingEntityType.getInstance());
         addEntityType(AddressNodeEntityType.getInstance());
         addOsmEntityBuilder(new BagOsmBuildingBuilder(this));

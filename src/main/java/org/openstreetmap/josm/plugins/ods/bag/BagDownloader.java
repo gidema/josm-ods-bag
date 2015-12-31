@@ -10,12 +10,18 @@ import org.openstreetmap.josm.plugins.ods.matching.AddressNodeMatcher;
 import org.openstreetmap.josm.plugins.ods.matching.BuildingMatcher;
 
 public class BagDownloader extends MainDownloader {
-    final private OpenDataLayerDownloader openDataLayerDownloader;
-    final private OsmLayerDownloader osmLayerDownloader;
-    final private BuildingMatcher buildingMatcher;
-    final private AddressNodeMatcher addressNodeMatcher;
+    final private OdsModule module;
+    private OpenDataLayerDownloader openDataLayerDownloader;
+    private OsmLayerDownloader osmLayerDownloader;
+    private BuildingMatcher buildingMatcher;
+    private AddressNodeMatcher addressNodeMatcher;
     
     public BagDownloader(OdsModule module) {
+        this.module = module;
+    }
+    
+    @Override
+    public void initialize() throws Exception {
         this.openDataLayerDownloader = new BagWfsLayerDownloader(module);
         this.osmLayerDownloader = new OsmLayerDownloader(module);
         this.buildingMatcher = new BuildingMatcher(module);
