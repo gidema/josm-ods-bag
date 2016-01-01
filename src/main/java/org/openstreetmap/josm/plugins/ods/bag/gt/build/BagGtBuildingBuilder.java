@@ -29,8 +29,13 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuildi
         if (bouwjaar != null) {
             building.setStartDate(bouwjaar.toString());
         }
-        building.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
-        if (type.equals("bag:pand")) {
+        // Find a better way to handle the mapping from feature attributes to Entity attributes
+        String status = FeatureUtil.getString(feature, "status");
+        if (status == null) {
+            status = FeatureUtil.getString(feature, "pandstatus");
+        }
+        building.setStatus(parseStatus(status));
+        if (type.equals("bag:pand") || type.equals("osm_bag:buildingdestroyed_osm")) {
             building.setBuildingType(BuildingType.UNCLASSIFIED);
             building.setAantalVerblijfsobjecten(FeatureUtil.getLong(feature, "aantal_verblijfsobjecten"));
         }
@@ -57,6 +62,9 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuildi
     }
 
     private static EntityStatus parseStatus(String status) {
+        if (status == null) {
+            return EntityStatus.UNKNOWN;
+        }
         switch (status) {
         case "Bouwvergunning verleend":
             return EntityStatus.PLANNED;

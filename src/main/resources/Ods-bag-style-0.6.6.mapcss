@@ -88,7 +88,7 @@ node[!"|ODS"]
   color: blue;
 }
 
-*["|ODS:idMatch"=true]["|ODS:status"=removed]
+*["|ODS:status"=removed]
 { 
     fill-color: purple;
     fill-opacity: 0.5;
