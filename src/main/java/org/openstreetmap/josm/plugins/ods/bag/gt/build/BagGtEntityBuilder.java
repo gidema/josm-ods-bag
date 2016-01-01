@@ -1,8 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
@@ -15,7 +14,6 @@ import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 
 public abstract class BagGtEntityBuilder<T extends Entity, T2 extends T> implements GeotoolsEntityBuilder<T> {
-    private final static DateFormat sourceDateFormat = new SimpleDateFormat("YYYY-MM-dd");
     private final CRSUtil crsUtil;
     
     public BagGtEntityBuilder(CRSUtil crsUtil) {
@@ -35,9 +33,9 @@ public abstract class BagGtEntityBuilder<T extends Entity, T2 extends T> impleme
         entity.setReferenceId(getReferenceId(feature));
         entity.setPrimaryId(feature.getID());
         try {
-            Date date = (Date) metaData.get("source.date");
+            LocalDate date = (LocalDate) metaData.get("source.date");
             if (date != null) {
-                entity.setSourceDate(sourceDateFormat.format(date));
+                entity.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
             }
             entity.setSource("BAG");
             entity.setGeometry(crsUtil.transform(feature));
