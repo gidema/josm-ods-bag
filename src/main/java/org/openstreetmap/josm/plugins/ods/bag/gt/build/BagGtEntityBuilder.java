@@ -10,8 +10,6 @@ import org.openstreetmap.josm.plugins.ods.entities.Entity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.GeotoolsEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
-import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
-import org.openstreetmap.josm.plugins.ods.metadata.MetaDataException;
 
 public abstract class BagGtEntityBuilder<T extends Entity, T2 extends T> implements GeotoolsEntityBuilder<T> {
     private final CRSUtil crsUtil;
@@ -27,19 +25,19 @@ public abstract class BagGtEntityBuilder<T extends Entity, T2 extends T> impleme
     }
 
     @Override
-    public T2 build(SimpleFeature feature, MetaData metaData, DownloadResponse response) {
+    public T2 build(SimpleFeature feature, DownloadResponse response) {
         T2 entity = newInstance();
         entity.setDownloadResponse(response);
         entity.setReferenceId(getReferenceId(feature));
         entity.setPrimaryId(feature.getID());
+        LocalDate date = response.getRequest().getDownloadTime().toLocalDate();
+        if (date != null) {
+            entity.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
+        }
+        entity.setSource("BAG");
         try {
-            LocalDate date = (LocalDate) metaData.get("source.date");
-            if (date != null) {
-                entity.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
-            }
-            entity.setSource("BAG");
             entity.setGeometry(crsUtil.transform(feature));
-        } catch (MetaDataException | CRSException e) {
+        } catch (CRSException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return null;

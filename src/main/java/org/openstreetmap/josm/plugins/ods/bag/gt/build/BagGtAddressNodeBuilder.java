@@ -8,7 +8,6 @@ import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
-import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 
 public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<AddressNode, BagAddressNode> {
     
@@ -22,8 +21,8 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<AddressNode, Bag
     }
 
     @Override
-    public BagAddressNode build(SimpleFeature feature, MetaData metaData, DownloadResponse response) {
-        BagAddressNode addressNode = super.build(feature, metaData, response);
+    public BagAddressNode build(SimpleFeature feature, DownloadResponse response) {
+        BagAddressNode addressNode = super.build(feature, response);
         BagAddress address = new BagAddress();
         address.setHouseNumber(FeatureUtil.getInteger(feature, "huisnummer"));
         String houseLetter = FeatureUtil.getString(feature, "huisletter");

@@ -7,7 +7,6 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.impl.CityImpl;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataCityStore;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
-import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 
 public class BagGtCityBuilder extends BagGtEntityBuilder<City, CityImpl> {
     public OpenDataCityStore cityStore;
@@ -22,8 +21,8 @@ public class BagGtCityBuilder extends BagGtEntityBuilder<City, CityImpl> {
     }
 
     @Override
-    public CityImpl build(SimpleFeature feature, MetaData metaData, DownloadResponse response) {
-        CityImpl city = super.build(feature, metaData, response);
+    public CityImpl build(SimpleFeature feature, DownloadResponse response) {
+        CityImpl city = super.build(feature, response);
         city.setName(FeatureUtil.getString(feature, "woonplaats"));
         return city;
     }

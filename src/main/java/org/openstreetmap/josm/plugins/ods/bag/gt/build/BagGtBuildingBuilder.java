@@ -9,7 +9,6 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
-import org.openstreetmap.josm.plugins.ods.metadata.MetaData;
 
 public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuilding> {
     
@@ -23,8 +22,8 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuildi
     }
 
     @Override
-    public BagBuilding build(SimpleFeature feature, MetaData metaData, DownloadResponse response) {
-        BagBuilding building = super.build(feature, metaData, response);
+    public BagBuilding build(SimpleFeature feature, DownloadResponse response) {
+        BagBuilding building = super.build(feature, response);
         String type = feature.getName().getLocalPart();
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");
         if (bouwjaar != null) {
