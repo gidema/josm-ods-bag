@@ -15,7 +15,6 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataBuildingStore;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.BuildingCompletenessEnricher;
-import org.openstreetmap.josm.plugins.ods.entities.enrichment.BuildingNeighboursEnricher;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.DistributeAddressNodes;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureDownloader;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloader;
@@ -25,7 +24,6 @@ import org.openstreetmap.josm.plugins.ods.geotools.GtDataSource;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDownloader;
 import org.openstreetmap.josm.plugins.ods.geotools.GtFeatureSource;
 import org.openstreetmap.josm.plugins.ods.geotools.InvalidQueryException;
-import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.matching.OpenDataAddressNodeToBuildingMatcher;
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 
@@ -142,12 +140,5 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         OpenDataBuildingStore buildingStore = (OpenDataBuildingStore) layerManager.getEntityStore(Building.class);
         Consumer<Building> enricher = new BuildingTypeEnricher();
         buildingStore.forEach(enricher);
-    }
-    
-    @Deprecated
-    private void findBuildingNeighbours(DownloadResponse response) {
-        OpenDataBuildingStore buildingStore = (OpenDataBuildingStore) layerManager.getEntityStore(Building.class);
-        Consumer<Building> enricher = new BuildingNeighboursEnricher(buildingStore, module.getGeoUtil());
-        buildingStore.stream().filter(b->b.getDownloadResponse() == response).forEach(enricher);
     }
 }
