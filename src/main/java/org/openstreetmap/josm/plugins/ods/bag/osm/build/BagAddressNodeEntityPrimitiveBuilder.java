@@ -5,15 +5,15 @@ import java.util.Map;
 import org.openstreetmap.josm.plugins.ods.LayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 
-public class BagAddressNodePrimitiveBuilder extends BagPrimitiveBuilder<AddressNode> {
+public class BagAddressNodeEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<AddressNode> {
 
-    public BagAddressNodePrimitiveBuilder(LayerManager dataLayer) {
+    public BagAddressNodeEntityPrimitiveBuilder(LayerManager dataLayer) {
         super(dataLayer);
     }
 
     @Override
     protected void buildTags(AddressNode addresNode, Map<String, String> tags) {
-        AddressPrimitiveBuilder.buildTags(addresNode.getAddress(), tags);
+        createAddressTags(addresNode.getAddress(), tags);
         tags.put("source", "BAG");
         tags.put("source:date", addresNode.getSourceDate());
     }

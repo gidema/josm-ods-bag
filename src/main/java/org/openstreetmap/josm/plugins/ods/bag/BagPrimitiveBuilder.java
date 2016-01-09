@@ -1,9 +1,9 @@
 package org.openstreetmap.josm.plugins.ods.bag;
 
 import org.openstreetmap.josm.plugins.ods.OdsModule;
-import org.openstreetmap.josm.plugins.ods.PrimitiveBuilder;
-import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagAddressNodePrimitiveBuilder;
-import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagBuildingPrimitiveBuilder;
+import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagAddressNodeEntityPrimitiveBuilder;
+import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagBuildingEntityPrimitiveBuilder;
+import org.openstreetmap.josm.plugins.ods.entities.EntityPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStore;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
@@ -14,16 +14,16 @@ import org.openstreetmap.josm.plugins.ods.osm.BuildingSegmentSimplifier;
 
 public class BagPrimitiveBuilder {
     private OdsModule module;
-    private PrimitiveBuilder<AddressNode> addressNodePrimitiveBuilder;
-    private PrimitiveBuilder<Building> buildingPrimitiveBuilder;
+    private EntityPrimitiveBuilder<AddressNode> addressNodePrimitiveBuilder;
+    private EntityPrimitiveBuilder<Building> buildingPrimitiveBuilder;
     private BuildingSegmentSimplifier segmentSimplifier;
     private BuildingAligner buildingAligner;
 
     public BagPrimitiveBuilder(OdsModule module) {
         this.module = module;
         OpenDataLayerManager odLayerManager = module.getOpenDataLayerManager();
-        buildingPrimitiveBuilder = new BagBuildingPrimitiveBuilder(odLayerManager);
-        addressNodePrimitiveBuilder = new BagAddressNodePrimitiveBuilder(odLayerManager);
+        buildingPrimitiveBuilder = new BagBuildingEntityPrimitiveBuilder(odLayerManager);
+        addressNodePrimitiveBuilder = new BagAddressNodeEntityPrimitiveBuilder(odLayerManager);
         // TODO pass tolerance as a configurable parameter at a higher level.
         segmentSimplifier = new BuildingSegmentSimplifier(1e-5);
         buildingAligner = new BuildingAligner(module, odLayerManager.getEntityStore(Building.class));

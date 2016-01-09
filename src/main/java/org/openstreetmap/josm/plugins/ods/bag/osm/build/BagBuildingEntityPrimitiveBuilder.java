@@ -7,9 +7,9 @@ import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 
-public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
+public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<Building> {
 
-    public BagBuildingPrimitiveBuilder(LayerManager dataLayer) {
+    public BagBuildingEntityPrimitiveBuilder(LayerManager dataLayer) {
         super(dataLayer);
     }
 
@@ -29,7 +29,7 @@ public class BagBuildingPrimitiveBuilder extends BagPrimitiveBuilder<Building> {
     protected void buildTags(Building building, Map<String, String> tags) {
         Address address = building.getAddress();
         if (address != null) {
-            AddressPrimitiveBuilder.buildTags(address, tags);
+            createAddressTags(address, tags);
         }
         tags.put("source", "BAG");
         tags.put("source:date", building.getSourceDate());
