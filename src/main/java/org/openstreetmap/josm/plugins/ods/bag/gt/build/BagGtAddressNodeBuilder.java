@@ -9,6 +9,8 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<AddressNode, BagAddressNode> {
     
     public BagGtAddressNodeBuilder(CRSUtil crsUtil) {
@@ -45,6 +47,11 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<AddressNode, Bag
         addressNode.setArea(FeatureUtil.getDouble(feature, "oppervlakte"));
         addressNode.setBuildingRef(FeatureUtil.getLong(feature, "pandidentificatie"));
         return addressNode;
+    }
+
+    @Override
+    protected Geometry getGeometry(SimpleFeature feature) {
+        return (Geometry) feature.getAttribute("geometrie");
     }
 
     private static EntityStatus parseStatus(String status) {
