@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -17,7 +18,6 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
 import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingEntityType;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
-import org.openstreetmap.josm.tools.Predicate;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -30,7 +30,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
 
     @Override
     public void buildOsmEntity(OsmPrimitive primitive) {
-        if (isBuilding.evaluate(primitive)) {
+        if (isBuilding.test(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeTags(primitive);
                 BagBuilding building = new BagBuilding();
