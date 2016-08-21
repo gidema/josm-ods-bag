@@ -44,7 +44,7 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<AddressNode, Bag
         addressNode.setAddress(address);
         addressNode.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
         addressNode.setGebruiksdoel(FeatureUtil.getString(feature, "gebruiksdoel"));
-        addressNode.setArea(FeatureUtil.getDouble(feature, "oppervlakte"));
+        addressNode.setArea(FeatureUtil.getBigDecimal(feature, "oppervlakte").doubleValue());
         addressNode.setBuildingRef(FeatureUtil.getLong(feature, "pandidentificatie"));
         return addressNode;
     }
