@@ -2,11 +2,11 @@
 meta
 {
 	title: "ODS";
-	version: "0.6.5";
+	version: "0.6.8";
 	description: "Colouring of buildings and address nodes in colour reflecting the difference between OSM data and imported Open Data";
 	author: "g.idema";
 	watch-modified: true;
-	min-josm-version: "7480";
+	min-josm-version: "10786";
 }
 
 meta[lang=nl]
@@ -24,7 +24,7 @@ setting::display_old_josm {
 
 node[!"|ODS"]
 {
-    symbol-stroke-color: black;
+    symbol-stroke-color: #222222;
 }
 
 *["|ODS"=true] {
@@ -46,46 +46,40 @@ node[!"|ODS"]
 }
 
 
-*["|ODS:geometryMatch"=match]["|ODS:tagMatch"=match]
-{ 
-	fill-color: green;
-	fill-opacity: 0.5;
-  text-color: green;
-}
-
-*["|ODS:geometryMatch"=comparable]["|ODS:tagMatch"=match]
+*["|ODS:geometryMatch"=match],
+*["|ODS:geometryMatch"=comparable]
 { 
 	fill-color: #00EE00;
 	fill-opacity: 0.5;
   text-color: #00EE00;
 }
 
-*["|ODS:geometryMatch"=match]["|ODS:tagMatch"=no_match],
-*["|ODS:geometryMatch"=comparable]["|ODS:tagMatch"=no_match]
-{ 
-	fill-color: coral;
-	fill-opacity: 0.5;
-  text-color: coral;
-}
-
-*["|ODS:geometryMatch"=no_match]["|ODS:tagMatch"=match]
+*["|ODS:geometryMatch"=no_match]
 { 
 	fill-color: orange;
 	fill-opacity: 0.5;
   text-color: orange;
 }
 
-*["|ODS:geometryMatch"=no_match]["|ODS:tagMatch"=no_match]
-{ 
-	fill-color: red;
-	fill-opacity: 0.5;
-  text-color: red;
-}
-
-
-*["|ODS:statusMatch"=no_match]
+*["|ODS:statusMatch"=no_match],
+*["|ODS:tagMatch"=no_match]
 {
   width: 2;  
   color: blue;
 }
+
+way[!"|ODS"][!construction][building]["ref:bag"]["source:date"][source][start_date][eval(number_of_tags() > 5)],
+way[!"|ODS"][construction][building]["ref:bag"]["source:date"][source][start_date][eval(number_of_tags() > 6)]
+{
+    text: tr("Kijk uit: pand");
+    text-color: red;
+}
+
+node[!"|ODS"]["addr:city"]["addr:housenumber"]["addr:postcode"]["addr:street"]["source:date"][source][eval(number_of_tags() > 6)]
+{
+    text: tr("Kijk uit: adresnode");
+    text-color: red;
+}
+
+
 

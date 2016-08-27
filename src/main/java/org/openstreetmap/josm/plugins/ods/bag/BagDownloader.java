@@ -2,10 +2,10 @@ package org.openstreetmap.josm.plugins.ods.bag;
 
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloader;
-import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.io.LayerDownloader;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
+import org.openstreetmap.josm.plugins.ods.io.OsmLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.matching.AddressNodeMatcher;
 import org.openstreetmap.josm.plugins.ods.matching.BuildingMatcher;
 

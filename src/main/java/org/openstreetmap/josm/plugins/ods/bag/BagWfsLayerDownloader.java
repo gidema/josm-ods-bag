@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.ods.bag;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.geotools.data.Query;
@@ -63,7 +64,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     @Override
     public void process() {
         try {
-            super.process();
+             super.process();
             matchAddressNodesToBuilding();
             checkBuildingCompleteness();
             distributeAddressNodes();
@@ -77,32 +78,40 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     }
 
     private FeatureDownloader createPandDownloader() throws InitializationException {
-        return createBuildingDownloader("bag:pand");
+        List<String> properties = Arrays.asList("identificatie", "bouwjaar", "status", "aantal_verblijfsobjecten", "geometrie");
+        return createBuildingDownloader("bag:pand", properties);
     }
     
     private FeatureDownloader createLigplaatsDownloader() throws InitializationException {
-        return createBuildingDownloader("bag:ligplaats");
+        List<String> properties = Arrays.asList("identificatie", "status", "openbare_ruimte", "huisnummer",
+            "huisletter", "toevoeging", "postcode", "woonplaats", "geometrie");
+        return createBuildingDownloader("bag:ligplaats", properties);
     }
     
     private FeatureDownloader createStandplaatsDownloader() throws InitializationException {
-        return createBuildingDownloader("bag:standplaats");
+        List<String> properties = Arrays.asList("identificatie", "status", "openbare_ruimte", "huisnummer",
+            "huisletter", "toevoeging", "postcode", "woonplaats", "geometrie");
+        return createBuildingDownloader("bag:standplaats", properties);
     }
     
     private FeatureDownloader createVerblijfsobjectDownloader() throws InitializationException {
         BagGtAddressNodeBuilder entityBuilder = new BagGtAddressNodeBuilder(module.getCrsUtil());
         GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:verblijfsobject", "identificatie");
         featureSource.initialize();
-        Query query = new GroupByQuery(featureSource, Arrays.asList("identificatie", "pandidentificatie"));
+        List<String> properties = Arrays.asList("identificatie", "oppervlakte", "status", "gebruiksdoel",
+                "openbare_ruimte", "huisnummer", "huisletter", "toevoeging", "postcode", "woonplaats",
+                "geometrie", "pandidentificatie");
+        Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie", "pandidentificatie"));
         GtDataSource dataSource = new GtDataSource(featureSource, query);
         return new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
             layerManager.getEntityStore(AddressNode.class));
     }
     
-    private FeatureDownloader createBuildingDownloader(String featureType) throws InvalidQueryException, InitializationException {
+    private FeatureDownloader createBuildingDownloader(String featureType, List<String> properties) throws InvalidQueryException, InitializationException {
         BagGtBuildingBuilder entityBuilder = new BagGtBuildingBuilder(module.getCrsUtil());
         GtFeatureSource featureSource = new GtFeatureSource(wfsHost, featureType, "identificatie");
         featureSource.initialize();
-        Query query = new GroupByQuery(featureSource, Arrays.asList("identificatie"));
+        Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie"));
         GtDataSource dataSource = new GtDataSource(featureSource, query);
         FeatureDownloader downloader = new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
             layerManager.getEntityStore(Building.class));
