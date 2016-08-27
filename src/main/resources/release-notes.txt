@@ -1,0 +1,7 @@
+See also the release notes for the opendataservices plug-in.
+
+Version 0.6.8
+=============
+- Fixed bug in handling duplicate buildings retrieved from WFS server
+
+No release notes prior to Version 0.6.8 are available. 
