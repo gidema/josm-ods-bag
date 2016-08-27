@@ -10,9 +10,7 @@ import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.plugins.ods.ModuleActivationException;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
-import org.openstreetmap.josm.plugins.ods.OdsModuleConfiguration;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmAddressNodeBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmBuildingBuilder;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
@@ -34,10 +32,7 @@ import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 import org.openstreetmap.josm.tools.I18n;
 
-import exceptions.OdsException;
-
 public class BagImportModule extends OdsModule {
-    private OdsModuleConfiguration configuration = new BagConfiguration();
     // Boundary of the Netherlands
     private final static Bounds BOUNDS = new Bounds(50.734, 3.206, 53.583, 7.245);
 //    private final OdsDownloader odsDownloader;
@@ -50,12 +45,7 @@ public class BagImportModule extends OdsModule {
     }
     
     @Override
-    public OdsModuleConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    @Override
-    public void initialize() throws OdsException {
+    public void initialize() throws Exception {
         super.initialize();
         mainDownloader.initialize();
         addEntityType(BuildingEntityType.getInstance());
@@ -125,17 +115,17 @@ public class BagImportModule extends OdsModule {
 
     @SuppressWarnings("unused")
     @Override
-    public void activate() throws ModuleActivationException {
+    public boolean activate() {
         if (false && !checkUser()) { // Disabled, but kept the code in case we need it
             int answer = JOptionPane.showConfirmDialog(Main.parent, 
                  "Je gebruikersnaam eindigt niet op _BAG en is daarom niet geschikt " +
                  "voor de BAG import.\nWeet je zeker dat je door wilt gaan?",
                 I18n.tr("Invalid user"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
             if (answer == JOptionPane.CANCEL_OPTION) {
-                throw ModuleActivationException.CANCELLED;
+                return false;
             }
         }
-        super.activate();
+        return super.activate();
     }
     
     @Override
