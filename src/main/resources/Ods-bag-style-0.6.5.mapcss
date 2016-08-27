@@ -82,15 +82,10 @@ node[!"|ODS"]
   text-color: red;
 }
 
-*["|ODS:statusMatch"=no_match]["|ODS:status"!=removed]
+
+*["|ODS:statusMatch"=no_match]
 {
   width: 2;  
   color: blue;
 }
 
-*["|ODS:idMatch"=true]["|ODS:status"=removed]
-{ 
-    fill-color: purple;
-    fill-opacity: 0.5;
-    text-color: purple
-}

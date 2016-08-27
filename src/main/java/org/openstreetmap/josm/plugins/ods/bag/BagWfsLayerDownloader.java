@@ -28,8 +28,7 @@ import org.openstreetmap.josm.plugins.ods.matching.OpenDataAddressNodeToBuilding
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
-    private static WFSHost bagHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=1.1.0", 15000);
-    private static WFSHost demolishedBuildingsHost = new WFSHost("Demolished", "http://duinoord.xs4all.nl:8080/geoserver/wfs?VERSION=1.1.0", 15000);
+    private static WFSHost wfsHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=1.1.0", 15000);
     private final OdsModule module;
     private final OpenDataLayerManager layerManager;
     private BagPrimitiveBuilder primitiveBuilder;
@@ -55,7 +54,6 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         this.module = module;
         this.layerManager = module.getOpenDataLayerManager();
         addFeatureDownloader(createPandDownloader());
-        addFeatureDownloader(createDemolishedBuildingsDownloader());
         addFeatureDownloader(createLigplaatsDownloader());
         addFeatureDownloader(createStandplaatsDownloader());
         addFeatureDownloader(createVerblijfsobjectDownloader());
@@ -92,7 +90,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     
     private FeatureDownloader createVerblijfsobjectDownloader() throws InitializationException {
         BagGtAddressNodeBuilder entityBuilder = new BagGtAddressNodeBuilder(module.getCrsUtil());
-        GtFeatureSource featureSource = new GtFeatureSource(bagHost, "bag:verblijfsobject", "identificatie");
+        GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:verblijfsobject", "identificatie");
         featureSource.initialize();
         Query query = new GroupByQuery(featureSource, Arrays.asList("identificatie", "pandidentificatie"));
         GtDataSource dataSource = new GtDataSource(featureSource, query);
@@ -102,22 +100,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     
     private FeatureDownloader createBuildingDownloader(String featureType) throws InvalidQueryException, InitializationException {
         BagGtBuildingBuilder entityBuilder = new BagGtBuildingBuilder(module.getCrsUtil());
-        GtFeatureSource featureSource = new GtFeatureSource(bagHost, featureType, "identificatie");
-        featureSource.initialize();
-        Query query = new GroupByQuery(featureSource, Arrays.asList("identificatie"));
-        GtDataSource dataSource = new GtDataSource(featureSource, query);
-        FeatureDownloader downloader = new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
-            layerManager.getEntityStore(Building.class));
-        // The original BAG import partially normalised the building geometries,
-        // by making the (outer) rings clockwise. For fast comparison of geometries,
-        // I choose to override the default normalisation here.
-        downloader.setNormalisation(Normalisation.CLOCKWISE);
-        return downloader;
-    }
-    
-    private FeatureDownloader createDemolishedBuildingsDownloader() throws InvalidQueryException, InitializationException {
-        BagGtBuildingBuilder entityBuilder = new BagGtBuildingBuilder(module.getCrsUtil());
-        GtFeatureSource featureSource = new GtFeatureSource(demolishedBuildingsHost, "osm_bag:buildingdestroyed_osm", "identificatie");
+        GtFeatureSource featureSource = new GtFeatureSource(wfsHost, featureType, "identificatie");
         featureSource.initialize();
         Query query = new GroupByQuery(featureSource, Arrays.asList("identificatie"));
         GtDataSource dataSource = new GtDataSource(featureSource, query);
