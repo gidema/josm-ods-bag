@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.geotools.data.Query;
 import org.openstreetmap.josm.plugins.ods.InitializationException;
 import org.openstreetmap.josm.plugins.ods.Normalisation;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
@@ -20,8 +19,8 @@ import org.openstreetmap.josm.plugins.ods.entities.enrichment.DistributeAddressN
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureDownloader;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerManager;
-import org.openstreetmap.josm.plugins.ods.geotools.GroupByQuery;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDataSource;
+import org.openstreetmap.josm.plugins.ods.geotools.GtDatasourceBuilder;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDownloader;
 import org.openstreetmap.josm.plugins.ods.geotools.GtFeatureSource;
 import org.openstreetmap.josm.plugins.ods.geotools.InvalidQueryException;
@@ -35,20 +34,6 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     private BagPrimitiveBuilder primitiveBuilder;
 
     LinkedList<AddressNode> unmatchedOpenDataAddressNodes = new LinkedList<>();
-
-//    private final Filter pandFilter;
-//    private final Filter vboFilter;
-//    
-//    { 
-//        try {
-//            pandFilter = CQL.toFilter("status <> 'Niet gerealiseerd pand' AND status <> 'Bouwvergunning verleend' " +
-//                    "AND status <> 'Pand gesloopt' AND status <> 'Pand buiten gebruik'");
-//            vboFilter = CQL.toFilter("status <> 'Verblijfsobject buiten gebruik' AND " +
-//                    "status <> 'Niet gerealiseerd verblijfsobject' AND status <> 'Verblijfsobject ingetrokken'");
-//        } catch (CQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     public BagWfsLayerDownloader(OdsModule module) throws InitializationException {
         super(module);
@@ -98,11 +83,14 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         BagGtAddressNodeBuilder entityBuilder = new BagGtAddressNodeBuilder(module.getCrsUtil());
         GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:verblijfsobject", "identificatie");
         featureSource.initialize();
-        List<String> properties = Arrays.asList("identificatie", "oppervlakte", "status", "gebruiksdoel",
+        GtDatasourceBuilder builder = new GtDatasourceBuilder();
+        builder.setFeatureSource(featureSource);
+        builder.setProperties(Arrays.asList("identificatie", "oppervlakte", "status", "gebruiksdoel",
                 "openbare_ruimte", "huisnummer", "huisletter", "toevoeging", "postcode", "woonplaats",
-                "geometrie", "pandidentificatie");
-        Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie", "pandidentificatie"));
-        GtDataSource dataSource = new GtDataSource(featureSource, query);
+                "geometrie", "pandidentificatie"));
+        builder.setUniqueKey(Arrays.asList("identificatie", "pandidentificatie"));
+//      Query query = new GroupByQuery(featureSource, properties, );
+        GtDataSource dataSource = builder.build();
         return new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
             layerManager.getEntityStore(AddressNode.class));
     }
@@ -111,8 +99,13 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         BagGtBuildingBuilder entityBuilder = new BagGtBuildingBuilder(module.getCrsUtil());
         GtFeatureSource featureSource = new GtFeatureSource(wfsHost, featureType, "identificatie");
         featureSource.initialize();
-        Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie"));
-        GtDataSource dataSource = new GtDataSource(featureSource, query);
+        GtDatasourceBuilder builder = new GtDatasourceBuilder();
+        builder.setFeatureSource(featureSource);
+        builder.setProperties(properties);
+        builder.setUniqueKey("identificatie");
+
+ //       Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie"));
+        GtDataSource dataSource = builder.build();
         FeatureDownloader downloader = new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
             layerManager.getEntityStore(Building.class));
         // The original BAG import partially normalised the building geometries,
