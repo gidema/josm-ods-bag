@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>josm-ods-bag</groupId>
   <artifactId>josm-ods-bag</artifactId>
-  <version>0.6.11</version>
+  <version>0.6.12</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -26,7 +26,7 @@
     <dependency>
       <groupId>josm-plugins</groupId>
       <artifactId>opendataservices</artifactId>
-      <version>0.6.11</version>
+      <version>0.6.12</version>
     </dependency>
   </dependencies>
 </project>
