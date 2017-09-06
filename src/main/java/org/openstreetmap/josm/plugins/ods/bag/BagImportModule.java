@@ -31,6 +31,7 @@ import org.openstreetmap.josm.plugins.ods.gui.OdsUpdateAction;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Logging;
 
 public class BagImportModule extends OdsModule {
     // Boundary of the Netherlands
@@ -139,8 +140,8 @@ public class BagImportModule extends OdsModule {
             String user = userInfo.getDisplayName();
             String suffix = "_BAG";
             return user.endsWith(suffix);
-        } catch (@SuppressWarnings("unused") OsmTransferException e1) {
-            Main.warn(tr("Failed to retrieve OSM user details from the server."));
+        } catch (OsmTransferException e1) {
+            Logging.warn(tr("Failed to retrieve OSM user details from the server."));
             return false;
         }
     }

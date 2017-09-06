@@ -10,13 +10,11 @@ import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerManager;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.osm.BuildingAligner;
-import org.openstreetmap.josm.plugins.ods.osm.BuildingSegmentSimplifier;
 
 public class BagPrimitiveBuilder {
     private OdsModule module;
     private EntityPrimitiveBuilder<AddressNode> addressNodePrimitiveBuilder;
     private EntityPrimitiveBuilder<Building> buildingPrimitiveBuilder;
-    private BuildingSegmentSimplifier segmentSimplifier;
     private BuildingAligner buildingAligner;
 
     public BagPrimitiveBuilder(OdsModule module) {
@@ -25,7 +23,6 @@ public class BagPrimitiveBuilder {
         buildingPrimitiveBuilder = new BagBuildingEntityPrimitiveBuilder(odLayerManager);
         addressNodePrimitiveBuilder = new BagAddressNodeEntityPrimitiveBuilder(odLayerManager);
         // TODO pass tolerance as a configurable parameter at a higher level.
-        segmentSimplifier = new BuildingSegmentSimplifier(1e-5);
         buildingAligner = new BuildingAligner(module, odLayerManager.getEntityStore(Building.class));
     }
     

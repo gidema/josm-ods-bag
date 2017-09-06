@@ -12,6 +12,7 @@ import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 
 public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
 
+    @SuppressWarnings("unused")
     private GeoUtil geoUtil;
     private OsmCityStore cityStore;
     
