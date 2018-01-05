@@ -1,5 +1,10 @@
 See also the release notes for the opendataservices plug-in.
 
+Version 0.6.14
+==============
+- Fixed incompatibilities with Josm versions >= 13265
+- See release notes of opendata services plug-in.  
+
 Version 0.6.9
 =============
 - See release notes of opendata services plug-in.  
