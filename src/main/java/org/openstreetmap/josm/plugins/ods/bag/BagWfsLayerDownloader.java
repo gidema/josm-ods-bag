@@ -28,7 +28,7 @@ import org.openstreetmap.josm.plugins.ods.matching.OpenDataAddressNodeToBuilding
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
-    private static WFSHost wfsHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=1.1.0", 1000);
+    private static WFSHost wfsHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=2.0.0", 1000, 1000, 60000);
     private final OdsModule module;
     private final OpenDataLayerManager layerManager;
     private BagPrimitiveBuilder primitiveBuilder;
@@ -89,6 +89,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
                 "openbare_ruimte", "huisnummer", "huisletter", "toevoeging", "postcode", "woonplaats",
                 "geometrie", "pandidentificatie"));
         builder.setUniqueKey(Arrays.asList("identificatie", "pandidentificatie"));
+        builder.setPageSize(1000);
 //      Query query = new GroupByQuery(featureSource, properties, );
         GtDataSource dataSource = builder.build();
         return new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder, 
@@ -103,6 +104,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         builder.setFeatureSource(featureSource);
         builder.setProperties(properties);
         builder.setUniqueKey("identificatie");
+        builder.setPageSize(1000);
 
  //       Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie"));
         GtDataSource dataSource = builder.build();
