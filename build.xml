@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="ods-bag"  default="dist" basedir="." 
   xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+  <tstamp>
+    <format property="plugin.date" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" />
+  </tstamp>
   <artifact:pom id="mypom" file="pom.xml" />
 
   <!-- enter the SVN commit message -->
   <property name="commit.message" value="Commit message"/>
   <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-  <property name="plugin.main.version" value="13265"/>
+  <property name="plugin.main.version" value="13710"/>
   <property name="plugin.class" value="org.openstreetmap.josm.plugins.ods.bag.BagImportPlugin"/>
   <property name="plugin.version" value="${mypom.version}"/>
   <property name="plugin.build.dir" value="build" />
-	<property name="plugin.src.dir" value="src" />
-	<!-- this is the directory where the plugin jar is copied to -->
+  <property name="plugin.src.dir" value="src" />
+  <!-- this is the directory where the plugin jar is copied to -->
   <property name="maven.target.dir" value="${mypom.build.directory}" />
-	<property name="plugin.dist.dir" value="dist" />
-	<property name="ant.build.javac.target" value="1.8" />
-	<property name="ant.build.javac.source" value="1.8" />
-	<property name="plugin.jar" value="${plugin.dist.dir}/${ant.project.name}.jar" />
+  <property name="plugin.dist.dir" value="dist" />
+  <property name="ant.build.javac.target" value="1.8" />
+  <property name="ant.build.javac.source" value="1.8" />
+  <property name="plugin.jar" value="${plugin.dist.dir}/${ant.project.name}.jar" />
 
 	<!--
     **********************************************************
@@ -44,7 +47,7 @@
       <manifest>
         <attribute name="Author" value="Gertjan Idema &lt;mail@gertjanidema.nl&gt;"/>
         <attribute name="Plugin-Class" value="${plugin.class}"/>
-        <attribute name="Plugin-Date" value="${time}"/>
+        <attribute name="Plugin-Date" value="${plugin.date}"/>
         <attribute name="Plugin-Description" value="Import buildings and addresses in The Netherlands from the BAG WFS"/>
         <attribute name="Plugin-Icon" value="images/wfs.png"/>
         <!--<attribute name="Plugin-Link" value="http://fixme.com"/>-->
