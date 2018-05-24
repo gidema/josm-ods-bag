@@ -13,9 +13,9 @@ import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
 
     @SuppressWarnings("unused")
-    private GeoUtil geoUtil;
-    private OsmCityStore cityStore;
-    
+    private final GeoUtil geoUtil;
+    private final OsmCityStore cityStore;
+
     public BagOsmCityBuilder(GeoUtil geoUtil, OsmCityStore store) {
         super();
         this.geoUtil = geoUtil;
@@ -28,10 +28,15 @@ public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
     }
 
     @Override
+    public boolean canHandle(OsmPrimitive primitive) {
+        return City.isCity(primitive);
+    }
+
+    @Override
     public void buildOsmEntity(OsmPrimitive primitive) {
         if (primitive.getType() == OsmPrimitiveType.RELATION &&
-              "administrative".equals(primitive.get("boundary")) &&
-              "8".equals(primitive.get("admin_level"))) {       
+                "administrative".equals(primitive.get("boundary")) &&
+                "8".equals(primitive.get("admin_level"))) {
             normalizeKeys(primitive);
             BagCity city = new BagCity();
             Map<String, String> tags = primitive.getKeys();
@@ -41,13 +46,13 @@ public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
         }
         return;
     }
-    
+
     public static void normalizeKeys(OsmPrimitive primitive) {
         if ("multipolygon".equals(primitive.get("type"))) {
             primitive.put("type", "boundary");
         }
     }
-    
+
     private static void parseKeys(BagCity city, Map<String, String> tags) {
         tags.remove("boundary");
         tags.remove("admin_level");
@@ -60,5 +65,5 @@ public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
         catch (NumberFormatException e) {
             // Do nothing, but keep the invalid tag
         }
-    }    
+    }
 }

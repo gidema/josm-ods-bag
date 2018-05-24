@@ -10,15 +10,14 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.actual.MutableAddress;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.AddressNodeEntityType;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
 import com.vividsolutions.jts.geom.Point;
 
 public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<AddressNode> {
-    
+
     public BagOsmAddressNodeBuilder(OdsModule module) {
-        super(module, AddressNodeEntityType.getInstance());
+        super(module, AddressNode.class);
     }
 
     @Override
@@ -26,10 +25,14 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<AddressNo
         return AddressNode.class;
     }
 
+    @Override
+    public boolean canHandle(OsmPrimitive primitive) {
+        return AddressNode.IsAddressNode(primitive);
+    }
 
     @Override
     public void buildOsmEntity(OsmPrimitive primitive) {
-        if (getEntityType().recognize(primitive)) {
+        if (canHandle(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeKeys(primitive);
                 MutableAddress address = new BagAddress();
@@ -47,15 +50,15 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<AddressNo
         }
         return;
     }
-    
+
     public static void normalizeKeys(OsmPrimitive primitive) {
         BagOsmEntityBuilder.normalizeTags(primitive);
     }
-    
+
     private static void parseKeys(BagAddressNode addressNode, Map<String, String> tags) {
-        BagOsmEntityBuilder.parseKeys(addressNode, tags); 
+        BagOsmEntityBuilder.parseKeys(addressNode, tags);
     }
-    
+
     private Point buildGeometry(OsmPrimitive primitive) {
         if (primitive.getDisplayType() == OsmPrimitiveType.NODE) {
             return getGeoUtil().toPoint((Node) primitive);
