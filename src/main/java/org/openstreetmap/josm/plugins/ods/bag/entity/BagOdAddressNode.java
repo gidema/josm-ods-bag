@@ -11,14 +11,6 @@ public class BagOdAddressNode extends AbstractOdAddressNode {
         return (BagOdAddress) super.getAddress();
     }
 
-    @Override
-    public boolean isIncomplete() {
-        if (getBuilding() != null) {
-            return getBuilding().isIncomplete();
-        }
-        return super.isIncomplete();
-    }
-
     public String getHuisLetter() {
         return getAddress().getHuisLetter();
     }

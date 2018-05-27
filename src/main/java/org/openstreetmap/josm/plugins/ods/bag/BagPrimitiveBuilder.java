@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag;
 
+import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Complete;
+
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagAddressNodeEntityPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagBuildingEntityPrimitiveBuilder;
@@ -33,11 +35,11 @@ public class BagPrimitiveBuilder {
                 .getEntityStore(OdBuilding.class);
         addressNodeStore.stream()
         .filter(addressNode->addressNode.getPrimitive() == null)
-        .filter(addressNode->!addressNode.isIncomplete())
+        .filter(addressNode->addressNode.getCompleteness() == Complete)
         .forEach(addressNodePrimitiveBuilder::createPrimitive);
         buildingStore.stream()
         .filter(building->building.getPrimitive() == null)
-        .filter(building->!building.isIncomplete())
+        .filter(building->building.getCompleteness() == Complete)
         .forEach(buildingPrimitiveBuilder::createPrimitive);
         //        buildingStore.stream().filter(building->building.getDownloadResponse() == response)
         //            .forEach(segmentSimplifier::simplify);

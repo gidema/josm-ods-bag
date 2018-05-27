@@ -14,12 +14,11 @@ import org.openstreetmap.josm.plugins.ods.bag.gt.build.BuildingTypeEnricher;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OpenDataBuildingStore;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.BuildingCompletenessEnricher;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.DistributeAddressNodes;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureDownloader;
-import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDataSource;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDatasourceBuilder;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDownloader;
@@ -131,7 +130,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
 
     private void checkBuildingCompleteness() {
         OpenDataBuildingStore buildingStore = (OpenDataBuildingStore) layerManager.getEntityStore(OdBuilding.class);
-        Consumer<Building> enricher = new BuildingCompletenessEnricher(buildingStore);
+        Consumer<OdBuilding> enricher = new BuildingCompletenessEnricher(buildingStore);
         buildingStore.forEach(enricher);
     }
 

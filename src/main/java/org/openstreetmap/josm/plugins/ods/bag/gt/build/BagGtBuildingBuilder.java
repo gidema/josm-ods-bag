@@ -22,9 +22,7 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<OdBuilding> {
         super.parse(feature, building, response);
         String type = feature.getName().getLocalPart();
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");
-        if (bouwjaar != null) {
-            building.setStartDate(bouwjaar.toString());
-        }
+        building.setStartYear(bouwjaar);
         building.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
         if (type.equals("bag:pand")) {
             building.setBuildingType(BuildingType.UNCLASSIFIED);

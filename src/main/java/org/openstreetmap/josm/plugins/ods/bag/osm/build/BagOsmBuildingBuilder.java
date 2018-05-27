@@ -12,7 +12,6 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.BaseOsmBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -25,7 +24,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding>
 
     @Override
     public boolean canHandle(OsmPrimitive primitive) {
-        return Building.IsBuilding(primitive);
+        return OsmBuilding.IsBuilding(primitive);
     }
 
     @Override

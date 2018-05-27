@@ -53,7 +53,7 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<OdAddressNode> {
     private static EntityStatus parseStatus(String status) {
         switch (status) {
         case "Verblijfsobject gevormd":
-            return EntityStatus.CONSTRUCTION;
+            return EntityStatus.PLANNED;
         case "Verblijfsobject in gebruik":
         case "Verblijfsobject buiten gebruik":
         case "Verblijfsobject in gebruik (niet ingemeten)":

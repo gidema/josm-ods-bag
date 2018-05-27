@@ -3,7 +3,6 @@ package org.openstreetmap.josm.plugins.ods.bag.entity;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
 
 public abstract class BagEntityImpl extends AbstractOdEntity {
-    private boolean incomplete;
     private Long identificatie;
 
     //    public void setInternal(boolean internal) {
@@ -18,12 +17,6 @@ public abstract class BagEntityImpl extends AbstractOdEntity {
     //    public boolean isInternal() {
     //        return internal;
     //    }
-
-    @Override
-    public boolean isIncomplete() {
-        return incomplete;
-    }
-
 
     //    @Override
     //    public boolean hasReferenceId() {

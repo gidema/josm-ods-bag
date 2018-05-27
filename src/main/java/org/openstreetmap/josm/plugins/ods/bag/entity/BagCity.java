@@ -53,11 +53,6 @@ public class BagCity extends AbstractOdCity {
     }
 
     @Override
-    public boolean isIncomplete() {
-        return false;
-    }
-
-    @Override
     public Match<OsmCity, OdCity> getMatch() {
         return null;
     }

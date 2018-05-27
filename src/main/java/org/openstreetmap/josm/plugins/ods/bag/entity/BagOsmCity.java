@@ -1,5 +1,10 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
+import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Complete;
+import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Incomplete;
+
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.plugins.ods.domains.places.impl.BaseOsmCity;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -50,7 +55,18 @@ public class BagOsmCity extends BaseOsmCity {
     }
 
     @Override
-    public boolean isIncomplete() {
-        return false;
+    public Completeness getCompleteness() {
+        OsmPrimitive osm = getPrimitive();
+        switch (osm.getDisplayType()) {
+        case CLOSEDWAY:
+            return Complete;
+        case MULTIPOLYGON:
+            if (((Relation)osm).hasIncompleteMembers()) {
+                return Incomplete;
+            }
+            return Complete;
+        default:
+            return Incomplete;
+        }
     }
 }
