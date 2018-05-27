@@ -7,20 +7,20 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOsmAddress;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmBuilding;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.BaseOsmBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
-import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
+public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding> {
 
     public BagOsmBuildingBuilder(OdsModule module) {
-        super(module, Building.class);
+        super(module, OsmBuilding.class);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
         if (canHandle(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeTags(primitive);
-                BagBuilding building = new BagBuilding();
+                BaseOsmBuilding building = new BaseOsmBuilding();
                 Map<String, String> tags = primitive.getKeys();
                 parseKeys(building, tags);
                 building.setOtherTags(tags);
@@ -55,7 +55,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
         }
     }
 
-    private static void parseKeys(BuildingImpl building, Map<String, String> tags) {
+    private static void parseKeys(BaseOsmBuilding building, Map<String, String> tags) {
         BagOsmEntityBuilder.parseKeys(building, tags);
         String type = tags.remove("building");
         if (type == null) {
@@ -72,7 +72,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<Building> {
         building.setBuildingType(getBuildingType(type, tags));
         building.setStartDate(tags.remove("start_date"));
         if (tags.containsKey("addr:housenumber")) {
-            BagAddress address = new BagAddress();
+            BagOsmAddress address = new BagOsmAddress();
             BagOsmAddressEntityBuilder.parseKeys(address, tags);
             building.setAddress(address);
         }

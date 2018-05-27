@@ -1,22 +1,22 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.BuildingImpl;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.AbstractOdBuilding;
 
-public class BagBuilding extends BuildingImpl {
+public class BagOdBuilding extends AbstractOdBuilding {
     private Long aantalVerblijfsobjecten;
-    private BagAddress bagAddress;
-    
-    public void setAddress(BagAddress address) {
+    private BagOdAddress bagOdAddress;
+
+    public void setAddress(BagOdAddress address) {
         super.setAddress(address);
-        this.bagAddress = address;
+        this.bagOdAddress = address;
     }
-    
+
     @Override
-    public BagAddress getAddress() {
-        return bagAddress;
+    public BagOdAddress getAddress() {
+        return bagOdAddress;
     }
-    
+
     public void setAantalVerblijfsobjecten(Long aantalVerblijfsobjecten) {
         this.aantalVerblijfsobjecten = aantalVerblijfsobjecten;
     }
@@ -28,9 +28,9 @@ public class BagBuilding extends BuildingImpl {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Building ").append(getReferenceId());
+        sb.append("OdBuilding ").append(getReferenceId());
         sb.append(" (").append(getStatus()).append(")");
-        for (AddressNode a :getAddressNodes()) {
+        for (OdAddressNode a :getAddressNodes()) {
             sb.append("\n").append(a.toString());
         }
         return sb.toString();

@@ -4,13 +4,13 @@ import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagCity;
-import org.openstreetmap.josm.plugins.ods.entities.actual.City;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.osm.OsmCityStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOsmCity;
+import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
+import org.openstreetmap.josm.plugins.ods.domains.places.impl.OsmCityStore;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 
-public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
+public class BagOsmCityBuilder implements OsmEntityBuilder<OsmCity> {
 
     @SuppressWarnings("unused")
     private final GeoUtil geoUtil;
@@ -23,13 +23,13 @@ public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
     }
 
     @Override
-    public Class<City> getEntityClass() {
-        return City.class;
+    public Class<OsmCity> getEntityClass() {
+        return OsmCity.class;
     }
 
     @Override
     public boolean canHandle(OsmPrimitive primitive) {
-        return City.isCity(primitive);
+        return OsmCity.isCity(primitive);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
                 "administrative".equals(primitive.get("boundary")) &&
                 "8".equals(primitive.get("admin_level"))) {
             normalizeKeys(primitive);
-            BagCity city = new BagCity();
+            BagOsmCity city = new BagOsmCity();
             Map<String, String> tags = primitive.getKeys();
             parseKeys(city, tags);
             city.setOtherTags(tags);
@@ -53,7 +53,7 @@ public class BagOsmCityBuilder implements OsmEntityBuilder<City> {
         }
     }
 
-    private static void parseKeys(BagCity city, Map<String, String> tags) {
+    private static void parseKeys(BagOsmCity city, Map<String, String> tags) {
         tags.remove("boundary");
         tags.remove("admin_level");
         tags.remove("type");

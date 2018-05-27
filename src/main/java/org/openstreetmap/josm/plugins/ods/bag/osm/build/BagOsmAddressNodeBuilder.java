@@ -6,28 +6,28 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.actual.MutableAddress;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOsmAddress;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmAddress;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmAddressNode;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.BaseOsmAddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
 import com.vividsolutions.jts.geom.Point;
 
-public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<AddressNode> {
+public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<OsmAddressNode> {
 
     public BagOsmAddressNodeBuilder(OdsModule module) {
-        super(module, AddressNode.class);
+        super(module, OsmAddressNode.class);
     }
 
     @Override
-    public Class<AddressNode> getEntityClass() {
-        return AddressNode.class;
+    public Class<OsmAddressNode> getEntityClass() {
+        return OsmAddressNode.class;
     }
 
     @Override
     public boolean canHandle(OsmPrimitive primitive) {
-        return AddressNode.IsAddressNode(primitive);
+        return OsmAddressNode.IsAddressNode(primitive);
     }
 
     @Override
@@ -35,8 +35,8 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<AddressNo
         if (canHandle(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeKeys(primitive);
-                MutableAddress address = new BagAddress();
-                BagAddressNode addressNode = new BagAddressNode();
+                OsmAddress address = new BagOsmAddress();
+                BaseOsmAddressNode addressNode = new BaseOsmAddressNode();
                 addressNode.setPrimaryId(primitive.getUniqueId());
                 addressNode.setPrimitive(primitive);
                 addressNode.setAddress(address);
@@ -55,7 +55,7 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<AddressNo
         BagOsmEntityBuilder.normalizeTags(primitive);
     }
 
-    private static void parseKeys(BagAddressNode addressNode, Map<String, String> tags) {
+    private static void parseKeys(BaseOsmAddressNode addressNode, Map<String, String> tags) {
         BagOsmEntityBuilder.parseKeys(addressNode, tags);
     }
 

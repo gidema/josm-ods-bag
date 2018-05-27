@@ -1,10 +1,8 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.AddressImpl;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.AbstractOdAddress;
 
-public class BagAddress extends AddressImpl {
+public class BagOdAddress extends AbstractOdAddress {
     private String huisletter;
     private String huisnummertoevoeging;
 
@@ -23,7 +21,7 @@ public class BagAddress extends AddressImpl {
     public String getHuisNummerToevoeging() {
         return huisnummertoevoeging;
     }
-    
+
     @Override
     public String formatHouseNumber() {
         StringBuilder sb = new StringBuilder(10);
@@ -35,16 +33,5 @@ public class BagAddress extends AddressImpl {
             sb.append('-').append(getHuisNummerToevoeging());
         }
         return sb.toString();
-    }
-
-    @Override
-    public int compareTo(Address a) {
-        int result = ObjectUtils.compare(getCityName(), a.getCityName());
-        if (result != 0) return result;
-        result = ObjectUtils.compare(getPostcode(), a.getPostcode());
-        if (result != 0) return result;
-        result = ObjectUtils.compare(getStreetName(), a.getStreetName());
-        if (result != 0) return result;
-        return getFullHouseNumber().compareTo(a.getFullHouseNumber());
     }
 }

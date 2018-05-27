@@ -2,19 +2,19 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
 import java.util.Map;
 
-import org.openstreetmap.josm.plugins.ods.LayerManager;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 
-public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<Building> {
+public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<OdBuilding> {
 
-    public BagBuildingEntityPrimitiveBuilder(LayerManager dataLayer) {
+    public BagBuildingEntityPrimitiveBuilder(OdLayerManager dataLayer) {
         super(dataLayer);
     }
 
     @Override
-    public void createPrimitive(Building building) {
+    public void createPrimitive(OdBuilding building) {
         // Ignore buildings with status "Bouwvergunning verleend"
         // Make an exception for buildings that already exist in OSM. In that case, the building permit is for reconstruction
         if ("Bouwvergunning verleend".equals(building.getStatus())
@@ -26,8 +26,8 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
 
 
     @Override
-    protected void buildTags(Building building, Map<String, String> tags) {
-        Address address = building.getAddress();
+    protected void buildTags(OdBuilding building, Map<String, String> tags) {
+        OdAddress address = building.getAddress();
         if (address != null) {
             createAddressTags(address, tags);
         }
@@ -80,7 +80,7 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
             type = "yes";
             break;
         }
-        
+
         if (building.getStatus().equals(EntityStatus.CONSTRUCTION) ||
                 building.getStatus().equals(EntityStatus.PLANNED)) {
             tags.put("building", "construction");

@@ -15,13 +15,15 @@ import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmAddressNodeBuilder
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmBuildingBuilder;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
-import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataAddressNodeStore;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.opendata.OpenDataBuildingStore;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.osm.OsmAddressNodeStore;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.osm.OsmBuildingStore;
-import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerManager;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmAddressNode;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmBuilding;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OpenDataAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OpenDataBuildingStore;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OsmAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OsmBuildingStore;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
 import org.openstreetmap.josm.plugins.ods.gui.OdsDownloadAction;
 import org.openstreetmap.josm.plugins.ods.gui.OdsResetAction;
@@ -58,16 +60,16 @@ public class BagImportModule extends OdsModule {
     @Override
     protected OsmLayerManager createOsmLayerManager() {
         OsmLayerManager manager = new OsmLayerManager(this, "BAG OSM");
-        manager.addEntityStore(Building.class, new OsmBuildingStore());
-        manager.addEntityStore(AddressNode.class, new OsmAddressNodeStore());
+        manager.addEntityStore(OsmBuilding.class, new OsmBuildingStore());
+        manager.addEntityStore(OsmAddressNode.class, new OsmAddressNodeStore());
         return manager;
     }
 
     @Override
-    protected OpenDataLayerManager createOpenDataLayerManager() {
-        OpenDataLayerManager manager = new OpenDataLayerManager("BAG ODS");
-        manager.addEntityStore(Building.class, new OpenDataBuildingStore());
-        manager.addEntityStore(AddressNode.class, new OpenDataAddressNodeStore());
+    protected OdLayerManager createOpenDataLayerManager() {
+        OdLayerManager manager = new OdLayerManager("BAG ODS");
+        manager.addEntityStore(OdBuilding.class, new OpenDataBuildingStore());
+        manager.addEntityStore(OdAddressNode.class, new OpenDataAddressNodeStore());
         return manager;
     }
 

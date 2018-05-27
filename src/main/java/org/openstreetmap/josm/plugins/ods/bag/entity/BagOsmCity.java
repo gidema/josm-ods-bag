@@ -1,15 +1,12 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-import org.openstreetmap.josm.plugins.ods.domains.places.OdCity;
-import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
-import org.openstreetmap.josm.plugins.ods.domains.places.impl.AbstractOdCity;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
+import org.openstreetmap.josm.plugins.ods.domains.places.impl.BaseOsmCity;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
-public class BagCity extends AbstractOdCity {
+public class BagOsmCity extends BaseOsmCity {
     private String name;
     private MultiPolygon multiPolygon;
     private long identificatie;
@@ -55,10 +52,5 @@ public class BagCity extends AbstractOdCity {
     @Override
     public boolean isIncomplete() {
         return false;
-    }
-
-    @Override
-    public Match<OsmCity, OdCity> getMatch() {
-        return null;
     }
 }

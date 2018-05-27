@@ -7,29 +7,27 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.ods.entities.Entity;
+import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
+import org.openstreetmap.josm.plugins.ods.entities.OdEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
-import org.openstreetmap.josm.plugins.ods.entities.opendata.GeotoolsEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public abstract class BagGtEntityBuilder<T extends Entity, T2 extends T> implements GeotoolsEntityBuilder<T> {
+public abstract class BagGtEntityBuilder<T extends OdEntity> implements OdEntityBuilder<T> {
     private final CRSUtil crsUtil;
-    
+
     public BagGtEntityBuilder(CRSUtil crsUtil) {
         super();
         this.crsUtil = crsUtil;
     }
 
-    @Override
+    @SuppressWarnings("static-method")
     public Object getReferenceId(SimpleFeature feature) {
         return FeatureUtil.getLong(feature, "identificatie");
     }
 
-    @Override
-    public T2 build(SimpleFeature feature, DownloadResponse response) {
-        T2 entity = newInstance();
+    protected void parse(SimpleFeature feature, OdEntity entity, DownloadResponse response) {
         entity.setDownloadResponse(response);
         entity.setReferenceId(getReferenceId(feature));
         entity.setPrimaryId(feature.getID());
@@ -46,14 +44,11 @@ public abstract class BagGtEntityBuilder<T extends Entity, T2 extends T> impleme
         } catch (CRSException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return null;
         }
-        return entity;
     }
 
+    @SuppressWarnings("static-method")
     protected Geometry getGeometry(SimpleFeature feature) {
         return (Geometry) feature.getDefaultGeometry();
     }
-
-    protected abstract T2 newInstance();
 }

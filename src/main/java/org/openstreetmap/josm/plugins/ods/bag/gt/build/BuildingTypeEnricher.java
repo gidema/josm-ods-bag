@@ -8,31 +8,31 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BuildingTypeEnricher.Statistics.Stat;
-import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
-import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 
-public class BuildingTypeEnricher implements Consumer<Building> {
+public class BuildingTypeEnricher implements Consumer<OdBuilding> {
     private final static List<String> trafo =
             Arrays.asList("TRAF","TRAN","TRFO","TRNS");
     private final static List<String> garage =
             Arrays.asList("GAR","GRG");
-    
+
     public BuildingTypeEnricher() {
         super();
     }
 
     @Override
-    public void accept(Building building) {
+    public void accept(OdBuilding building) {
         if (BuildingType.HOUSEBOAT.equals(building.getBuildingType()) ||
                 BuildingType.STATIC_CARAVAN.equals(building.getBuildingType())) {
             return;
         }
         BuildingType type = BuildingType.UNCLASSIFIED;
         if (building.getAddressNodes().size() == 1) {
-            type = getBuildingType((BagAddressNode)building.getAddressNodes().get(0));
+            type = getBuildingType((BagOdAddressNode)building.getAddressNodes().get(0));
         }
         else {
             type = getBuildingType(building.getAddressNodes());
@@ -40,11 +40,11 @@ public class BuildingTypeEnricher implements Consumer<Building> {
         building.setBuildingType(type);
     }
 
-    private BuildingType getBuildingType(List<AddressNode> addresses) {
+    private BuildingType getBuildingType(List<OdAddressNode> addresses) {
         Statistics stats = new Statistics();
-        Iterator<AddressNode> it = addresses.iterator();
+        Iterator<OdAddressNode> it = addresses.iterator();
         while (it.hasNext()) {
-            BagAddressNode addressNode = (BagAddressNode) it.next();
+            BagOdAddressNode addressNode = (BagOdAddressNode) it.next();
             BuildingType type = getBuildingType(addressNode);
             stats.add(type, addressNode.getArea());
         }
@@ -67,7 +67,7 @@ public class BuildingTypeEnricher implements Consumer<Building> {
         return type;
     }
 
-    private static BuildingType getBuildingType(BagAddressNode addressNode) {
+    private static BuildingType getBuildingType(BagOdAddressNode addressNode) {
         String extra = addressNode.getHuisNummerToevoeging();
         if (extra != null) {
             extra = extra.toUpperCase();
@@ -91,15 +91,15 @@ public class BuildingTypeEnricher implements Consumer<Building> {
             return BuildingType.OFFICE;
         case "celfunctie":
             return BuildingType.PRISON;
-        default: 
+        default:
             return BuildingType.UNCLASSIFIED;
         }
     }
 
     class Statistics {
-        private Map<BuildingType, Row> rows = new HashMap<>();
+        private final Map<BuildingType, Row> rows = new HashMap<>();
         private double totalArea = 0.0;
-        
+
         public void add(BuildingType type, double area) {
             Row row = rows.get(type);
             if (row == null) {
@@ -109,7 +109,7 @@ public class BuildingTypeEnricher implements Consumer<Building> {
             row.add(area);
             totalArea += area;
         }
-        
+
         public Stat getLargest() {
             Stat stat = new Stat();
             for (Entry<BuildingType, Row> entry : rows.entrySet()) {
@@ -117,24 +117,24 @@ public class BuildingTypeEnricher implements Consumer<Building> {
                 if (row.area > stat.area) {
                     stat.type = entry.getKey();
                     stat.area = row.area;
-                    stat.count = row.count; 
+                    stat.count = row.count;
                 }
             }
             stat.percentage = stat.area/totalArea;
             return stat;
         }
-        
+
         class Stat {
             BuildingType type;
             int count = 0;
             double area = 0.0;
             double percentage = 0.0;
         }
-        
+
         class Row {
             int count = 0;
             double area = 0;
-            
+
             public void add(double a) {
                 this.area += a;
                 this.count++;

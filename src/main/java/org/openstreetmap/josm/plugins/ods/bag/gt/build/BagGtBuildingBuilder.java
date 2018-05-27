@@ -1,29 +1,25 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddress;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Building;
-import org.openstreetmap.josm.plugins.ods.entities.actual.BuildingType;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
-public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuilding> {
-    
+public class BagGtBuildingBuilder extends BagGtEntityBuilder<OdBuilding> {
+
     public BagGtBuildingBuilder(CRSUtil crsUtil) {
         super(crsUtil);
     }
 
     @Override
-    protected BagBuilding newInstance() {
-        return new BagBuilding();
-    }
-
-    @Override
-    public BagBuilding build(SimpleFeature feature, DownloadResponse response) {
-        BagBuilding building = super.build(feature, response);
+    public OdBuilding build(SimpleFeature feature, DownloadResponse response) {
+        BagOdBuilding building = new BagOdBuilding();
+        super.parse(feature, building, response);
         String type = feature.getName().getLocalPart();
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");
         if (bouwjaar != null) {
@@ -35,7 +31,7 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<Building, BagBuildi
             building.setAantalVerblijfsobjecten(FeatureUtil.getLong(feature, "aantal_verblijfsobjecten"));
         }
         else {
-            BagAddress address = new BagAddress();
+            BagOdAddress address = new BagOdAddress();
             address.setHouseNumber(FeatureUtil.getInteger(feature, "huisnummer"));
             address.setHuisletter(FeatureUtil.getString(feature, "huisletter"));
             address.setHuisnummerToevoeging(FeatureUtil.getString(feature, "toevoeging"));

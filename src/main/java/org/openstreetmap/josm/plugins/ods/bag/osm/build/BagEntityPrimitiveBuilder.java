@@ -4,19 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.plugins.ods.LayerManager;
-import org.openstreetmap.josm.plugins.ods.entities.Entity;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.entities.EntityPrimitiveBuilder;
-import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
+import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 import org.openstreetmap.josm.plugins.ods.osm.DefaultPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.osm.OsmPrimitiveFactory;
 
-public abstract class BagEntityPrimitiveBuilder<T extends Entity>
-        implements EntityPrimitiveBuilder<T> {
-    private final LayerManager layerManager;
+public abstract class BagEntityPrimitiveBuilder<T extends OdEntity>
+implements EntityPrimitiveBuilder<T> {
+    private final OdLayerManager layerManager;
     private final OsmPrimitiveFactory primitiveBuilder;
 
-    public BagEntityPrimitiveBuilder(LayerManager layerManager) {
+    public BagEntityPrimitiveBuilder(OdLayerManager layerManager) {
         this.layerManager = layerManager;
         this.primitiveBuilder = new DefaultPrimitiveBuilder(layerManager);
     }
@@ -33,19 +33,19 @@ public abstract class BagEntityPrimitiveBuilder<T extends Entity>
     }
 
     protected abstract void buildTags(T entity, Map<String, String> tags);
-    
-    public static void createAddressTags(Address address, Map<String, String> tags) {
+
+    public static void createAddressTags(OdAddress address, Map<String, String> tags) {
         if (address.getStreetName() != null) {
-          tags.put("addr:street", address.getStreetName());
+            tags.put("addr:street", address.getStreetName());
         }
         if (address.getFullHouseNumber() != null) {
             tags.put("addr:housenumber", address.getFullHouseNumber());
         }
         if (address.getPostcode() != null) {
-          tags.put("addr:postcode", address.getPostcode());
+            tags.put("addr:postcode", address.getPostcode());
         }
         if (address.getCityName() != null) {
-          tags.put("addr:city", address.getCityName());
+            tags.put("addr:city", address.getCityName());
         }
     }
 

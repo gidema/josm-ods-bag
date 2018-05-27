@@ -3,16 +3,16 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.plugins.ods.entities.AbstractEntity;
+import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 
 public abstract class BagOsmEntityBuilder {
-    
+
     /*
      * Earlier versions of the BAG import plug-in and some other small BAG
      * imports have introduced tags that are no longer used.
      * This method translates these tags into their current equivalent and
      * remove the old tags.
-     */   
+     */
     public static void normalizeTags(OsmPrimitive primitive) {
         String source = primitive.get("source");
         if (source != null && source.toUpperCase().startsWith("BAG")) {
@@ -63,13 +63,13 @@ public abstract class BagOsmEntityBuilder {
                 value.startsWith("9999LIG") || value.startsWith("9999STA")) {
             StringBuilder sb = new StringBuilder(10);
             sb.append(value.substring(11, 15)).append("-")
-                    .append(value.substring(9, 11)).append("-")
-                    .append(value.substring(7, 9));
+            .append(value.substring(9, 11)).append("-")
+            .append(value.substring(7, 9));
             primitive.put("source:date", sb.toString());
         }
     }
-    
-    public static void parseKeys(AbstractEntity entity, Map<String, String> tags) {
+
+    public static void parseKeys(OsmEntity entity, Map<String, String> tags) {
         entity.setReferenceId(getReferenceId(tags.remove("ref:bag")));
         entity.setSource(tags.remove("source"));
         String sourceDate = tags.remove("source:date");
@@ -77,7 +77,7 @@ public abstract class BagOsmEntityBuilder {
             entity.setSourceDate(sourceDate);
         }
     }
-    
+
     private static Long getReferenceId(String s) {
         if (s == null || s.length() == 0) return null;
         int i=0;

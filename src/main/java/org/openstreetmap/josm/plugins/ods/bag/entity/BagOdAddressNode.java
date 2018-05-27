@@ -1,17 +1,16 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-import org.openstreetmap.josm.plugins.ods.entities.actual.Address;
-import org.openstreetmap.josm.plugins.ods.entities.actual.impl.AddressNodeImpl;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.AbstractOdAddressNode;
 
-public class BagAddressNode extends AddressNodeImpl {
+public class BagOdAddressNode extends AbstractOdAddressNode {
     private String gebruiksdoel;
     private Double area;
-    
+
     @Override
-    public BagAddress getAddress() {
-        return (BagAddress) super.getAddress();
+    public BagOdAddress getAddress() {
+        return (BagOdAddress) super.getAddress();
     }
-    
+
     @Override
     public boolean isIncomplete() {
         if (getBuilding() != null) {
@@ -19,7 +18,7 @@ public class BagAddressNode extends AddressNodeImpl {
         }
         return super.isIncomplete();
     }
-    
+
     public String getHuisLetter() {
         return getAddress().getHuisLetter();
     }
@@ -43,11 +42,11 @@ public class BagAddressNode extends AddressNodeImpl {
     public double getArea() {
         return area;
     }
-    
-    @Override
-    public int compareTo(Address o) {
-        return getAddress().compareTo(o);
-    }
+
+    //    @Override
+    //    public int compareTo(Address o) {
+    //        return getAddress().compareTo(o);
+    //    }
 
     @Override
     public String toString() {

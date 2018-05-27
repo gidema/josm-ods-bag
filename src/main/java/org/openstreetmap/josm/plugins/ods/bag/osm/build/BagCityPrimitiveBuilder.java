@@ -2,17 +2,17 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
 import java.util.Map;
 
-import org.openstreetmap.josm.plugins.ods.LayerManager;
-import org.openstreetmap.josm.plugins.ods.entities.actual.City;
+import org.openstreetmap.josm.plugins.ods.domains.places.OdCity;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 
-public class BagCityPrimitiveBuilder extends BagEntityPrimitiveBuilder<City> {
+public class BagCityPrimitiveBuilder extends BagEntityPrimitiveBuilder<OdCity> {
 
-    public BagCityPrimitiveBuilder(LayerManager dataLayer) {
+    public BagCityPrimitiveBuilder(OdLayerManager dataLayer) {
         super(dataLayer);
     }
 
     @Override
-    protected void buildTags(City city, Map<String, String> tags) {
+    protected void buildTags(OdCity city, Map<String, String> tags) {
         tags.put("source", "BAG");
         tags.put("source:date", city.getSourceDate());
         tags.put("boundary",  "administrative");

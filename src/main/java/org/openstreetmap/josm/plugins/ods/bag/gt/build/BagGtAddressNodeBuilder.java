@@ -1,31 +1,27 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddress;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressNode;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddress;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
-import org.openstreetmap.josm.plugins.ods.entities.actual.AddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<AddressNode, BagAddressNode> {
-    
+public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<OdAddressNode> {
+
     public BagGtAddressNodeBuilder(CRSUtil crsUtil) {
         super(crsUtil);
     }
 
     @Override
-    protected BagAddressNode newInstance() {
-        return new BagAddressNode();
-    }
-
-    @Override
-    public BagAddressNode build(SimpleFeature feature, DownloadResponse response) {
-        BagAddressNode addressNode = super.build(feature, response);
-        BagAddress address = new BagAddress();
+    public OdAddressNode build(SimpleFeature feature, DownloadResponse response) {
+        BagOdAddressNode addressNode = new BagOdAddressNode();
+        super.parse(feature, addressNode, response);
+        BagOdAddress address = new BagOdAddress();
         address.setHouseNumber(FeatureUtil.getInteger(feature, "huisnummer"));
         String houseLetter = FeatureUtil.getString(feature, "huisletter");
         if (houseLetter != null) {
