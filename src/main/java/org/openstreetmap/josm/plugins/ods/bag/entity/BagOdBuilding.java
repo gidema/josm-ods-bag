@@ -28,7 +28,7 @@ public class BagOdBuilding extends AbstractOdBuilding {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("OdBuilding ").append(getReferenceId());
+        sb.append("OdBuilding ").append(getBuildingId());
         sb.append(" (").append(getStatus()).append(")");
         for (OdAddressNode a :getAddressNodes()) {
             sb.append("\n").append(a.toString());

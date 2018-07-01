@@ -19,6 +19,6 @@ public class BagCityPrimitiveBuilder extends BagEntityPrimitiveBuilder<OdCity> {
         tags.put("admin_level", "10");
         tags.put("type", "boundary");
         tags.put("name", city.getName());
-        tags.put("ref:woonplaatscode", city.getReferenceId().toString());
+        tags.put("ref:woonplaatscode", city.getCityId().toString());
     }
 }

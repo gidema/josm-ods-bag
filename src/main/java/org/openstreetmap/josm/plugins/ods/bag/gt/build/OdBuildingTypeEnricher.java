@@ -6,26 +6,31 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
-import org.openstreetmap.josm.plugins.ods.bag.gt.build.BuildingTypeEnricher.Statistics.Stat;
+import org.openstreetmap.josm.plugins.ods.bag.gt.build.OdBuildingTypeEnricher.Statistics.Stat;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
 
-public class BuildingTypeEnricher implements Consumer<OdBuilding> {
+public class OdBuildingTypeEnricher {
     private final static List<String> trafo =
             Arrays.asList("TRAF","TRAN","TRFO","TRNS");
     private final static List<String> garage =
             Arrays.asList("GAR","GRG");
+    private final OdBuildingStore odBuildingStore;
 
-    public BuildingTypeEnricher() {
+    public OdBuildingTypeEnricher(OdBuildingStore odBuildingStore) {
         super();
+        this.odBuildingStore = odBuildingStore;
     }
 
-    @Override
-    public void accept(OdBuilding building) {
+    public void run() {
+        odBuildingStore.forEach(this::update);
+    }
+
+    public void update(OdBuilding building) {
         if (BuildingType.HOUSEBOAT.equals(building.getBuildingType()) ||
                 BuildingType.STATIC_CARAVAN.equals(building.getBuildingType())) {
             return;

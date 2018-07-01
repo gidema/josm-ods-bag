@@ -70,20 +70,10 @@ public abstract class BagOsmEntityBuilder {
     }
 
     public static void parseKeys(OsmEntity entity, Map<String, String> tags) {
-        entity.setReferenceId(getReferenceId(tags.remove("ref:bag")));
         entity.setSource(tags.remove("source"));
         String sourceDate = tags.remove("source:date");
         if (sourceDate != null) {
             entity.setSourceDate(sourceDate);
         }
-    }
-
-    private static Long getReferenceId(String s) {
-        if (s == null || s.length() == 0) return null;
-        int i=0;
-        while (i<s.length() && Character.isDigit(s.charAt(i))) {
-            i++;
-        }
-        return Long.valueOf(s.substring(0, i));
     }
 }

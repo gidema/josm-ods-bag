@@ -9,7 +9,6 @@ import org.openstreetmap.josm.plugins.ods.crs.CRSException;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntityBuilder;
-import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -22,14 +21,8 @@ public abstract class BagGtEntityBuilder<T extends OdEntity> implements OdEntity
         this.crsUtil = crsUtil;
     }
 
-    @SuppressWarnings("static-method")
-    public Object getReferenceId(SimpleFeature feature) {
-        return FeatureUtil.getLong(feature, "identificatie");
-    }
-
     protected void parse(SimpleFeature feature, OdEntity entity, DownloadResponse response) {
         entity.setDownloadResponse(response);
-        entity.setReferenceId(getReferenceId(feature));
         entity.setPrimaryId(feature.getID());
         LocalDate date = response.getRequest().getDownloadTime().toLocalDate();
         if (date != null) {

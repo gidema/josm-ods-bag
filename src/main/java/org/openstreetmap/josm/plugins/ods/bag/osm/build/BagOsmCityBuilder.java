@@ -23,11 +23,6 @@ public class BagOsmCityBuilder implements OsmEntityBuilder<OsmCity> {
     }
 
     @Override
-    public Class<OsmCity> getEntityClass() {
-        return OsmCity.class;
-    }
-
-    @Override
     public boolean canHandle(OsmPrimitive primitive) {
         return OsmCity.isCity(primitive);
     }

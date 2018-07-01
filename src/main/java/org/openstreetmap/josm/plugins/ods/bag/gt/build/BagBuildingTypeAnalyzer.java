@@ -13,7 +13,7 @@ import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagBuildingTypeAnalyzer.S
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OpenDataBuildingStore;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
 
 @Deprecated
 public class BagBuildingTypeAnalyzer {
@@ -22,9 +22,9 @@ public class BagBuildingTypeAnalyzer {
     private final static List<String> garage =
             Arrays.asList("GAR","GRG");
 
-    private final OpenDataBuildingStore buildingStore;
+    private final OdBuildingStore buildingStore;
 
-    public BagBuildingTypeAnalyzer(OpenDataBuildingStore buildingStore) {
+    public BagBuildingTypeAnalyzer(OdBuildingStore buildingStore) {
         super();
         this.buildingStore = buildingStore;
     }
