@@ -9,7 +9,7 @@
   <!-- enter the SVN commit message -->
   <property name="commit.message" value="Commit message"/>
   <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-  <property name="plugin.main.version" value="13710"/>
+  <property name="plugin.main.version" value="14026"/>
   <property name="plugin.class" value="org.openstreetmap.josm.plugins.ods.bag.BagImportPlugin"/>
   <property name="plugin.version" value="${mypom.version}"/>
   <property name="plugin.build.dir" value="build" />
