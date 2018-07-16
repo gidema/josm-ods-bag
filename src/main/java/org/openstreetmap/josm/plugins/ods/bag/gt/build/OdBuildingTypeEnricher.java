@@ -1,24 +1,21 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.OdBuildingTypeEnricher.Statistics.Stat;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
 
 public class OdBuildingTypeEnricher {
-    private final static List<String> trafo =
-            Arrays.asList("TRAF","TRAN","TRFO","TRNS");
-    private final static List<String> garage =
-            Arrays.asList("GAR","GRG");
+    //    private final static List<String> trafo =
+    //            Arrays.asList("TRAF","TRAN","TRFO","TRNS");
+    //    private final static List<String> garage =
+    //            Arrays.asList("GAR","GRG");
     private final OdBuildingStore odBuildingStore;
 
     public OdBuildingTypeEnricher(OdBuildingStore odBuildingStore) {
@@ -36,23 +33,27 @@ public class OdBuildingTypeEnricher {
             return;
         }
         BuildingType type = BuildingType.UNCLASSIFIED;
-        if (building.getAddressNodes().size() == 1) {
-            type = getBuildingType((BagOdAddressNode)building.getAddressNodes().get(0));
+        if (building.getBuildingUnits().size() == 1) {
+            type = building.getBuildingUnits().iterator().next().getBuildingType();
         }
         else {
-            type = getBuildingType(building.getAddressNodes());
+            type = getBuildingType(building.getBuildingUnits());
         }
         building.setBuildingType(type);
     }
 
-    private BuildingType getBuildingType(List<OdAddressNode> addresses) {
+    private BuildingType getBuildingType(Set<OdBuildingUnit> buildingUnits) {
         Statistics stats = new Statistics();
-        Iterator<OdAddressNode> it = addresses.iterator();
-        while (it.hasNext()) {
-            BagOdAddressNode addressNode = (BagOdAddressNode) it.next();
-            BuildingType type = getBuildingType(addressNode);
-            stats.add(type, addressNode.getArea());
-        }
+        buildingUnits.forEach(buildingUnit -> {
+            BuildingType type = buildingUnit.getBuildingType();
+            stats.add(type, buildingUnit.getArea());
+        });
+        //        Iterator<OdAddressNode> it = addresses.iterator();
+        //        while (it.hasNext()) {
+        //            BagOdAddressNode addressNode = (BagOdAddressNode) it.next();
+        //            BuildingType type = getBuildingType(addressNode);
+        //            stats.add(type, addressNode.getArea());
+        //        }
         Stat largest = stats.getLargest();
         BuildingType type = BuildingType.UNCLASSIFIED;
         if (largest.percentage > 0.75) {
@@ -72,34 +73,36 @@ public class OdBuildingTypeEnricher {
         return type;
     }
 
-    private static BuildingType getBuildingType(BagOdAddressNode addressNode) {
-        String extra = addressNode.getHuisNummerToevoeging();
-        if (extra != null) {
-            extra = extra.toUpperCase();
-            if (trafo.contains(extra)) {
-                return BuildingType.SUBSTATION;
-            }
-            else if (garage.contains(extra)) {
-                return BuildingType.GARAGE;
-            }
-        }
-        switch (addressNode.getGebruiksdoel().toLowerCase()) {
-        case "woonfunctie":
-            return BuildingType.HOUSE;
-        case "overige gebruiksfunctie":
-            return BuildingType.UNCLASSIFIED;
-        case "industriefunctie":
-            return BuildingType.INDUSTRIAL;
-        case "winkelfunctie":
-            return BuildingType.RETAIL;
-        case "kantoorfunctie":
-            return BuildingType.OFFICE;
-        case "celfunctie":
-            return BuildingType.PRISON;
-        default:
-            return BuildingType.UNCLASSIFIED;
-        }
-    }
+    //    private static BuildingType getBuildingType(OdBuildingUnit buildingUnit) {
+    //        OdAddressNode addressNode = buildingUnit.getAddressNodes().get(0);
+    //        String extra = addressNode.getHouseNumberExtra();
+    //        if (extra != null) {
+    //            extra = extra.toUpperCase();
+    //            if (trafo.contains(extra)) {
+    //                return BuildingType.SUBSTATION;
+    //            }
+    //            else if (garage.contains(extra)) {
+    //                return BuildingType.GARAGE;
+    //            }
+    //        }
+    //        BagOdBuildingUnit bagBuildingUnit = (BagOdBuildingUnit) buildingUnit;
+    //        switch (bagBuildingUnit.getGebruiksdoel().toLowerCase()) {
+    //        case "woonfunctie":
+    //            return BuildingType.HOUSE;
+    //        case "overige gebruiksfunctie":
+    //            return BuildingType.UNCLASSIFIED;
+    //        case "industriefunctie":
+    //            return BuildingType.INDUSTRIAL;
+    //        case "winkelfunctie":
+    //            return BuildingType.RETAIL;
+    //        case "kantoorfunctie":
+    //            return BuildingType.OFFICE;
+    //        case "celfunctie":
+    //            return BuildingType.PRISON;
+    //        default:
+    //            return BuildingType.UNCLASSIFIED;
+    //        }
+    //    }
 
     class Statistics {
         private final Map<BuildingType, Row> rows = new HashMap<>();

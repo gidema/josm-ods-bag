@@ -7,13 +7,14 @@ import java.util.List;
 import org.openstreetmap.josm.plugins.ods.Context;
 import org.openstreetmap.josm.plugins.ods.InitializationException;
 import org.openstreetmap.josm.plugins.ods.Normalisation;
-import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtAddressNodeBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtBuildingBuilder;
+import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagPdokBuildingUnitBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.OdBuildingTypeEnricher;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingUnitStore;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.BuildingCompletenessEnricher;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.OdAddressNodesDistributer;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureDownloader;
@@ -24,15 +25,19 @@ import org.openstreetmap.josm.plugins.ods.geotools.GtDownloader;
 import org.openstreetmap.josm.plugins.ods.geotools.GtFeatureSource;
 import org.openstreetmap.josm.plugins.ods.geotools.InvalidQueryException;
 import org.openstreetmap.josm.plugins.ods.matching.OdAddressNodeToBuildingMatcher;
+import org.openstreetmap.josm.plugins.ods.matching.OdBuildingUnitToBuildingBinder;
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
-    private static WFSHost wfsHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=2.0.0", 1000, 1000, 60000);
+    private final WFSHost pdokWfsHost = new WFSHost("PDOK BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=2.0.0", 1000, 1000, 60000);
+    private final WFSHost duinoordWfsHost = new WFSHost("DUINOORD BAG WFS", "https://duinoord.xs4all.nl/geoserver/wfs?VERSION=2.0.0", 1000, 1000, 60000);
     private final BagPrimitiveBuilder primitiveBuilder;
     private final CRSUtil crsUtil;
     private final OdBuildingStore odBuildingStore;
+    private final OdBuildingUnitStore odBuildingUnitStore;
     private final OdAddressNodeStore odAddressNodeStore;
     private final OdAddressNodeToBuildingMatcher odAddressNodeToBuildingMatcher;
+    private final OdBuildingUnitToBuildingBinder odBuildingUnitToBuildingBinder;
     private final BuildingCompletenessEnricher buildingCompletenessEnricher;
     private final OdAddressNodesDistributer addressNodeDistributer;
     private final OdBuildingTypeEnricher buildingTypeEnricher;
@@ -43,7 +48,9 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         super(context);
         this.crsUtil = context.get(CRSUtil.class);
         this.odBuildingStore = context.get(OdBuildingStore.class);
+        this.odBuildingUnitStore = context.get(OdBuildingUnitStore.class);
         this.odAddressNodeStore = context.get(OdAddressNodeStore.class);
+        this.odBuildingUnitToBuildingBinder = context.get(OdBuildingUnitToBuildingBinder.class);
         this.odAddressNodeToBuildingMatcher = context.get(OdAddressNodeToBuildingMatcher.class);
         this.buildingCompletenessEnricher = context.get(BuildingCompletenessEnricher.class);
         this.addressNodeDistributer = context.get(OdAddressNodesDistributer.class);
@@ -59,7 +66,8 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     public void process() {
         try {
             super.process();
-            odAddressNodeToBuildingMatcher.run();
+            odBuildingUnitToBuildingBinder.run();
+            //            odAddressNodeToBuildingMatcher.run();
             buildingCompletenessEnricher.run();
             addressNodeDistributer.run();
             buildingTypeEnricher.run();
@@ -89,8 +97,8 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
     }
 
     private FeatureDownloader createVerblijfsobjectDownloader() throws InitializationException {
-        BagGtAddressNodeBuilder entityBuilder = new BagGtAddressNodeBuilder(crsUtil);
-        GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:verblijfsobject", "identificatie");
+        BagPdokBuildingUnitBuilder entityBuilder = new BagPdokBuildingUnitBuilder(crsUtil);
+        GtFeatureSource featureSource = new GtFeatureSource(pdokWfsHost, "bag:verblijfsobject", "identificatie");
         featureSource.initialize();
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
@@ -102,12 +110,12 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         //      Query query = new GroupByQuery(featureSource, properties, );
         GtDataSource dataSource = builder.build();
         return new GtDownloader<>(dataSource, crsUtil, entityBuilder,
-                odAddressNodeStore);
+                odBuildingUnitStore);
     }
 
     private FeatureDownloader createBuildingDownloader(String featureType, List<String> properties) throws InvalidQueryException, InitializationException {
         BagGtBuildingBuilder entityBuilder = new BagGtBuildingBuilder(crsUtil);
-        GtFeatureSource featureSource = new GtFeatureSource(wfsHost, featureType, "identificatie");
+        GtFeatureSource featureSource = new GtFeatureSource(pdokWfsHost, featureType, "identificatie");
         featureSource.initialize();
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);

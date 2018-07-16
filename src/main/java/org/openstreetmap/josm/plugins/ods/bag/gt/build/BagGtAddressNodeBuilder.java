@@ -2,9 +2,9 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddress;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.AbstractOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
@@ -19,7 +19,7 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<OdAddressNode> {
 
     @Override
     public OdAddressNode build(SimpleFeature feature, DownloadResponse response) {
-        BagOdAddressNode addressNode = new BagOdAddressNode();
+        OdAddressNode addressNode = new AbstractOdAddressNode();
         super.parse(feature, addressNode, response);
         BagOdAddress address = new BagOdAddress();
         address.setHouseNumber(FeatureUtil.getInteger(feature, "huisnummer"));
@@ -39,9 +39,6 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<OdAddressNode> {
         }
         addressNode.setAddress(address);
         addressNode.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
-        addressNode.setGebruiksdoel(FeatureUtil.getString(feature, "gebruiksdoel"));
-        addressNode.setArea(FeatureUtil.getBigDecimal(feature, "oppervlakte").doubleValue());
-        addressNode.setBuildingRef(FeatureUtil.getLong(feature, "pandidentificatie"));
         return addressNode;
     }
 
