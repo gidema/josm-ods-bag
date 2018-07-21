@@ -10,6 +10,7 @@ import org.openstreetmap.josm.plugins.ods.Normalisation;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtBuildingBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagPdokBuildingUnitBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.OdBuildingTypeEnricher;
+import org.openstreetmap.josm.plugins.ods.bag.relations.OdBuildingUnitToBuildingBinder;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
@@ -25,7 +26,6 @@ import org.openstreetmap.josm.plugins.ods.geotools.GtDownloader;
 import org.openstreetmap.josm.plugins.ods.geotools.GtFeatureSource;
 import org.openstreetmap.josm.plugins.ods.geotools.InvalidQueryException;
 import org.openstreetmap.josm.plugins.ods.matching.OdAddressNodeToBuildingMatcher;
-import org.openstreetmap.josm.plugins.ods.matching.OdBuildingUnitToBuildingBinder;
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
