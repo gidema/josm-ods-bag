@@ -1,28 +1,29 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
+import org.openstreetmap.josm.plugins.ods.entities.storage.OdEntityStore;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
 public class BagPdokPandParser extends BagFeatureParser {
-    private final OdBuildingStore buildingStore;
-    private final SimpleFeatureType featureType;
+    private final OdEntityStore<OdBuilding, Long> buildingStore;
+    //    private final SimpleFeatureType featureType;
 
-    public BagPdokPandParser(CRSUtil crsUtil,
-            SimpleFeatureType featureType,
-            OdBuildingStore buildingStore) {
+    public  BagPdokPandParser(CRSUtil crsUtil,
+            //            SimpleFeatureType featureType,
+            OdEntityStore<OdBuilding, Long> buildingStore) {
         super(crsUtil);
-        this.featureType = featureType;
+        //        this.featureType = featureType;
         this.buildingStore = buildingStore;
     }
 
-    public void parseBuilding(SimpleFeature feature, DownloadResponse response) {
+    @Override
+    public void parse(SimpleFeature feature, DownloadResponse response) {
         BagOdBuilding building = new BagOdBuilding();
         super.parse(feature, building, response);
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");

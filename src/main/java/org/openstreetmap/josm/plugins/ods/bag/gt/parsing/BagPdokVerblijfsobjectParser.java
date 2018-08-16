@@ -1,14 +1,18 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingToBuildingUnitRelation;
 import org.openstreetmap.josm.plugins.ods.bag.relations.Building_BuildingUnitPair;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuildingUnit;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.DefaultOdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingUnitStore;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
@@ -18,6 +22,11 @@ import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class BagPdokVerblijfsobjectParser extends BagFeatureParser {
+    private final static List<String> trafo =
+            Arrays.asList("TRAF","TRAN","TRFO","TRNS");
+    private final static List<String> garage =
+            Arrays.asList("GAR","GRG");
+
     private final OdBuildingUnitStore buildingUnitStore;
     private final OdAddressNodeStore addressNodeStore;
     private final BuildingToBuildingUnitRelation buildingToBuildingUnitRelation;
@@ -51,33 +60,43 @@ public class BagPdokVerblijfsobjectParser extends BagFeatureParser {
      * @param feature
      * @param response
      */
+    @Override
     public void parse(SimpleFeature feature, DownloadResponse response) {
-        // Parse the
-        OdBuildingUnit buildingUnit = parseBuildingUnit(feature, response);
+        BagOdBuildingUnit buildingUnit = parseBuildingUnit(feature, response);
         if (buildingUnitStore.add(buildingUnit)) {
-            OdAddressNode addressNode = parseAddressNode(feature, response);
+            OdAddressNode addressNode = parseAddressNode(feature, buildingUnit, response);
             addressNodeStore.add(addressNode);
-            buildingUnit.getAddressNodes().set(0, addressNode);
+            buildingUnit.setMainAddressNode(addressNode);
         }
         Building_BuildingUnitPair pair = parseBuilding_BuildingUnitPair(feature);
         buildingToBuildingUnitRelation.add(pair);
     }
 
-    public OdBuildingUnit parseBuildingUnit(SimpleFeature feature, DownloadResponse response) {
-        OdBuildingUnit buildingUnit = new DefaultOdBuildingUnit();
+    public BagOdBuildingUnit parseBuildingUnit(SimpleFeature feature, DownloadResponse response) {
+        BagOdBuildingUnit buildingUnit = new BagOdBuildingUnit();
         super.parse(feature, buildingUnit, response);
         buildingUnit.setBuildingUnitId(parseId(feature));
         String status = FeatureUtil.getString(feature, "status");
         buildingUnit.setStatus(parseStatus(status));
+        Double area = FeatureUtil.getBigDecimal(feature, "oppervlakte").doubleValue();
+        buildingUnit.setArea(area);
+        BuildingType buildingType = parseBuildingType(feature);
+        buildingUnit.setBuildingType(buildingType);
         return buildingUnit;
     }
 
-    private OdAddressNode parseAddressNode(SimpleFeature feature, DownloadResponse response) {
+    private OdAddressNode parseAddressNode(SimpleFeature feature, OdBuildingUnit buildingUnit, DownloadResponse response) {
         BagOdAddressNode addressNode = new BagOdAddressNode();
         super.parse(feature, addressNode, response);
+        // The PDOK WFS service doesn't provide the address id for the main address.
+        // We use the buildingUnitId instead to get a unique Id;
+        addressNode.setPrimaryId(buildingUnit.getBuildingUnitId());
         OdAddress address = parseAddress(feature);
         addressNode.setAddress(address);
-        addressNode.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
+        String status = FeatureUtil.getString(feature, "status");
+        addressNode.setStatus(parseStatus(status));
+        addressNode.setGeometry(buildingUnit.getGeometry());
+        addressNode.setBuildinUnit(buildingUnit);
         return addressNode;
     }
 
@@ -109,6 +128,36 @@ public class BagPdokVerblijfsobjectParser extends BagFeatureParser {
             return EntityStatus.REMOVED;
         default:
             return EntityStatus.IN_USE;
+        }
+    }
+
+    private static BuildingType parseBuildingType(SimpleFeature feature) {
+        String extra = FeatureUtil.getString(feature, "toevoeging");
+        if (extra != null) {
+            extra = extra.toUpperCase();
+            if (trafo.contains(extra)) {
+                return BuildingType.SUBSTATION;
+            }
+            else if (garage.contains(extra)) {
+                return BuildingType.GARAGE;
+            }
+        }
+        String gebruiksdoel = FeatureUtil.getString(feature, "gebruiksdoel");
+        switch (gebruiksdoel.toLowerCase()) {
+        case "woonfunctie":
+            return BuildingType.HOUSE;
+        case "overige gebruiksfunctie":
+            return BuildingType.UNCLASSIFIED;
+        case "industriefunctie":
+            return BuildingType.INDUSTRIAL;
+        case "winkelfunctie":
+            return BuildingType.RETAIL;
+        case "kantoorfunctie":
+            return BuildingType.OFFICE;
+        case "celfunctie":
+            return BuildingType.PRISON;
+        default:
+            return BuildingType.UNCLASSIFIED;
         }
     }
 }

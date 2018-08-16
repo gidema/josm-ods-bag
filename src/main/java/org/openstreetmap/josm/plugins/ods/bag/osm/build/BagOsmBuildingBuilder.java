@@ -76,6 +76,12 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding>
         if (type == null) {
             type = tags.remove("building:part");
         }
+        if (type == null) {
+            type = tags.remove("no:building");
+        }
+        if (type == null) {
+            type = tags.remove("not:building");
+        }
         if (type.equals("construction")) {
             building.setStatus(EntityStatus.CONSTRUCTION);
             String construction = tags.remove("construction");

@@ -3,6 +3,8 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddress;
@@ -12,16 +14,30 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
+import org.openstreetmap.josm.plugins.ods.parsing.FeatureParser;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public abstract class BagFeatureParser {
+public abstract class BagFeatureParser implements FeatureParser {
     private final CRSUtil crsUtil;
 
     public BagFeatureParser(CRSUtil crsUtil) {
         super();
         this.crsUtil = crsUtil;
     }
+
+    @Override
+    public void parse(SimpleFeatureCollection downloadedFeatures, DownloadResponse response) {
+        try (
+                FeatureIterator<SimpleFeature> it = downloadedFeatures.features();
+                ) {
+            while (it.hasNext()) {
+                parse(it.next(), response);
+            }
+        }
+    }
+
+    public abstract void parse(SimpleFeature feature, DownloadResponse response);
 
     protected void parse(SimpleFeature feature, OdEntity entity, DownloadResponse response) {
         entity.setDownloadResponse(response);
@@ -66,5 +82,4 @@ public abstract class BagFeatureParser {
         }
         return address;
     }
-
 }

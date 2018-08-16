@@ -7,19 +7,20 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStore;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
+import org.openstreetmap.josm.plugins.ods.entities.storage.OdEntityStore;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
 public class BagPdokStandplaatsParser extends BagFeatureParser {
-    private final EntityStore<OdBuilding> buildingStore;
+    private final OdEntityStore<OdBuilding, Long> buildingStore;
 
-    public BagPdokStandplaatsParser(CRSUtil crsUtil, EntityStore<OdBuilding> buildingStore) {
+    public BagPdokStandplaatsParser(CRSUtil crsUtil, OdEntityStore<OdBuilding, Long> buildingStore) {
         super(crsUtil);
         this.buildingStore = buildingStore;
     }
 
-    public void parseBuilding(SimpleFeature feature, DownloadResponse response) {
+    @Override
+    public void parse(SimpleFeature feature, DownloadResponse response) {
         BagOdBuilding building = new BagOdBuilding();
         super.parse(feature, building, response);
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");

@@ -4,11 +4,12 @@ import java.util.Map;
 
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
+import org.openstreetmap.josm.plugins.ods.entities.storage.OdEntityStore;
 
 public class BagAddressNodeEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<OdAddressNode> {
 
-    public BagAddressNodeEntityPrimitiveBuilder(OdLayerManager dataLayer) {
-        super(dataLayer);
+    public BagAddressNodeEntityPrimitiveBuilder(OdLayerManager dataLayer, OdEntityStore<OdAddressNode, ?> entityStore) {
+        super(dataLayer, entityStore);
     }
 
     @Override

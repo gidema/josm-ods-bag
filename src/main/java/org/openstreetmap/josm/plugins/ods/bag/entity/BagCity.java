@@ -53,7 +53,7 @@ public class BagCity extends AbstractOdCity {
     }
 
     @Override
-    public Match<OsmCity, OdCity> getMatch() {
+    public Match<OdCity, OsmCity> getMatch() {
         return null;
     }
 }

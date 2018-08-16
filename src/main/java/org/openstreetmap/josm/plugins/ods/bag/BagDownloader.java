@@ -1,45 +1,29 @@
 package org.openstreetmap.josm.plugins.ods.bag;
 
-import org.openstreetmap.josm.plugins.ods.Context;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OsmAddressNodeStore;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OsmBuildingStore;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.matching.BuildingMatcher;
+import java.util.List;
+
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.io.LayerDownloader;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
 import org.openstreetmap.josm.plugins.ods.io.OsmLayerDownloader;
-import org.openstreetmap.josm.plugins.ods.matching.AddressNodeMatcher;
 import org.openstreetmap.josm.plugins.ods.matching.OsmAnalyzer;
+import org.openstreetmap.josm.plugins.ods.setup.ModuleSetup;
 
 public class BagDownloader extends MainDownloader {
-    private final Context context;
-    private OpenDataLayerDownloader openDataLayerDownloader;
-    private OsmLayerDownloader osmLayerDownloader;
-    private BuildingMatcher buildingMatcher;
-    private AddressNodeMatcher addressNodeMatcher;
+    private final OpenDataLayerDownloader openDataLayerDownloader;
+    private final OsmLayerDownloader osmLayerDownloader;
     private OsmAnalyzer osmAnalyzer;
 
-    public BagDownloader(Context context) {
-        super(context);
-        this.context = context;
+    public BagDownloader(ModuleSetup setup, List<Runnable> processors) {
+        super(setup, processors);
+        this.openDataLayerDownloader = setup.getOdLayerDownloader();
+        this.osmLayerDownloader = setup.getOsmLayerDownloader();
     }
 
     @Override
     public void initialize() throws Exception {
-        this.openDataLayerDownloader = new BagWfsLayerDownloader(context);
-        this.osmLayerDownloader = new OsmLayerDownloader(context);
-        this.osmAnalyzer = context.get(OsmAnalyzer.class);
         // TODO Use dependency injection for the next 2 lines
-        OsmBuildingStore osmBuildingStore = context.get(OsmBuildingStore.class);
-        OdBuildingStore odBuildingStore = context.get(OdBuildingStore.class);
-        OsmAddressNodeStore osmAddressNodeStore = context.get(OsmAddressNodeStore.class);
-        OdAddressNodeStore odAddressNodeStore = context.get(OdAddressNodeStore.class);
-        this.buildingMatcher = new BuildingMatcher(osmBuildingStore, odBuildingStore);
-        this.addressNodeMatcher = new AddressNodeMatcher(osmAddressNodeStore, odAddressNodeStore);
-
     }
 
     @Override
@@ -55,8 +39,6 @@ public class BagDownloader extends MainDownloader {
     @Override
     protected void process(DownloadResponse response) {
         super.process(response);
-        buildingMatcher.run();
-        addressNodeMatcher.run();
         osmAnalyzer.run();
     }
 }

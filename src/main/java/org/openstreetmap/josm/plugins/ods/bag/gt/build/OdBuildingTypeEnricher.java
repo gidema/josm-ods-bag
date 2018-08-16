@@ -11,11 +11,7 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
 
-public class OdBuildingTypeEnricher {
-    //    private final static List<String> trafo =
-    //            Arrays.asList("TRAF","TRAN","TRFO","TRNS");
-    //    private final static List<String> garage =
-    //            Arrays.asList("GAR","GRG");
+public class OdBuildingTypeEnricher implements Runnable {
     private final OdBuildingStore odBuildingStore;
 
     public OdBuildingTypeEnricher(OdBuildingStore odBuildingStore) {
@@ -23,6 +19,7 @@ public class OdBuildingTypeEnricher {
         this.odBuildingStore = odBuildingStore;
     }
 
+    @Override
     public void run() {
         odBuildingStore.forEach(this::update);
     }
@@ -48,12 +45,6 @@ public class OdBuildingTypeEnricher {
             BuildingType type = buildingUnit.getBuildingType();
             stats.add(type, buildingUnit.getArea());
         });
-        //        Iterator<OdAddressNode> it = addresses.iterator();
-        //        while (it.hasNext()) {
-        //            BagOdAddressNode addressNode = (BagOdAddressNode) it.next();
-        //            BuildingType type = getBuildingType(addressNode);
-        //            stats.add(type, addressNode.getArea());
-        //        }
         Stat largest = stats.getLargest();
         BuildingType type = BuildingType.UNCLASSIFIED;
         if (largest.percentage > 0.75) {
@@ -72,37 +63,6 @@ public class OdBuildingTypeEnricher {
         }
         return type;
     }
-
-    //    private static BuildingType getBuildingType(OdBuildingUnit buildingUnit) {
-    //        OdAddressNode addressNode = buildingUnit.getAddressNodes().get(0);
-    //        String extra = addressNode.getHouseNumberExtra();
-    //        if (extra != null) {
-    //            extra = extra.toUpperCase();
-    //            if (trafo.contains(extra)) {
-    //                return BuildingType.SUBSTATION;
-    //            }
-    //            else if (garage.contains(extra)) {
-    //                return BuildingType.GARAGE;
-    //            }
-    //        }
-    //        BagOdBuildingUnit bagBuildingUnit = (BagOdBuildingUnit) buildingUnit;
-    //        switch (bagBuildingUnit.getGebruiksdoel().toLowerCase()) {
-    //        case "woonfunctie":
-    //            return BuildingType.HOUSE;
-    //        case "overige gebruiksfunctie":
-    //            return BuildingType.UNCLASSIFIED;
-    //        case "industriefunctie":
-    //            return BuildingType.INDUSTRIAL;
-    //        case "winkelfunctie":
-    //            return BuildingType.RETAIL;
-    //        case "kantoorfunctie":
-    //            return BuildingType.OFFICE;
-    //        case "celfunctie":
-    //            return BuildingType.PRISON;
-    //        default:
-    //            return BuildingType.UNCLASSIFIED;
-    //        }
-    //    }
 
     class Statistics {
         private final Map<BuildingType, Row> rows = new HashMap<>();

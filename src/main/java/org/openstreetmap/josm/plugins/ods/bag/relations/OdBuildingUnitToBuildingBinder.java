@@ -14,7 +14,7 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingUnitS
  * @author gertjan
  *
  */
-public class OdBuildingUnitToBuildingBinder {
+public class OdBuildingUnitToBuildingBinder implements Runnable {
     private final BuildingToBuildingUnitRelation buildingUnitToBuildingRelation;
     private final OdBuildingStore buildingStore;
     private final OdBuildingUnitStore buildingUnitStore;
@@ -29,6 +29,7 @@ public class OdBuildingUnitToBuildingBinder {
         this.buildingUnitStore = buildingUnitStore;
     }
 
+    @Override
     public void run() {
         for(Building_BuildingUnitPair pair : buildingUnitToBuildingRelation) {
             bindBuildingUnitToBuilding(pair);

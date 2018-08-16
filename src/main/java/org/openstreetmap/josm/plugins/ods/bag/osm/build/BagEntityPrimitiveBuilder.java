@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
+import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Complete;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,17 +10,28 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.entities.EntityPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
-import org.openstreetmap.josm.plugins.ods.osm.DefaultPrimitiveBuilder;
+import org.openstreetmap.josm.plugins.ods.entities.storage.OdEntityStore;
+import org.openstreetmap.josm.plugins.ods.osm.DefaultPrimitiveFactory;
 import org.openstreetmap.josm.plugins.ods.osm.OsmPrimitiveFactory;
 
 public abstract class BagEntityPrimitiveBuilder<T extends OdEntity>
-implements EntityPrimitiveBuilder<T> {
+implements EntityPrimitiveBuilder<T>, Runnable {
     private final OdLayerManager layerManager;
-    private final OsmPrimitiveFactory primitiveBuilder;
+    private final OsmPrimitiveFactory primitiveFactory;
+    private final OdEntityStore<T, ?> entityStore;
 
-    public BagEntityPrimitiveBuilder(OdLayerManager layerManager) {
+    public BagEntityPrimitiveBuilder(OdLayerManager layerManager, OdEntityStore<T, ?> entityStore) {
         this.layerManager = layerManager;
-        this.primitiveBuilder = new DefaultPrimitiveBuilder(layerManager);
+        this.primitiveFactory = new DefaultPrimitiveFactory(layerManager);
+        this.entityStore = entityStore;
+    }
+
+    @Override
+    public void run() {
+        entityStore.stream()
+        .filter(entity->entity.getPrimitive() == null)
+        .filter(entity->entity.getCompleteness() == Complete)
+        .forEach(this::createPrimitive);
     }
 
     @Override
@@ -26,7 +39,7 @@ implements EntityPrimitiveBuilder<T> {
         if (entity.getPrimitive() == null && entity.getGeometry() != null) {
             Map<String, String> tags = new HashMap<>();
             buildTags(entity, tags);
-            OsmPrimitive primitive = primitiveBuilder.create(entity.getGeometry(), tags);
+            OsmPrimitive primitive = primitiveFactory.create(entity.getGeometry(), tags);
             entity.setPrimitive(primitive);
             layerManager.register(primitive, entity);
         }
