@@ -4,9 +4,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -113,7 +113,7 @@ public class BagImportModule extends OdsModule {
     @Override
     public boolean activate() {
         if (false && !checkUser()) { // Disabled, but kept the code in case we need it
-            int answer = JOptionPane.showConfirmDialog(Main.parent,
+            int answer = JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
                     "Je gebruikersnaam eindigt niet op _BAG en is daarom niet geschikt " +
                             "voor de BAG import.\nWeet je zeker dat je door wilt gaan?",
                             I18n.tr("Invalid user"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
