@@ -1,0 +1,60 @@
+package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
+
+import org.opengis.feature.simple.SimpleFeature;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
+import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnitToAddressNodeRelation;
+import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnit_AddressNodePair;
+import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
+import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
+
+public class BagDuinoordAddressNodeParser extends BagFeatureParser {
+
+    //    private final OdBuildingUnitStore buildingUnitStore;
+    private final OdAddressNodeStore addressNodeStore;
+    private final BuildingUnitToAddressNodeRelation buildingUnitToAddressNodeRelation;
+
+    public BagDuinoordAddressNodeParser(CRSUtil crsUtil,
+            //            OdBuildingUnitStore buildingUnitStore,
+            OdAddressNodeStore addressNodeStore,
+            BuildingUnitToAddressNodeRelation buildingUnitToAddressNodeRelation) {
+        super(crsUtil);
+        this.addressNodeStore = addressNodeStore;
+        this.buildingUnitToAddressNodeRelation = buildingUnitToAddressNodeRelation;
+    }
+
+    /**
+     * Parse the AddressNode feature.
+     *
+     * @param feature
+     * @param response
+     */
+    @Override
+    public void parse(SimpleFeature feature, DownloadResponse response) {
+        OdAddressNode addressNode = parseAddressNode(feature, response);
+        addressNodeStore.add(addressNode);
+        BuildingUnit_AddressNodePair pair = parseBuildingUnit_AddressNodePair(feature);
+        buildingUnitToAddressNodeRelation.add(pair);
+    }
+
+    private OdAddressNode parseAddressNode(SimpleFeature feature, DownloadResponse response) {
+        BagOdAddressNode addressNode = new BagOdAddressNode();
+        super.parse(feature, addressNode, response);
+        addressNode.setPrimaryId(FeatureUtil.getLong(feature, "nummeraanduiding"));
+        OdAddress address = parseAddress(feature);
+        addressNode.setAddress(address);
+        //        addressNode.setGeometry(buildingUnit.getGeometry());
+        //        addressNode.setBuildinUnit(buildingUnit);
+        //        addressNode.setStatus(buildingUnit.getStatus();
+        return addressNode;
+    }
+
+    private static BuildingUnit_AddressNodePair parseBuildingUnit_AddressNodePair(SimpleFeature feature) {
+        Long buildingUnitId = FeatureUtil.getLong(feature, "verblijfsobject");
+        Long addressNodeId = FeatureUtil.getLong(feature, "nummeraanduiding");
+        return new BuildingUnit_AddressNodePair(buildingUnitId, addressNodeId);
+    }
+}

@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
+import org.opengis.filter.Filter;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.OdBuildingTypeEnricher;
+import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagDuinoordAddressNodeParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokLigplaatsParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokPandParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokStandplaatsParser;
@@ -12,6 +16,8 @@ import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokVerblijfsobjectP
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagAddressNodeEntityPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagBuildingEntityPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingToBuildingUnitRelation;
+import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnitToAddressNodeRelation;
+import org.openstreetmap.josm.plugins.ods.bag.relations.OdBuildingUnitToAddressNodeBinder;
 import org.openstreetmap.josm.plugins.ods.bag.relations.OdBuildingUnitToBuildingBinder;
 import org.openstreetmap.josm.plugins.ods.bag.setup.BagModuleSetup.EntityStores;
 import org.openstreetmap.josm.plugins.ods.binding.OdAddressNodeToBuildingBinder;
@@ -33,6 +39,7 @@ import org.openstreetmap.josm.plugins.ods.geotools.GtFeatureSource;
 import org.openstreetmap.josm.plugins.ods.io.OsmLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
+import org.openstreetmap.josm.tools.Logging;
 
 public class BagOdSetup {
     private final CRSUtil crsUtil;
@@ -72,6 +79,7 @@ public class BagOdSetup {
     private Relations setupRelations() {
         Relations relations = new Relations();
         relations.buildingToBuildingUnit = new BuildingToBuildingUnitRelation();
+        relations.buildingUnitToAddressNode = new BuildingUnitToAddressNodeRelation();
         return relations;
     }
 
@@ -85,6 +93,9 @@ public class BagOdSetup {
         parsers.verblijfsobject = new BagPdokVerblijfsobjectParser(crsUtil,
                 stores.odBuildingUnit, stores.odAddressNode,
                 relations.buildingToBuildingUnit);
+        parsers.duinoordAddress = new BagDuinoordAddressNodeParser(crsUtil,
+                stores.odAddressNode,
+                relations.buildingUnitToAddressNode);
         return parsers;
     }
 
@@ -109,6 +120,8 @@ public class BagOdSetup {
                 "bag:standplaats", "identificatie");
         featureSources.verblijfsobject = new GtFeatureSource(host.pdokBagWFS,
                 "bag:verblijfsobject", "identificatie");
+        featureSources.duinoordAdres = new GtFeatureSource(host.duinoordBagWFS,
+                "bag:All_Addresses", "nummeraanduiding");
         return featureSources;
     }
 
@@ -121,6 +134,8 @@ public class BagOdSetup {
                 featureSources.standplaats);
         dataSources.verblijfsobject = createVerblijfsobjectDataSource(
                 featureSources.verblijfsobject);
+        dataSources.duinoordAdres = createDuinoordAdresDataSource(
+                featureSources.duinoordAdres);
         return dataSources;
     }
 
@@ -135,12 +150,16 @@ public class BagOdSetup {
                 crsUtil, parsers.standplaats);
         downloaders.verblijfsobject = new GtDownloader(
                 dataSources.verblijfsobject, crsUtil, parsers.verblijfsobject);
+        downloaders.duinoordAddress = new GtDownloader(
+                dataSources.duinoordAdres, crsUtil, parsers.duinoordAddress);
         return downloaders;
     }
 
     private List<Runnable> setupOdProcessors(Relations relations) {
         List<Runnable> processors = new ArrayList<>(4);
         processors.add(new OdBuildingUnitToBuildingBinder(stores.odBuilding, stores.odBuildingUnit, relations.buildingToBuildingUnit));
+        processors.add(new OdBuildingUnitToAddressNodeBinder(stores.odBuildingUnit, stores.odAddressNode,
+                relations.buildingUnitToAddressNode));
         processors.add(new OdAddressNodeToBuildingBinder(stores.odAddressNode));
         processors.add(new BuildingCompletenessEnricher(stores.odBuilding));
         processors.add(new OdAddressNodesDistributer(stores.odBuilding, geoUtil));
@@ -164,7 +183,6 @@ public class BagOdSetup {
         builder.setFeatureSource(featureSource);
         builder.setProperties("identificatie", "bouwjaar", "status",
                 "aantal_verblijfsobjecten", "geometrie");
-        builder.setUniqueKey("identificatie");
         builder.setPageSize(1000);
         return builder.build();
     }
@@ -176,7 +194,6 @@ public class BagOdSetup {
         builder.setProperties("identificatie", "status", "openbare_ruimte",
                 "huisnummer", "huisletter", "toevoeging", "postcode",
                 "woonplaats", "geometrie");
-        builder.setUniqueKey("identificatie");
         builder.setPageSize(1000);
         return builder.build();
     }
@@ -188,7 +205,6 @@ public class BagOdSetup {
         builder.setProperties("identificatie", "status", "openbare_ruimte",
                 "huisnummer", "huisletter", "toevoeging", "postcode",
                 "woonplaats", "geometrie");
-        builder.setUniqueKey("identificatie");
         builder.setPageSize(1000);
         return builder.build();
     }
@@ -201,7 +217,25 @@ public class BagOdSetup {
                 "gebruiksdoel", "openbare_ruimte", "huisnummer", "huisletter",
                 "toevoeging", "postcode", "woonplaats", "geometrie",
                 "pandidentificatie");
-        builder.setUniqueKey("identificatie", "pandidentificatie");
+        builder.setPageSize(1000);
+        return builder.build();
+    }
+
+    private static GtDataSource createDuinoordAdresDataSource(
+            GtFeatureSource featureSource) {
+        GtDatasourceBuilder builder = new GtDatasourceBuilder();
+        builder.setFeatureSource(featureSource);
+        builder.setProperties("verblijfsobject","geopunt","nummeraanduiding",
+                "postcode","huisnummer","huisletter","huisnummertoevoeging",
+                "nevenadres","openbareruimte","woonplaats");
+        Filter filter;
+        try {
+            filter = CQL.toFilter("nevenadres = true");
+            builder.setFilter(filter);
+        } catch (CQLException e) {
+            Logging.error(e);
+            throw new RuntimeException(e);
+        }
         builder.setPageSize(1000);
         return builder.build();
     }
@@ -211,6 +245,7 @@ public class BagOdSetup {
         BagPdokLigplaatsParser ligplaats;
         BagPdokStandplaatsParser standplaats;
         BagPdokVerblijfsobjectParser verblijfsobject;
+        BagDuinoordAddressNodeParser duinoordAddress;
 
         public Parsers() {
         }
@@ -218,6 +253,7 @@ public class BagOdSetup {
 
     private class Relations {
         BuildingToBuildingUnitRelation buildingToBuildingUnit;
+        BuildingUnitToAddressNodeRelation buildingUnitToAddressNode;
 
         public Relations() {
         }
@@ -236,6 +272,7 @@ public class BagOdSetup {
         GtFeatureSource standplaats;
         GtFeatureSource ligplaats;
         GtFeatureSource verblijfsobject;
+        GtFeatureSource duinoordAdres;
 
         public GtFeatureSources() {
         }
@@ -246,6 +283,7 @@ public class BagOdSetup {
         GtDataSource standplaats;
         GtDataSource ligplaats;
         GtDataSource verblijfsobject;
+        GtDataSource duinoordAdres;
 
         public DataSources() {
         }
@@ -256,12 +294,13 @@ public class BagOdSetup {
         FeatureDownloader standplaats;
         FeatureDownloader ligplaats;
         FeatureDownloader verblijfsobject;
+        FeatureDownloader duinoordAddress;
 
         public FeatureDownloaders() {
         }
 
         List<FeatureDownloader> all() {
-            return Arrays.asList(pand, standplaats, ligplaats, verblijfsobject);
+            return Arrays.asList(pand, standplaats, ligplaats, verblijfsobject, duinoordAddress);
         }
     }
 
