@@ -7,7 +7,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingToBuildingUnitRelation;
-import org.openstreetmap.josm.plugins.ods.bag.relations.Building_BuildingUnitPair;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
@@ -68,7 +67,7 @@ public class BagPdokVerblijfsobjectParser extends BagFeatureParser {
             addressNodeStore.add(addressNode);
             buildingUnit.setMainAddressNode(addressNode);
         }
-        Building_BuildingUnitPair pair = parseBuilding_BuildingUnitPair(feature);
+        BuildingToBuildingUnitRelation.Tuple pair = parseBuilding_BuildingUnitPair(feature);
         buildingToBuildingUnitRelation.add(pair);
     }
 
@@ -100,10 +99,10 @@ public class BagPdokVerblijfsobjectParser extends BagFeatureParser {
         return addressNode;
     }
 
-    private static Building_BuildingUnitPair parseBuilding_BuildingUnitPair(SimpleFeature feature) {
+    private static BuildingToBuildingUnitRelation.Tuple parseBuilding_BuildingUnitPair(SimpleFeature feature) {
         Long buildingUnitId = parseId(feature);
         Long buildingId = FeatureUtil.getLong(feature, "pandidentificatie");
-        return new Building_BuildingUnitPair(buildingId, buildingUnitId);
+        return new BuildingToBuildingUnitRelation.Tuple(buildingId, buildingUnitId);
     }
 
     private static Long parseId(SimpleFeature feature) {

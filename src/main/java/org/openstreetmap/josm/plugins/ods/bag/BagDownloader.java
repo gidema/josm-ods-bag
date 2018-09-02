@@ -7,13 +7,11 @@ import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.io.LayerDownloader;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
 import org.openstreetmap.josm.plugins.ods.io.OsmLayerDownloader;
-import org.openstreetmap.josm.plugins.ods.matching.OsmAnalyzer;
 import org.openstreetmap.josm.plugins.ods.setup.ModuleSetup;
 
 public class BagDownloader extends MainDownloader {
     private final OpenDataLayerDownloader openDataLayerDownloader;
     private final OsmLayerDownloader osmLayerDownloader;
-    private OsmAnalyzer osmAnalyzer;
 
     public BagDownloader(ModuleSetup setup, List<Runnable> processors) {
         super(setup, processors);
@@ -39,6 +37,5 @@ public class BagDownloader extends MainDownloader {
     @Override
     protected void process(DownloadResponse response) {
         super.process(response);
-        osmAnalyzer.run();
     }
 }

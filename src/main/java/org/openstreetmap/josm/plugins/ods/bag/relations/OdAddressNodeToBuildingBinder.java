@@ -14,12 +14,12 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingUnitS
  * @author gertjan
  *
  */
-public class OdBuildingUnitToBuildingBinder implements Runnable {
+public class OdAddressNodeToBuildingBinder implements Runnable {
     private final BuildingToBuildingUnitRelation buildingUnitToBuildingRelation;
     private final OdBuildingStore buildingStore;
     private final OdBuildingUnitStore buildingUnitStore;
 
-    public OdBuildingUnitToBuildingBinder(
+    public OdAddressNodeToBuildingBinder(
             OdBuildingStore buildingStore,
             OdBuildingUnitStore buildingUnitStore,
             BuildingToBuildingUnitRelation buildingUnitToBuildingRelation) {

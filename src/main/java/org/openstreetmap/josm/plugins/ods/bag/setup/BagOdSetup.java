@@ -2,13 +2,14 @@ package org.openstreetmap.josm.plugins.ods.bag.setup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.filter.Filter;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.OdBuildingTypeEnricher;
-import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagDuinoordAddressNodeParser;
+import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagDuinoordAddressMissingParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokLigplaatsParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokPandParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokStandplaatsParser;
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.relations.AddressNodeToBuildingRelation;
 import org.openstreetmap.josm.plugins.ods.entities.EntityPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.BuildingCompletenessEnricher;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.OdAddressNodesDistributer;
@@ -80,6 +82,7 @@ public class BagOdSetup {
         Relations relations = new Relations();
         relations.buildingToBuildingUnit = new BuildingToBuildingUnitRelation();
         relations.buildingUnitToAddressNode = new BuildingUnitToAddressNodeRelation();
+        relations.addressNodeToBuilding = new AddressNodeToBuildingRelation();
         return relations;
     }
 
@@ -93,9 +96,12 @@ public class BagOdSetup {
         parsers.verblijfsobject = new BagPdokVerblijfsobjectParser(crsUtil,
                 stores.odBuildingUnit, stores.odAddressNode,
                 relations.buildingToBuildingUnit);
-        parsers.duinoordAddress = new BagDuinoordAddressNodeParser(crsUtil,
+        //        parsers.duinoordAddress = new BagDuinoordAddressNodeParser(crsUtil,
+        //                stores.odAddressNode,
+        //                relations.buildingUnitToAddressNode);
+        parsers.duinoordAddressMissing = new BagDuinoordAddressMissingParser(crsUtil,
                 stores.odAddressNode,
-                relations.buildingUnitToAddressNode);
+                relations.addressNodeToBuilding);
         return parsers;
     }
 
@@ -105,7 +111,7 @@ public class BagOdSetup {
                 "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=2.0.0",
                 1000, 1000, 60000);
         hosts.duinoordBagWFS = new WFSHost("DUINOORD BAG WFS",
-                "https://duinoord.xs4all.nl/geoserver/wfs?VERSION=2.0.0", 1000,
+                "https://duinoord.xs4all.nl/geoserver/wfs?VERSION=2.0.0", 0,
                 1000, 60000);
         return hosts;
     }
@@ -120,8 +126,10 @@ public class BagOdSetup {
                 "bag:standplaats", "identificatie");
         featureSources.verblijfsobject = new GtFeatureSource(host.pdokBagWFS,
                 "bag:verblijfsobject", "identificatie");
-        featureSources.duinoordAdres = new GtFeatureSource(host.duinoordBagWFS,
-                "bag:All_Addresses", "nummeraanduiding");
+        //        featureSources.duinoordAdres = new GtFeatureSource(host.duinoordBagWFS,
+        //                "bag:All_Addresses", "nummeraanduiding");
+        featureSources.duinoordAddressMissing = new GtFeatureSource(host.duinoordBagWFS,
+                "bag:Address_Missing", "nummeraanduiding");
         return featureSources;
     }
 
@@ -134,8 +142,10 @@ public class BagOdSetup {
                 featureSources.standplaats);
         dataSources.verblijfsobject = createVerblijfsobjectDataSource(
                 featureSources.verblijfsobject);
-        dataSources.duinoordAdres = createDuinoordAdresDataSource(
-                featureSources.duinoordAdres);
+        //        dataSources.duinoordAdres = createDuinoordAdresDataSource(
+        //                featureSources.duinoordAdres);
+        dataSources.duinoordAddressMissing = createDuinoordAddressMissingDataSource(
+                featureSources.duinoordAddressMissing);
         return dataSources;
     }
 
@@ -150,8 +160,10 @@ public class BagOdSetup {
                 crsUtil, parsers.standplaats);
         downloaders.verblijfsobject = new GtDownloader(
                 dataSources.verblijfsobject, crsUtil, parsers.verblijfsobject);
+        //        downloaders.duinoordAddress = new GtDownloader(
+        //                dataSources.duinoordAdres, crsUtil, parsers.duinoordAddress);
         downloaders.duinoordAddress = new GtDownloader(
-                dataSources.duinoordAdres, crsUtil, parsers.duinoordAddress);
+                dataSources.duinoordAddressMissing, crsUtil, parsers.duinoordAddressMissing);
         return downloaders;
     }
 
@@ -160,7 +172,8 @@ public class BagOdSetup {
         processors.add(new OdBuildingUnitToBuildingBinder(stores.odBuilding, stores.odBuildingUnit, relations.buildingToBuildingUnit));
         processors.add(new OdBuildingUnitToAddressNodeBinder(stores.odBuildingUnit, stores.odAddressNode,
                 relations.buildingUnitToAddressNode));
-        processors.add(new OdAddressNodeToBuildingBinder(stores.odAddressNode));
+        processors.add(new OdAddressNodeToBuildingBinder(stores.odAddressNode, stores.odBuilding,
+                relations.addressNodeToBuilding));
         processors.add(new BuildingCompletenessEnricher(stores.odBuilding));
         processors.add(new OdAddressNodesDistributer(stores.odBuilding, geoUtil));
         processors.add(new OdBuildingTypeEnricher(stores.odBuilding));
@@ -236,7 +249,26 @@ public class BagOdSetup {
             Logging.error(e);
             throw new RuntimeException(e);
         }
-        builder.setPageSize(1000);
+        builder.setPageSize(0);
+        return builder.build();
+    }
+
+    private static GtDataSource createDuinoordAddressMissingDataSource(
+            GtFeatureSource featureSource) {
+        GtDatasourceBuilder builder = new GtDatasourceBuilder();
+        builder.setFeatureSource(featureSource);
+        builder.setProperties("nummeraanduiding","geopunt","postcode",
+                "huisnummer","huisletter","huisnummertoevoeging",
+                "straat","woonplaats","nevenadres","pandidentificatie");
+        Filter filter;
+        try {
+            filter = CQL.toFilter("nevenadres = true");
+            builder.setFilter(filter);
+        } catch (CQLException e) {
+            Logging.error(e);
+            throw new RuntimeException(e);
+        }
+        builder.setPageSize(0);
         return builder.build();
     }
 
@@ -245,7 +277,8 @@ public class BagOdSetup {
         BagPdokLigplaatsParser ligplaats;
         BagPdokStandplaatsParser standplaats;
         BagPdokVerblijfsobjectParser verblijfsobject;
-        BagDuinoordAddressNodeParser duinoordAddress;
+        //        BagDuinoordAddressNodeParser duinoordAddress;
+        BagDuinoordAddressMissingParser duinoordAddressMissing;
 
         public Parsers() {
         }
@@ -254,6 +287,7 @@ public class BagOdSetup {
     private class Relations {
         BuildingToBuildingUnitRelation buildingToBuildingUnit;
         BuildingUnitToAddressNodeRelation buildingUnitToAddressNode;
+        AddressNodeToBuildingRelation addressNodeToBuilding;
 
         public Relations() {
         }
@@ -272,9 +306,15 @@ public class BagOdSetup {
         GtFeatureSource standplaats;
         GtFeatureSource ligplaats;
         GtFeatureSource verblijfsobject;
-        GtFeatureSource duinoordAdres;
+        //        GtFeatureSource duinoordAdres;
+        GtFeatureSource duinoordAddressMissing;
 
         public GtFeatureSources() {
+        }
+
+        public Collection<GtFeatureSource> getAll() {
+            return Arrays.asList(pand, standplaats, ligplaats,
+                    verblijfsobject,duinoordAddressMissing);
         }
     }
 
@@ -283,7 +323,8 @@ public class BagOdSetup {
         GtDataSource standplaats;
         GtDataSource ligplaats;
         GtDataSource verblijfsobject;
-        GtDataSource duinoordAdres;
+        //        GtDataSource duinoordAdres;
+        GtDataSource duinoordAddressMissing;
 
         public DataSources() {
         }
