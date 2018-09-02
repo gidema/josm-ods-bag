@@ -2,8 +2,6 @@ package org.openstreetmap.josm.plugins.ods.bag;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
-
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -14,17 +12,10 @@ import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.bag.setup.BagModuleSetup;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmBuilding;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OsmBuildingStore;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.matching.BuildingStatusAnalyzer;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.matching.StartYearAnalyzer;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
-import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
 import org.openstreetmap.josm.plugins.ods.gui.OdsDownloadAction;
 import org.openstreetmap.josm.plugins.ods.gui.OdsResetAction;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
-import org.openstreetmap.josm.plugins.ods.matching.OsmAnalyzer;
-import org.openstreetmap.josm.plugins.ods.matching.OsmEntityAnalyzer;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -42,7 +33,6 @@ public class BagImportModule extends OdsModule {
     public void initialize() throws Exception {
         super.initialize();
         OdLayerManager odLayerManager = getSetup().getOdLayerManager();
-        OsmLayerManager osmLayerManager = getSetup().getOsmLayerManager();
 
         //        OsmBuildingAligner osmBuildingAligner = new OsmBuildingAligner(osmBuildingStore);
         //        OsmNeighbourFinder osmNeighbourFinder = new OsmNeighbourFinder(osmBuildingAligner, getTolerance());
@@ -113,12 +103,5 @@ public class BagImportModule extends OdsModule {
             Logging.warn(tr("Failed to retrieve OSM user details from the server."));
             return false;
         }
-    }
-
-    private static OsmAnalyzer createOsmAnalyzer(OsmBuildingStore osmBuildingStore) {
-        OsmEntityAnalyzer<OsmBuilding> buildingAnalyzer = new OsmEntityAnalyzer<>(OsmBuilding.class, osmBuildingStore,
-                new StartYearAnalyzer(), new BuildingStatusAnalyzer());
-        return new OsmAnalyzer(Arrays.asList(
-                buildingAnalyzer));
     }
 }

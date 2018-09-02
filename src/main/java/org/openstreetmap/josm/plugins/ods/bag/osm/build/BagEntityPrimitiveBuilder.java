@@ -15,7 +15,7 @@ import org.openstreetmap.josm.plugins.ods.osm.DefaultPrimitiveFactory;
 import org.openstreetmap.josm.plugins.ods.osm.OsmPrimitiveFactory;
 
 public abstract class BagEntityPrimitiveBuilder<T extends OdEntity>
-implements EntityPrimitiveBuilder<T>, Runnable {
+implements EntityPrimitiveBuilder<T> {
     private final OdLayerManager layerManager;
     private final OsmPrimitiveFactory primitiveFactory;
     private final OdEntityStore<T, ?> entityStore;

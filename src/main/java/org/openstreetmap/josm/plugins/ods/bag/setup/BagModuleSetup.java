@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.plugins.ods.bag.BagDownloader;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
@@ -23,15 +21,14 @@ import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.storage.OdEntityStore;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
 import org.openstreetmap.josm.plugins.ods.io.OsmLayerDownloader;
-import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 import org.openstreetmap.josm.plugins.ods.matching.Matcher;
 import org.openstreetmap.josm.plugins.ods.matching.OsmAnalyzer;
 import org.openstreetmap.josm.plugins.ods.matching.OsmEntityAnalyzer;
 import org.openstreetmap.josm.plugins.ods.setup.ModuleSetup;
 
 public class BagModuleSetup implements ModuleSetup {
-    private final GeoUtil geoUtil = new GeoUtil();
-    private final CRSUtil crsUtil = new CRSUtilProj4j();
+    //    private final GeoUtil geoUtil = new GeoUtil();
+    //    private final CRSUtil crsUtil = new CRSUtilProj4j();
     private final EntityStores entityStores;
     private final OdLayerManager odLayerManager;
     private final OsmLayerManager osmLayerManager;
