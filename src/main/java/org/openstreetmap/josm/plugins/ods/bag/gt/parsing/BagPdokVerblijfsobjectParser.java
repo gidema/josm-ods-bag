@@ -9,14 +9,15 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingToBuildingUnitRelation;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingUnitStatus;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingUnitStore;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
+import org.openstreetmap.josm.tools.Logging;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -92,8 +93,6 @@ public class BagPdokVerblijfsobjectParser extends BagFeatureParser {
         addressNode.setPrimaryId(buildingUnit.getBuildingUnitId());
         OdAddress address = parseAddress(feature);
         addressNode.setAddress(address);
-        String status = FeatureUtil.getString(feature, "status");
-        addressNode.setStatus(parseStatus(status));
         addressNode.setGeometry(buildingUnit.getGeometry());
         addressNode.setBuildinUnit(buildingUnit);
         return addressNode;
@@ -114,19 +113,26 @@ public class BagPdokVerblijfsobjectParser extends BagFeatureParser {
         return (Geometry) feature.getAttribute("geometrie");
     }
 
-    private static EntityStatus parseStatus(String status) {
+    private static BuildingUnitStatus parseStatus(String status) {
         switch (status) {
         case "Verblijfsobject gevormd":
-            return EntityStatus.PLANNED;
+            return BuildingUnitStatus.PROJECTED;
         case "Verblijfsobject in gebruik":
+            return BuildingUnitStatus.FUNCTIONAL;
         case "Verblijfsobject buiten gebruik":
+            return BuildingUnitStatus.DECLINED;
         case "Verblijfsobject in gebruik (niet ingemeten)":
-            return EntityStatus.IN_USE;
+            return BuildingUnitStatus.IN_USE_NOT_MEASURED;
         case "Verblijfsobject ingetrokken":
+            return BuildingUnitStatus.NOT_ESTABLISHED;
         case "Niet gerealiseerd verblijfsobject":
-            return EntityStatus.REMOVED;
+        case "Verblijfsobject ten onrechte opgevoerd":
+            return BuildingUnitStatus.WITHDRAW;
+        case "Verbouwing verblijfsobject":
+            return BuildingUnitStatus.UNDER_RECONSTRUCTION;
         default:
-            return EntityStatus.IN_USE;
+            Logging.warn("Unknown status voor Verblijfsobject: {0}", status);
+            return BuildingUnitStatus.UNKNOWN;
         }
     }
 

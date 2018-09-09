@@ -5,7 +5,6 @@ import java.util.Map;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 
 public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<OdBuilding> {
@@ -52,10 +51,6 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
         case HOUSE:
             type = "house";
             break;
-        case HOUSEBOAT:
-            type = "houseboat";
-            tags.put("floating", "yes");
-            break;
         case INDUSTRIAL:
             type = "industrial";
             break;
@@ -68,9 +63,6 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
         case RETAIL:
             type = "retail";
             break;
-        case STATIC_CARAVAN:
-            type = "static_caravan";
-            break;
         case SUBSTATION:
             tags.put("power", "substation");
             break;
@@ -82,12 +74,13 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
             break;
         }
 
-        if (building.getStatus().equals(EntityStatus.CONSTRUCTION) ||
-                building.getStatus().equals(EntityStatus.PLANNED)) {
+        switch (building.getStatus()) {
+        case UNDER_CONSTRUCTION:
+        case PROJECTED:
             tags.put("building", "construction");
             tags.put("construction", type);
-        }
-        else {
+            break;
+        default:
             tags.put("building", type);
         }
     }

@@ -5,16 +5,9 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.AbstractOdBuild
 
 public class BagOdBuilding extends AbstractOdBuilding {
     private Long aantalVerblijfsobjecten;
-    private BagOdAddress bagOdAddress;
 
     public void setAddress(BagOdAddress address) {
         super.setAddress(address);
-        this.bagOdAddress = address;
-    }
-
-    @Override
-    public BagOdAddress getAddress() {
-        return bagOdAddress;
     }
 
     public void setAantalVerblijfsobjecten(Long aantalVerblijfsobjecten) {

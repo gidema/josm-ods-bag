@@ -3,12 +3,13 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuilding;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.entities.storage.OdEntityStore;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
+import org.openstreetmap.josm.tools.Logging;
 
 public class BagPdokPandParser extends BagFeatureParser {
     private final OdEntityStore<OdBuilding, Long> buildingStore;
@@ -35,26 +36,31 @@ public class BagPdokPandParser extends BagFeatureParser {
         buildingStore.add(building);
     }
 
-    private static EntityStatus parseStatus(String status) {
+    private static BuildingStatus parseStatus(String status) {
         switch (status) {
         case "Bouwvergunning verleend":
-            return EntityStatus.PLANNED;
+            return BuildingStatus.PROJECTED;
         case "Bouw gestart":
-            return EntityStatus.CONSTRUCTION;
+            return BuildingStatus.UNDER_CONSTRUCTION;
         case "Pand in gebruik":
-        case "Pand buiten gebruik":
-        case "Plaats aangewezen":
-            return EntityStatus.IN_USE;
+            return BuildingStatus.FUNCTIONAL;
         case "Pand in gebruik (niet ingemeten)":
-            return EntityStatus.IN_USE_NOT_MEASURED;
+            return BuildingStatus.IN_USE_NOT_MEASURED;
         case "Niet gerealiseerd pand":
-            return EntityStatus.NOT_REALIZED;
+            return BuildingStatus.NOT_ESTABLISHED;
         case "Sloopvergunning verleend":
-            return EntityStatus.REMOVAL_DUE;
+            return BuildingStatus.DEMOLITION_DUE;
         case "Pand gesloopt":
-            return EntityStatus.REMOVED;
+            return BuildingStatus.DEMOLISHED;
+        case "Pand buiten gebruik":
+            return BuildingStatus.DECLINED;
+        case "Verbouwing pand":
+            return BuildingStatus.UNDER_RECONSTRUCTION;
+        case "Pand ten onrechte opgevoerd":
+            return BuildingStatus.WITHDRAWN;
         default:
-            return EntityStatus.UNKNOWN;
+            Logging.warn("Unknown Pand status: {0}", status);
+            return BuildingStatus.UNKNOWN;
         }
     }
 }

@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.plugins.ods.bag.BagDownloader;
+import org.openstreetmap.josm.plugins.ods.bag.os.storage.OdLigplaatsStore;
+import org.openstreetmap.josm.plugins.ods.bag.os.storage.OdStandplaatsStore;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
@@ -38,7 +40,7 @@ public class BagModuleSetup implements ModuleSetup {
 
 
     public BagModuleSetup() {
-        this.entityStores = setupEntityStores();
+        this.entityStores = new EntityStores();
         this.odLayerManager = new OdLayerManager("BAG ODS");
         this.osmLayerManager = new OsmLayerManager("BAG OSM");
         this.odSetup = new BagOdSetup(odLayerManager, entityStores);
@@ -110,22 +112,24 @@ public class BagModuleSetup implements ModuleSetup {
         }
     }
 
-    private EntityStores setupEntityStores() {
-        EntityStores stores = new EntityStores();
-        stores.odBuilding = new OdBuildingStore();
-        stores.odBuildingUnit = new OdBuildingUnitStore();
-        stores.odAddressNode = new OdAddressNodeStore();
-        stores.osmBuilding = new OsmBuildingStore();
-        stores.osmAddressNode = new OsmAddressNodeStore();
-        return stores;
-    }
-
     protected class EntityStores {
-        public OsmAddressNodeStore osmAddressNode;
-        public OsmBuildingStore osmBuilding;
-        public OdAddressNodeStore odAddressNode;
-        public OdBuildingUnitStore odBuildingUnit;
-        public OdBuildingStore odBuilding;
+        final public OsmAddressNodeStore osmAddressNode;
+        final public OsmBuildingStore osmBuilding;
+        final public OdAddressNodeStore odAddressNode;
+        final public OdBuildingUnitStore odBuildingUnit;
+        final public OdBuildingStore odBuilding;
+        final public OdLigplaatsStore odLigplaats;
+        final public OdStandplaatsStore odStandplaats;
+
+        public EntityStores() {
+            this.odBuilding = new OdBuildingStore();
+            this.odBuildingUnit = new OdBuildingUnitStore();
+            this.odAddressNode = new OdAddressNodeStore();
+            this.odLigplaats = new OdLigplaatsStore();
+            this.odStandplaats = new OdStandplaatsStore();
+            this.osmBuilding = new OsmBuildingStore();
+            this.osmAddressNode = new OsmAddressNodeStore();
+        }
 
         public List<OdEntityStore<?, ?>> odEntityStores() {
             return Arrays.asList(odAddressNode, odBuilding, odBuildingUnit);

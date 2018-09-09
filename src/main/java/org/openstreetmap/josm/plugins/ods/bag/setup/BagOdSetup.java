@@ -10,6 +10,7 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.filter.Filter;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.OdBuildingTypeEnricher;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagDuinoordAddressMissingParser;
+import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagDuinoordAddressWithdrawnParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokLigplaatsParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokPandParser;
 import org.openstreetmap.josm.plugins.ods.bag.gt.parsing.BagPdokStandplaatsParser;
@@ -26,7 +27,6 @@ import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.relations.AddressNodeToBuildingRelation;
 import org.openstreetmap.josm.plugins.ods.entities.EntityPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.BuildingCompletenessEnricher;
 import org.openstreetmap.josm.plugins.ods.entities.enrichment.OdAddressNodesDistributer;
@@ -44,7 +44,7 @@ import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 import org.openstreetmap.josm.tools.Logging;
 
 public class BagOdSetup {
-    private final CRSUtil crsUtil;
+    final CRSUtil crsUtil;
     private final GeoUtil geoUtil;
     private final EntityStores stores;
     private final OdLayerManager odLayerManager;
@@ -66,105 +66,16 @@ public class BagOdSetup {
     }
 
     private void setup() {
-        Hosts hosts = setupHosts();
-        Relations relations = setupRelations();
-        Parsers parsers = setupParsers(stores, relations);
-        GtFeatureSources featureSources = setupFeatureSources(hosts);
-        DataSources dataSources = setupDataSources(featureSources);
-        FeatureDownloaders featureDownloaders = setupDownloaders(dataSources, parsers);
+        Hosts hosts = new Hosts();
+        Relations relations = new Relations();
+        Parsers parsers = new Parsers(stores, relations);
+        GtFeatureSources featureSources = new GtFeatureSources(hosts);
+        DataSources dataSources = new DataSources(featureSources);
+        FeatureDownloaders featureDownloaders = new FeatureDownloaders(dataSources, parsers);
 
         List<Runnable> odProcessors = setupOdProcessors(relations);
         this.downloader = new OpenDataLayerDownloader(
                 odLayerManager, featureDownloaders.all(), odProcessors, boundaryManager);
-    }
-
-    private Relations setupRelations() {
-        Relations relations = new Relations();
-        relations.buildingToBuildingUnit = new BuildingToBuildingUnitRelation();
-        relations.buildingUnitToAddressNode = new BuildingUnitToAddressNodeRelation();
-        relations.addressNodeToBuilding = new AddressNodeToBuildingRelation();
-        return relations;
-    }
-
-    private Parsers setupParsers(EntityStores stores, Relations relations) {
-        Parsers parsers = new Parsers();
-        parsers.pand = new BagPdokPandParser(crsUtil, stores.odBuilding);
-        parsers.ligplaats = new BagPdokLigplaatsParser(crsUtil,
-                stores.odBuilding);
-        parsers.standplaats = new BagPdokStandplaatsParser(crsUtil,
-                stores.odBuilding);
-        parsers.verblijfsobject = new BagPdokVerblijfsobjectParser(crsUtil,
-                stores.odBuildingUnit, stores.odAddressNode,
-                relations.buildingToBuildingUnit);
-        //        parsers.duinoordAddress = new BagDuinoordAddressNodeParser(crsUtil,
-        //                stores.odAddressNode,
-        //                relations.buildingUnitToAddressNode);
-        parsers.duinoordAddressMissing = new BagDuinoordAddressMissingParser(crsUtil,
-                stores.odAddressNode,
-                relations.addressNodeToBuilding);
-        return parsers;
-    }
-
-    private Hosts setupHosts() {
-        Hosts hosts = new Hosts();
-        hosts.pdokBagWFS = new WFSHost("PDOK BAG WFS",
-                "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=2.0.0",
-                1000, 1000, 60000);
-        hosts.duinoordBagWFS = new WFSHost("DUINOORD BAG WFS",
-                "https://duinoord.xs4all.nl/geoserver/wfs?VERSION=2.0.0", 0,
-                1000, 60000);
-        return hosts;
-    }
-
-    private GtFeatureSources setupFeatureSources(Hosts host) {
-        GtFeatureSources featureSources = new GtFeatureSources();
-        featureSources.pand = new GtFeatureSource(host.pdokBagWFS, "bag:pand",
-                "identificatie");
-        featureSources.ligplaats = new GtFeatureSource(host.pdokBagWFS,
-                "bag:ligplaats", "identificatie");
-        featureSources.standplaats = new GtFeatureSource(host.pdokBagWFS,
-                "bag:standplaats", "identificatie");
-        featureSources.verblijfsobject = new GtFeatureSource(host.pdokBagWFS,
-                "bag:verblijfsobject", "identificatie");
-        //        featureSources.duinoordAdres = new GtFeatureSource(host.duinoordBagWFS,
-        //                "bag:All_Addresses", "nummeraanduiding");
-        featureSources.duinoordAddressMissing = new GtFeatureSource(host.duinoordBagWFS,
-                "bag:Address_Missing", "nummeraanduiding");
-        return featureSources;
-    }
-
-    private DataSources setupDataSources(GtFeatureSources featureSources) {
-        DataSources dataSources = new DataSources();
-        dataSources.pand = createPandDataSource(featureSources.pand);
-        dataSources.ligplaats = createLigplaatsDataSource(
-                featureSources.ligplaats);
-        dataSources.standplaats = createStandplaatsDataSource(
-                featureSources.standplaats);
-        dataSources.verblijfsobject = createVerblijfsobjectDataSource(
-                featureSources.verblijfsobject);
-        //        dataSources.duinoordAdres = createDuinoordAdresDataSource(
-        //                featureSources.duinoordAdres);
-        dataSources.duinoordAddressMissing = createDuinoordAddressMissingDataSource(
-                featureSources.duinoordAddressMissing);
-        return dataSources;
-    }
-
-    private FeatureDownloaders setupDownloaders(DataSources dataSources,
-            Parsers parsers) {
-        FeatureDownloaders downloaders = new FeatureDownloaders();
-        downloaders.pand = new GtDownloader(dataSources.pand, crsUtil,
-                parsers.pand);
-        downloaders.ligplaats = new GtDownloader(dataSources.ligplaats, crsUtil,
-                parsers.ligplaats);
-        downloaders.standplaats = new GtDownloader(dataSources.standplaats,
-                crsUtil, parsers.standplaats);
-        downloaders.verblijfsobject = new GtDownloader(
-                dataSources.verblijfsobject, crsUtil, parsers.verblijfsobject);
-        //        downloaders.duinoordAddress = new GtDownloader(
-        //                dataSources.duinoordAdres, crsUtil, parsers.duinoordAddress);
-        downloaders.duinoordAddress = new GtDownloader(
-                dataSources.duinoordAddressMissing, crsUtil, parsers.duinoordAddressMissing);
-        return downloaders;
     }
 
     private List<Runnable> setupOdProcessors(Relations relations) {
@@ -172,8 +83,7 @@ public class BagOdSetup {
         processors.add(new OdBuildingUnitToBuildingBinder(stores.odBuilding, stores.odBuildingUnit, relations.buildingToBuildingUnit));
         processors.add(new OdBuildingUnitToAddressNodeBinder(stores.odBuildingUnit, stores.odAddressNode,
                 relations.buildingUnitToAddressNode));
-        processors.add(new OdAddressNodeToBuildingBinder(stores.odAddressNode, stores.odBuilding,
-                relations.addressNodeToBuilding));
+        processors.add(new OdAddressNodeToBuildingBinder(stores.odAddressNode));
         processors.add(new BuildingCompletenessEnricher(stores.odBuilding));
         processors.add(new OdAddressNodesDistributer(stores.odBuilding, geoUtil));
         processors.add(new OdBuildingTypeEnricher(stores.odBuilding));
@@ -190,7 +100,7 @@ public class BagOdSetup {
         return builders;
     }
 
-    private static GtDataSource createPandDataSource(
+    static GtDataSource createPandDataSource(
             GtFeatureSource featureSource) {
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
@@ -200,7 +110,7 @@ public class BagOdSetup {
         return builder.build();
     }
 
-    private static GtDataSource createLigplaatsDataSource(
+    static GtDataSource createLigplaatsDataSource(
             GtFeatureSource featureSource) {
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
@@ -211,7 +121,7 @@ public class BagOdSetup {
         return builder.build();
     }
 
-    private static GtDataSource createStandplaatsDataSource(
+    static GtDataSource createStandplaatsDataSource(
             GtFeatureSource featureSource) {
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
@@ -222,7 +132,7 @@ public class BagOdSetup {
         return builder.build();
     }
 
-    private static GtDataSource createVerblijfsobjectDataSource(
+    static GtDataSource createVerblijfsobjectDataSource(
             GtFeatureSource featureSource) {
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
@@ -234,7 +144,7 @@ public class BagOdSetup {
         return builder.build();
     }
 
-    private static GtDataSource createDuinoordAdresDataSource(
+    static GtDataSource createDuinoordAdresDataSource(
             GtFeatureSource featureSource) {
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
@@ -253,7 +163,7 @@ public class BagOdSetup {
         return builder.build();
     }
 
-    private static GtDataSource createDuinoordAddressMissingDataSource(
+    static GtDataSource createDuinoordAddressMissingDataSource(
             GtFeatureSource featureSource) {
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
@@ -272,82 +182,161 @@ public class BagOdSetup {
         return builder.build();
     }
 
-    private class Parsers {
-        BagPdokPandParser pand;
-        BagPdokLigplaatsParser ligplaats;
-        BagPdokStandplaatsParser standplaats;
-        BagPdokVerblijfsobjectParser verblijfsobject;
-        //        BagDuinoordAddressNodeParser duinoordAddress;
-        BagDuinoordAddressMissingParser duinoordAddressMissing;
+    static GtDataSource createDuinoordAddressWithdrawnDataSource(
+            GtFeatureSource featureSource) {
+        GtDatasourceBuilder builder = new GtDatasourceBuilder();
+        builder.setFeatureSource(featureSource);
+        builder.setProperties("nummeraanduiding","geopunt","postcode",
+                "huisnummer","huisletter","huisnummertoevoeging",
+                "straat","woonplaats","nevenadres","osm_id");
+        builder.setPageSize(0);
+        return builder.build();
+    }
 
-        public Parsers() {
+    private class Parsers {
+        final BagPdokPandParser pand;
+        final BagPdokLigplaatsParser ligplaats;
+        final BagPdokStandplaatsParser standplaats;
+        final BagPdokVerblijfsobjectParser verblijfsobject;
+        //        BagDuinoordAddressNodeParser duinoordAddress;
+        final BagDuinoordAddressMissingParser duinoordAddressMissing;
+        final BagDuinoordAddressWithdrawnParser duinoordAddressWithdrawn;
+
+        public Parsers(EntityStores stores, Relations relations) {
+            this.pand = new BagPdokPandParser(crsUtil, stores.odBuilding);
+            this.ligplaats = new BagPdokLigplaatsParser(crsUtil,
+                    stores.odLigplaats);
+            this.standplaats = new BagPdokStandplaatsParser(crsUtil,
+                    stores.odStandplaats);
+            this.verblijfsobject = new BagPdokVerblijfsobjectParser(crsUtil,
+                    stores.odBuildingUnit, stores.odAddressNode,
+                    relations.buildingToBuildingUnit);
+            //        this.duinoordAddress = new BagDuinoordAddressNodeParser(crsUtil,
+            //                stores.odAddressNode,
+            //                relations.buildingUnitToAddressNode);
+            this.duinoordAddressMissing = new BagDuinoordAddressMissingParser(crsUtil,
+                    stores.odAddressNode,
+                    relations.buildingUnitToAddressNode);
+            this.duinoordAddressWithdrawn = new BagDuinoordAddressWithdrawnParser(crsUtil,
+                    stores.odAddressNode);
         }
     }
 
     private class Relations {
-        BuildingToBuildingUnitRelation buildingToBuildingUnit;
-        BuildingUnitToAddressNodeRelation buildingUnitToAddressNode;
-        AddressNodeToBuildingRelation addressNodeToBuilding;
+        final BuildingToBuildingUnitRelation buildingToBuildingUnit = new BuildingToBuildingUnitRelation();
+        final BuildingUnitToAddressNodeRelation buildingUnitToAddressNode = new BuildingUnitToAddressNodeRelation();
 
         public Relations() {
         }
     }
 
     private class Hosts {
-        WFSHost pdokBagWFS;
-        WFSHost duinoordBagWFS;
+        final WFSHost pdokBagWFS = new WFSHost("PDOK BAG WFS",
+                "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=2.0.0",
+                1000, 1000, 60000);
+        final WFSHost duinoordBagWFS = new WFSHost("DUINOORD BAG WFS",
+                "https://duinoord.xs4all.nl/geoserver/wfs?VERSION=2.0.0", 0,
+                1000, 60000);
 
         Hosts() {
         }
     }
 
     private class GtFeatureSources {
-        GtFeatureSource pand;
-        GtFeatureSource standplaats;
-        GtFeatureSource ligplaats;
-        GtFeatureSource verblijfsobject;
+        // PDOK
+        final GtFeatureSource pand;
+        final GtFeatureSource standplaats;
+        final GtFeatureSource ligplaats;
+        final GtFeatureSource verblijfsobject;
+        // Duinoord
         //        GtFeatureSource duinoordAdres;
-        GtFeatureSource duinoordAddressMissing;
+        final GtFeatureSource duinoordAddressMissing;
+        final GtFeatureSource duinoordAddressWithdrawn;
 
-        public GtFeatureSources() {
+        public GtFeatureSources(Hosts hosts) {
+            WFSHost pdok = hosts.pdokBagWFS;
+            this.pand = new GtFeatureSource(pdok, "bag:pand", "identificatie");
+            this.ligplaats = new GtFeatureSource(pdok, "bag:ligplaats", "identificatie");
+            this.standplaats = new GtFeatureSource(pdok, "bag:standplaats", "identificatie");
+            this.verblijfsobject = new GtFeatureSource(pdok, "bag:verblijfsobject", "identificatie");
+            WFSHost duinoord = hosts.duinoordBagWFS;
+            //  new GtFeatureSource(duinoord, "bag:All_Addresses", "nummeraanduiding");
+            this.duinoordAddressMissing = new GtFeatureSource(duinoord, "bag:Address_Missing", "nummeraanduiding");
+            this.duinoordAddressWithdrawn = new GtFeatureSource(duinoord, "bag:Address_Withdrawn", "nummeraanduiding");
         }
 
         public Collection<GtFeatureSource> getAll() {
             return Arrays.asList(pand, standplaats, ligplaats,
-                    verblijfsobject,duinoordAddressMissing);
+                    verblijfsobject,duinoordAddressMissing, duinoordAddressWithdrawn);
         }
     }
 
     private class DataSources {
-        GtDataSource pand;
-        GtDataSource standplaats;
-        GtDataSource ligplaats;
-        GtDataSource verblijfsobject;
+        final GtDataSource pand;
+        final GtDataSource standplaats;
+        final GtDataSource ligplaats;
+        final GtDataSource verblijfsobject;
         //        GtDataSource duinoordAdres;
-        GtDataSource duinoordAddressMissing;
+        final GtDataSource duinoordAddressMissing;
+        final GtDataSource duinoordAddressWithdrawn;
 
-        public DataSources() {
+        public DataSources(GtFeatureSources featureSources) {
+            this.pand = createPandDataSource(featureSources.pand);
+            this.ligplaats = createLigplaatsDataSource(
+                    featureSources.ligplaats);
+            this.standplaats = createStandplaatsDataSource(
+                    featureSources.standplaats);
+            this.verblijfsobject = createVerblijfsobjectDataSource(
+                    featureSources.verblijfsobject);
+            //        dataSources.duinoordAdres = createDuinoordAdresDataSource(
+            //                featureSources.duinoordAdres);
+            this.duinoordAddressMissing = createDuinoordAddressMissingDataSource(
+                    featureSources.duinoordAddressMissing);
+            this.duinoordAddressWithdrawn = createDuinoordAddressWithdrawnDataSource(
+                    featureSources.duinoordAddressWithdrawn);
         }
     }
 
     private class FeatureDownloaders {
-        FeatureDownloader pand;
-        FeatureDownloader standplaats;
-        FeatureDownloader ligplaats;
-        FeatureDownloader verblijfsobject;
-        FeatureDownloader duinoordAddress;
+        final FeatureDownloader pand;
+        final FeatureDownloader standplaats;
+        final FeatureDownloader ligplaats;
+        final FeatureDownloader verblijfsobject;
+        final FeatureDownloader duinoordAddressMissing;
+        final FeatureDownloader duinoordAddressWithdrawn;
 
-        public FeatureDownloaders() {
+        public FeatureDownloaders(DataSources dataSources, Parsers parsers) {
+            this.pand = new GtDownloader(dataSources.pand, crsUtil,
+                    parsers.pand);
+            this.ligplaats = new GtDownloader(dataSources.ligplaats, crsUtil,
+                    parsers.ligplaats);
+            this.standplaats = new GtDownloader(dataSources.standplaats,
+                    crsUtil, parsers.standplaats);
+            this.verblijfsobject = new GtDownloader(
+                    dataSources.verblijfsobject, crsUtil, parsers.verblijfsobject);
+            //        downloaders.duinoordAddress = new GtDownloader(
+            //                dataSources.duinoordAdres, crsUtil, parsers.duinoordAddress);
+            this.duinoordAddressMissing = new GtDownloader(
+                    dataSources.duinoordAddressMissing, crsUtil, parsers.duinoordAddressMissing);
+            this.duinoordAddressWithdrawn = new GtDownloader(
+                    dataSources.duinoordAddressWithdrawn, crsUtil, parsers.duinoordAddressWithdrawn);
         }
 
         List<FeatureDownloader> all() {
-            return Arrays.asList(pand, standplaats, ligplaats, verblijfsobject, duinoordAddress);
+            return Arrays.asList(pand, standplaats, ligplaats, verblijfsobject, duinoordAddressMissing, duinoordAddressWithdrawn);
         }
     }
 
     static class LayerDownloaders {
-        OsmLayerDownloader osm;
-        OpenDataLayerDownloader od;
+        final OsmLayerDownloader osm;
+        final OpenDataLayerDownloader od;
+
+        public LayerDownloaders(OsmLayerDownloader osm,
+                OpenDataLayerDownloader od) {
+            super();
+            this.osm = osm;
+            this.od = od;
+        }
     }
 
     static class PrimitiveBuilders  {

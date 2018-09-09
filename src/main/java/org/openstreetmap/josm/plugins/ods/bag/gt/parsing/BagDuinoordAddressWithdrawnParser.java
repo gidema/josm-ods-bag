@@ -2,25 +2,21 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
-import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnitToAddressNodeRelation;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.AddressNodeStatus;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
-public class BagDuinoordAddressMissingParser extends BagFeatureParser {
+public class BagDuinoordAddressWithdrawnParser extends BagFeatureParser {
     private final OdAddressNodeStore addressNodeStore;
-    private final BuildingUnitToAddressNodeRelation buildingUnitToAddressNodeRelation;
 
-    public BagDuinoordAddressMissingParser(CRSUtil crsUtil,
-            //            OdBuildingUnitStore buildingUnitStore,
-            OdAddressNodeStore addressNodeStore,
-            BuildingUnitToAddressNodeRelation buildingUnitToAddressNodeRelation) {
+    public BagDuinoordAddressWithdrawnParser(CRSUtil crsUtil,
+            OdAddressNodeStore addressNodeStore) {
         super(crsUtil);
         this.addressNodeStore = addressNodeStore;
-        this.buildingUnitToAddressNodeRelation = buildingUnitToAddressNodeRelation;
     }
 
     /**
@@ -33,8 +29,6 @@ public class BagDuinoordAddressMissingParser extends BagFeatureParser {
     public void parse(SimpleFeature feature, DownloadResponse response) {
         OdAddressNode addressNode = parseAddressNode(feature, response);
         addressNodeStore.add(addressNode);
-        BuildingUnitToAddressNodeRelation.Tuple tuple = parseBu_An_Tuple(feature);
-        buildingUnitToAddressNodeRelation.add(tuple);
     }
 
     private OdAddressNode parseAddressNode(SimpleFeature feature, DownloadResponse response) {
@@ -43,15 +37,9 @@ public class BagDuinoordAddressMissingParser extends BagFeatureParser {
         Long id = FeatureUtil.getLong(feature, "nummeraanduiding");
         addressNode.setPrimaryId(id);
         addressNode.setAddressNodeId(id);
+        addressNode.setStatus(AddressNodeStatus.WITHDRAWN);
         OdAddress address = DuinoordAddressParser.parseAddress(feature);
         addressNode.setAddress(address);
         return addressNode;
     }
-
-    private static BuildingUnitToAddressNodeRelation.Tuple parseBu_An_Tuple(SimpleFeature feature) {
-        Long addressNodeId = FeatureUtil.getLong(feature, "nummeraanduiding");
-        Long buildingId = FeatureUtil.getLong(feature, "verblijfsobjectidentificatie");
-        return new BuildingUnitToAddressNodeRelation.Tuple(addressNodeId, buildingId);
-    }
-
 }

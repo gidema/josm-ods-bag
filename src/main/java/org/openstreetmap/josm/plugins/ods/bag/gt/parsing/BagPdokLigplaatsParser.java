@@ -1,44 +1,41 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdLigplaats;
+import org.openstreetmap.josm.plugins.ods.bag.entity.StatusPlaats;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.entities.storage.OdEntityStore;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
 public class BagPdokLigplaatsParser extends BagFeatureParser {
-    private final OdEntityStore<OdBuilding, Long> buildingStore;
+    private final OdEntityStore<BagOdLigplaats, Long> ligplaatsStore;
 
-    public BagPdokLigplaatsParser(CRSUtil crsUtil, OdEntityStore<OdBuilding, Long> buildingStore) {
+    public BagPdokLigplaatsParser(CRSUtil crsUtil, OdEntityStore<BagOdLigplaats, Long> ligplaatsStore) {
         super(crsUtil);
-        this.buildingStore = buildingStore;
+        this.ligplaatsStore = ligplaatsStore;
     }
 
     @Override
     public void parse(SimpleFeature feature, DownloadResponse response) {
-        BagOdBuilding building = new BagOdBuilding();
-        super.parse(feature, building, response);
-        Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");
-        building.setStartYear(bouwjaar);
-        building.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
-        building.setBuildingId(FeatureUtil.getLong(feature, "identificatie"));
+        BagOdLigplaats ligplaats = new BagOdLigplaats();
+        super.parse(feature, ligplaats, response);
+        ligplaats.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
+        ligplaats.setId(FeatureUtil.getLong(feature, "identificatie"));
         OdAddress address = parseAddress(feature);
-        building.setAddress(address);
-        building.setBuildingType(BuildingType.HOUSEBOAT);
-        buildingStore.add(building);
+        ligplaats.setAddress(address);
+        ligplaatsStore.add(ligplaats);
     }
 
-    private static EntityStatus parseStatus(String status) {
+    private static StatusPlaats parseStatus(String status) {
         switch (status) {
         case "Plaats aangewezen":
-            return EntityStatus.IN_USE;
+            return StatusPlaats.AANGEWEZEN;
+        case "Plaats ingetrokken":
+            return StatusPlaats.INGETROKKEN;
         default:
-            return EntityStatus.UNKNOWN;
+            return StatusPlaats.ONBEKEND;
         }
     }
 }

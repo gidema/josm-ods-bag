@@ -3,7 +3,7 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnitToAddressNodeRelation;
-import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnit_AddressNodePair;
+import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnitToAddressNodeRelation.Tuple;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
@@ -36,7 +36,7 @@ public class BagDuinoordAddressNodeParser extends BagFeatureParser {
     public void parse(SimpleFeature feature, DownloadResponse response) {
         OdAddressNode addressNode = parseAddressNode(feature, response);
         addressNodeStore.add(addressNode);
-        BuildingUnit_AddressNodePair pair = parseBuildingUnit_AddressNodePair(feature);
+        Tuple pair = parseBuildingUnit_AddressNodePair(feature);
         buildingUnitToAddressNodeRelation.add(pair);
     }
 
@@ -52,9 +52,9 @@ public class BagDuinoordAddressNodeParser extends BagFeatureParser {
         return addressNode;
     }
 
-    private static BuildingUnit_AddressNodePair parseBuildingUnit_AddressNodePair(SimpleFeature feature) {
+    private static Tuple parseBuildingUnit_AddressNodePair(SimpleFeature feature) {
         Long buildingUnitId = FeatureUtil.getLong(feature, "verblijfsobject");
         Long addressNodeId = FeatureUtil.getLong(feature, "nummeraanduiding");
-        return new BuildingUnit_AddressNodePair(buildingUnitId, addressNodeId);
+        return new Tuple(buildingUnitId, addressNodeId);
     }
 }

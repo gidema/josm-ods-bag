@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.ods.bag.relations;
 
+import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnitToAddressNodeRelation.Tuple;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
@@ -31,7 +32,7 @@ public class OdBuildingUnitToAddressNodeBinder implements Runnable {
 
     @Override
     public void run() {
-        for(BuildingUnit_AddressNodePair pair : buildingUnitToAddressNodeRelation) {
+        for(Tuple pair : buildingUnitToAddressNodeRelation) {
             bindBuildingUnitToAddressNode(pair);
         }
     }
@@ -41,7 +42,7 @@ public class OdBuildingUnitToAddressNodeBinder implements Runnable {
      *
      * @param buildingUnit
      */
-    public void bindBuildingUnitToAddressNode(BuildingUnit_AddressNodePair pair) {
+    public void bindBuildingUnitToAddressNode(Tuple pair) {
         OdBuildingUnit buildingUnit = buildingUnitStore.get(pair.getBuildingUnitId());
         OdAddressNode addressNode = addressNodeStore.get(pair.getAddressNodeId());
         if (buildingUnit != null && addressNode != null) {
