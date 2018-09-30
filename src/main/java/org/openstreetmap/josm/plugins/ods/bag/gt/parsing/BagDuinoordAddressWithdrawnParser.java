@@ -2,7 +2,6 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.AddressNodeStatus;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
@@ -13,9 +12,9 @@ import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 public class BagDuinoordAddressWithdrawnParser extends BagFeatureParser {
     private final OdAddressNodeStore addressNodeStore;
 
-    public BagDuinoordAddressWithdrawnParser(CRSUtil crsUtil,
+    public BagDuinoordAddressWithdrawnParser(
             OdAddressNodeStore addressNodeStore) {
-        super(crsUtil);
+        super();
         this.addressNodeStore = addressNodeStore;
     }
 

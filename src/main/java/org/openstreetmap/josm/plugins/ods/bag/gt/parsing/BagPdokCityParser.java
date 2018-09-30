@@ -1,7 +1,6 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.places.OdCity;
 import org.openstreetmap.josm.plugins.ods.domains.places.impl.AbstractOdCity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
@@ -11,8 +10,8 @@ import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 public class BagPdokCityParser extends BagFeatureParser {
     private final OdEntityStore<OdCity, Long> cityStore;
 
-    public BagPdokCityParser(CRSUtil crsUtil, OdEntityStore<OdCity, Long> cityStore) {
-        super(crsUtil);
+    public BagPdokCityParser(OdEntityStore<OdCity, Long> cityStore) {
+        super();
         this.cityStore = cityStore;
     }
 

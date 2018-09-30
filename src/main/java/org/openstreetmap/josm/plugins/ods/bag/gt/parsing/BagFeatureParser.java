@@ -19,11 +19,9 @@ import org.openstreetmap.josm.plugins.ods.parsing.FeatureParser;
 import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class BagFeatureParser implements FeatureParser {
-    private final CRSUtil crsUtil;
 
-    public BagFeatureParser(CRSUtil crsUtil) {
+    public BagFeatureParser() {
         super();
-        this.crsUtil = crsUtil;
     }
 
     @Override
@@ -51,6 +49,7 @@ public abstract class BagFeatureParser implements FeatureParser {
             CoordinateReferenceSystem crs = feature.getType()
                     .getCoordinateReferenceSystem();
             Geometry gtGeometry = getGeometry(feature);
+            CRSUtil crsUtil = CRSUtil.getInstance();
             entity.setGeometry(crsUtil.toOsm(gtGeometry, crs));
         } catch (CRSException e) {
             // TODO Auto-generated catch block

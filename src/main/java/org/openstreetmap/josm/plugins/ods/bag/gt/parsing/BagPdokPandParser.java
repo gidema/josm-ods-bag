@@ -2,7 +2,6 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuilding;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
@@ -13,13 +12,9 @@ import org.openstreetmap.josm.tools.Logging;
 
 public class BagPdokPandParser extends BagFeatureParser {
     private final OdEntityStore<OdBuilding, Long> buildingStore;
-    //    private final SimpleFeatureType featureType;
 
-    public  BagPdokPandParser(CRSUtil crsUtil,
-            //            SimpleFeatureType featureType,
-            OdEntityStore<OdBuilding, Long> buildingStore) {
-        super(crsUtil);
-        //        this.featureType = featureType;
+    public  BagPdokPandParser(OdEntityStore<OdBuilding, Long> buildingStore) {
+        super();
         this.buildingStore = buildingStore;
     }
 

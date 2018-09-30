@@ -3,7 +3,6 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingUnitToAddressNodeRelation;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdAddressNodeStore;
@@ -14,11 +13,10 @@ public class BagDuinoordAddressMissingParser extends BagFeatureParser {
     private final OdAddressNodeStore addressNodeStore;
     private final BuildingUnitToAddressNodeRelation buildingUnitToAddressNodeRelation;
 
-    public BagDuinoordAddressMissingParser(CRSUtil crsUtil,
-            //            OdBuildingUnitStore buildingUnitStore,
+    public BagDuinoordAddressMissingParser(
             OdAddressNodeStore addressNodeStore,
             BuildingUnitToAddressNodeRelation buildingUnitToAddressNodeRelation) {
-        super(crsUtil);
+        super();
         this.addressNodeStore = addressNodeStore;
         this.buildingUnitToAddressNodeRelation = buildingUnitToAddressNodeRelation;
     }

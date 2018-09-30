@@ -23,8 +23,6 @@ import org.openstreetmap.josm.plugins.ods.bag.relations.OdBuildingUnitToAddressN
 import org.openstreetmap.josm.plugins.ods.bag.relations.OdBuildingUnitToBuildingBinder;
 import org.openstreetmap.josm.plugins.ods.bag.setup.BagModuleSetup.EntityStores;
 import org.openstreetmap.josm.plugins.ods.binding.OdAddressNodeToBuildingBinder;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityPrimitiveBuilder;
@@ -44,7 +42,6 @@ import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 import org.openstreetmap.josm.tools.Logging;
 
 public class BagOdSetup {
-    final CRSUtil crsUtil;
     private final GeoUtil geoUtil;
     private final EntityStores stores;
     private final OdLayerManager odLayerManager;
@@ -53,7 +50,6 @@ public class BagOdSetup {
 
     public BagOdSetup(OdLayerManager odLayerManager, EntityStores stores) {
         super();
-        this.crsUtil = new CRSUtilProj4j();
         this.geoUtil = new GeoUtil();
         this.stores = stores;
         this.odLayerManager = odLayerManager;
@@ -203,22 +199,17 @@ public class BagOdSetup {
         final BagDuinoordAddressWithdrawnParser duinoordAddressWithdrawn;
 
         public Parsers(EntityStores stores, Relations relations) {
-            this.pand = new BagPdokPandParser(crsUtil, stores.odBuilding);
-            this.ligplaats = new BagPdokLigplaatsParser(crsUtil,
-                    stores.odLigplaats);
-            this.standplaats = new BagPdokStandplaatsParser(crsUtil,
-                    stores.odStandplaats);
-            this.verblijfsobject = new BagPdokVerblijfsobjectParser(crsUtil,
-                    stores.odBuildingUnit, stores.odAddressNode,
+            this.pand = new BagPdokPandParser(stores.odBuilding);
+            this.ligplaats = new BagPdokLigplaatsParser(stores.odLigplaats);
+            this.standplaats = new BagPdokStandplaatsParser(stores.odStandplaats);
+            this.verblijfsobject = new BagPdokVerblijfsobjectParser(stores.odBuildingUnit, stores.odAddressNode,
                     relations.buildingToBuildingUnit);
             //        this.duinoordAddress = new BagDuinoordAddressNodeParser(crsUtil,
             //                stores.odAddressNode,
             //                relations.buildingUnitToAddressNode);
-            this.duinoordAddressMissing = new BagDuinoordAddressMissingParser(crsUtil,
-                    stores.odAddressNode,
+            this.duinoordAddressMissing = new BagDuinoordAddressMissingParser(stores.odAddressNode,
                     relations.buildingUnitToAddressNode);
-            this.duinoordAddressWithdrawn = new BagDuinoordAddressWithdrawnParser(crsUtil,
-                    stores.odAddressNode);
+            this.duinoordAddressWithdrawn = new BagDuinoordAddressWithdrawnParser(stores.odAddressNode);
         }
     }
 
@@ -306,20 +297,17 @@ public class BagOdSetup {
         final FeatureDownloader duinoordAddressWithdrawn;
 
         public FeatureDownloaders(DataSources dataSources, Parsers parsers) {
-            this.pand = new GtDownloader(dataSources.pand, crsUtil,
-                    parsers.pand);
-            this.ligplaats = new GtDownloader(dataSources.ligplaats, crsUtil,
-                    parsers.ligplaats);
-            this.standplaats = new GtDownloader(dataSources.standplaats,
-                    crsUtil, parsers.standplaats);
+            this.pand = new GtDownloader(dataSources.pand, parsers.pand);
+            this.ligplaats = new GtDownloader(dataSources.ligplaats, parsers.ligplaats);
+            this.standplaats = new GtDownloader(dataSources.standplaats, parsers.standplaats);
             this.verblijfsobject = new GtDownloader(
-                    dataSources.verblijfsobject, crsUtil, parsers.verblijfsobject);
+                    dataSources.verblijfsobject, parsers.verblijfsobject);
             //        downloaders.duinoordAddress = new GtDownloader(
             //                dataSources.duinoordAdres, crsUtil, parsers.duinoordAddress);
             this.duinoordAddressMissing = new GtDownloader(
-                    dataSources.duinoordAddressMissing, crsUtil, parsers.duinoordAddressMissing);
+                    dataSources.duinoordAddressMissing, parsers.duinoordAddressMissing);
             this.duinoordAddressWithdrawn = new GtDownloader(
-                    dataSources.duinoordAddressWithdrawn, crsUtil, parsers.duinoordAddressWithdrawn);
+                    dataSources.duinoordAddressWithdrawn, parsers.duinoordAddressWithdrawn);
         }
 
         List<FeatureDownloader> all() {

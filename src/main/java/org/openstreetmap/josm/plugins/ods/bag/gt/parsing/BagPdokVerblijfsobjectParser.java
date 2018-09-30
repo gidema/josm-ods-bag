@@ -7,7 +7,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.bag.relations.BuildingToBuildingUnitRelation;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingUnitStatus;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
@@ -31,11 +30,11 @@ public class BagPdokVerblijfsobjectParser extends BagFeatureParser {
     private final OdAddressNodeStore addressNodeStore;
     private final BuildingToBuildingUnitRelation buildingToBuildingUnitRelation;
 
-    public BagPdokVerblijfsobjectParser(CRSUtil crsUtil,
+    public BagPdokVerblijfsobjectParser(
             OdBuildingUnitStore buildingUnitStore,
             OdAddressNodeStore addressNodeStore,
             BuildingToBuildingUnitRelation buildingToBuildingUnitRelation) {
-        super(crsUtil);
+        super();
         this.buildingUnitStore = buildingUnitStore;
         this.addressNodeStore = addressNodeStore;
         this.buildingToBuildingUnitRelation = buildingToBuildingUnitRelation;

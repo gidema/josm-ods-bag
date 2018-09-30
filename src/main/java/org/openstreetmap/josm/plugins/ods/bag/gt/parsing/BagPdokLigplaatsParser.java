@@ -3,7 +3,6 @@ package org.openstreetmap.josm.plugins.ods.bag.gt.parsing;
 import org.opengis.feature.simple.SimpleFeature;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdLigplaats;
 import org.openstreetmap.josm.plugins.ods.bag.entity.StatusPlaats;
-import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.entities.storage.OdEntityStore;
@@ -12,8 +11,8 @@ import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 public class BagPdokLigplaatsParser extends BagFeatureParser {
     private final OdEntityStore<BagOdLigplaats, Long> ligplaatsStore;
 
-    public BagPdokLigplaatsParser(CRSUtil crsUtil, OdEntityStore<BagOdLigplaats, Long> ligplaatsStore) {
-        super(crsUtil);
+    public BagPdokLigplaatsParser(OdEntityStore<BagOdLigplaats, Long> ligplaatsStore) {
+        super();
         this.ligplaatsStore = ligplaatsStore;
     }
 
