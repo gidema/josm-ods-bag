@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
-import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Complete;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +28,7 @@ implements EntityPrimitiveBuilder<T> {
     public void run() {
         entityStore.stream()
         .filter(entity->entity.getPrimitive() == null)
-        .filter(entity->entity.getCompleteness() == Complete)
+        .filter(entity->entity.hide() == false)
         .forEach(this::createPrimitive);
     }
 

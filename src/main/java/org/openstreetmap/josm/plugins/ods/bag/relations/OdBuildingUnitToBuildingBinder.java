@@ -4,6 +4,7 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingStore;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OdBuildingUnitStore;
+import org.openstreetmap.josm.tools.Logging;
 
 
 /**
@@ -44,12 +45,11 @@ public class OdBuildingUnitToBuildingBinder implements Runnable {
     public void bindBuildingUnitToBuilding(BuildingToBuildingUnitRelation.Tuple tuple) {
         OdBuildingUnit unit = buildingUnitStore.get(tuple.getBuildingUnitId());
         OdBuilding building = buildingStore.get(tuple.getBuildingId());
+        if (building == null) Logging.warn("BuildingUnit connected to missing building: {0}",
+                tuple.getBuildingId());
         if (unit != null && building != null) {
             unit.addBuilding(building);
             building.addBuildingUnit(unit);
-        }
-        else {
-            // TODO Is in necessary to handle this case?
         }
     }
 }
