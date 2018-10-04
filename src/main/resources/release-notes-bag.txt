@@ -1,5 +1,9 @@
 See also the release notes for the opendataservices plug-in.
 
+Version 0.6.17
+==============
+- Fixed incompatibilities with Josm versions >= 14178
+
 Version 0.6.16
 ==============
 - Fixed incompatibilities with Josm versions >= 14026
