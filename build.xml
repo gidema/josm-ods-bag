@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="ods-bag"  default="dist" basedir="." 
   xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+
   <tstamp>
     <format property="plugin.date" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" />
   </tstamp>
@@ -9,7 +12,7 @@
   <!-- enter the SVN commit message -->
   <property name="commit.message" value="Commit message"/>
   <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-  <property name="plugin.main.version" value="14178"/>
+  <property name="plugin.main.version" value="15390"/>
   <property name="plugin.class" value="org.openstreetmap.josm.plugins.ods.bag.BagImportPlugin"/>
   <property name="plugin.version" value="${mypom.version}"/>
   <property name="plugin.build.dir" value="build" />

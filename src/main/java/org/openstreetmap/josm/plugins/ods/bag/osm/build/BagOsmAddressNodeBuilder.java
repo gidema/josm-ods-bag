@@ -12,7 +12,7 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.BaseOsmAddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 
 public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<OsmAddressNode> {
 

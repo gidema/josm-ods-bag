@@ -9,7 +9,7 @@ import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<OdAddressNode> {
 

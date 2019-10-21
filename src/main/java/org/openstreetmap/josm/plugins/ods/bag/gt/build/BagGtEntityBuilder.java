@@ -12,7 +12,7 @@ import org.openstreetmap.josm.plugins.ods.entities.OdEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public abstract class BagGtEntityBuilder<T extends OdEntity> implements OdEntityBuilder<T> {
     private final CRSUtil crsUtil;

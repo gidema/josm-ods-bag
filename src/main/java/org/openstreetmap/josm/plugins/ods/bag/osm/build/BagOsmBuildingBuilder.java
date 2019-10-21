@@ -14,7 +14,7 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.BaseOsmBuilding
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding> {
 

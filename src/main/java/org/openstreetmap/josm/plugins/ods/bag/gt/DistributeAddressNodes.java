@@ -15,9 +15,9 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.AddressNodeGroup;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineSegment;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineSegment;
+import org.locationtech.jts.geom.Point;
 
 /**
  * This enricher finds overlapping nodes in the data and distibutes them, so
