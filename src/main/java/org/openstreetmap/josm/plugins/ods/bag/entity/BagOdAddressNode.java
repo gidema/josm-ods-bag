@@ -11,14 +11,9 @@ public class BagOdAddressNode extends AbstractOdAddressNode {
         return (BagOdAddress) super.getAddress();
     }
 
-    public String getHuisLetter() {
-        return getAddress().getHuisLetter();
+    public NL_HouseNumber getHouseNumber() {
+        return getAddress().getHouseNumber();
     }
-
-    public String getHuisNummerToevoeging() {
-        return getAddress().getHuisNummerToevoeging();
-    }
-
     public String getGebruiksdoel() {
         return gebruiksdoel;
     }

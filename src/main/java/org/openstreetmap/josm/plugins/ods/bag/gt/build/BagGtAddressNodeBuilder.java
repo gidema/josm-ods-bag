@@ -8,11 +8,11 @@ import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
-
+import org.openstreetmap.josm.plugins.ods.pdok.bag.wfs.v1_1.NL_HouseNumberFactory;
 import org.locationtech.jts.geom.Geometry;
 
 public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<OdAddressNode> {
-
+    private NL_HouseNumberFactory hnrFactory = new NL_HouseNumberFactory();
     public BagGtAddressNodeBuilder(CRSUtil crsUtil) {
         super(crsUtil);
     }
@@ -22,15 +22,7 @@ public class BagGtAddressNodeBuilder extends BagGtEntityBuilder<OdAddressNode> {
         BagOdAddressNode addressNode = new BagOdAddressNode();
         super.parse(feature, addressNode, response);
         BagOdAddress address = new BagOdAddress();
-        address.setHouseNumber(FeatureUtil.getInteger(feature, "huisnummer"));
-        String houseLetter = FeatureUtil.getString(feature, "huisletter");
-        if (houseLetter != null) {
-            address.setHuisletter(houseLetter);
-            address.setHouseLetter(houseLetter.charAt(0));
-        }
-        String houseNumberExtra = FeatureUtil.getString(feature, "toevoeging");
-        address.setHuisnummerToevoeging(houseNumberExtra);
-        address.setHouseNumberExtra(houseNumberExtra);
+        address.setHouseNumber(hnrFactory.create(feature));
         address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
         address.setCityName(FeatureUtil.getString(feature, "woonplaats"));
         String postcode = FeatureUtil.getString(feature, "postcode");

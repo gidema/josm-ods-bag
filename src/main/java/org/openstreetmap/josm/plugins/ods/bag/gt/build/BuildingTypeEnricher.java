@@ -68,7 +68,7 @@ public class BuildingTypeEnricher implements Consumer<OdBuilding> {
     }
 
     private static BuildingType getBuildingType(BagOdAddressNode addressNode) {
-        String extra = addressNode.getHuisNummerToevoeging();
+        String extra = addressNode.getHouseNumber().getHouseNumberExtra();
         if (extra != null) {
             extra = extra.toUpperCase();
             if (trafo.contains(extra)) {

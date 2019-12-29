@@ -78,7 +78,7 @@ public class BagBuildingTypeAnalyzer {
     }
 
     private static BuildingType getBuildingType(BagOdAddressNode addressNode) {
-        String extra = addressNode.getAddress().getHuisNummerToevoeging();
+        String extra = addressNode.getAddress().getHouseNumber().getHouseNumberExtra();
         if (extra != null) {
             extra = extra.toUpperCase();
             if (trafo.contains(extra)) {

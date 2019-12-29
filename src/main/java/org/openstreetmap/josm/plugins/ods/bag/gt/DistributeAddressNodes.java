@@ -9,15 +9,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineSegment;
+import org.locationtech.jts.geom.Point;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.AddressNodeGroup;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.LineSegment;
-import org.locationtech.jts.geom.Point;
 
 /**
  * This enricher finds overlapping nodes in the data and distibutes them, so
@@ -113,7 +112,7 @@ public class DistributeAddressNodes implements Consumer<OdBuilding> {
                 result = Objects.compare(a2.getStreetName(), a1.getStreetName(), String.CASE_INSENSITIVE_ORDER);
             }
             if (result == 0) {
-                result = Objects.compare(a2.getFullHouseNumber(), a1.getFullHouseNumber(), String.CASE_INSENSITIVE_ORDER);
+                result = a1.getHouseNumber().compareTo(a2.getHouseNumber());
             }
             return result;
         }

@@ -38,8 +38,8 @@ implements EntityPrimitiveBuilder<T> {
         if (address.getStreetName() != null) {
             tags.put("addr:street", address.getStreetName());
         }
-        if (address.getFullHouseNumber() != null) {
-            tags.put("addr:housenumber", address.getFullHouseNumber());
+        if (address.getHouseNumber() != null) {
+            tags.put("addr:housenumber", address.getHouseNumber().toString());
         }
         if (address.getPostcode() != null) {
             tags.put("addr:postcode", address.getPostcode());
