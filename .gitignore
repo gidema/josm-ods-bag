@@ -2,3 +2,7 @@
 /target
 /build
 /dist
+
+# IDE stuff
+.idea
+**.iml

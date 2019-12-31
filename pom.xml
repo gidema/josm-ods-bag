@@ -5,7 +5,6 @@
   <artifactId>josm-ods-bag</artifactId>
   <version>0.6.18</version>
   <build>
-    <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -15,18 +14,40 @@
           <target />
         </configuration>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.2</version>
+      </plugin>
     </plugins>
   </build>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+
+    <junit.jupiter.version>5.5.2</junit.jupiter.version>
+    <mockito.version>3.2.4</mockito.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>josm-plugins</groupId>
       <artifactId>opendataservices</artifactId>
       <version>0.6.18</version>
+    </dependency>
+
+    <!-- Testing dependencies. -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>3.2.4</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

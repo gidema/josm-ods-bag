@@ -33,20 +33,4 @@ implements EntityPrimitiveBuilder<T> {
     }
 
     protected abstract void buildTags(T entity, Map<String, String> tags);
-
-    public static void createAddressTags(OdAddress address, Map<String, String> tags) {
-        if (address.getStreetName() != null) {
-            tags.put("addr:street", address.getStreetName());
-        }
-        if (address.getFullHouseNumber() != null) {
-            tags.put("addr:housenumber", address.getFullHouseNumber());
-        }
-        if (address.getPostcode() != null) {
-            tags.put("addr:postcode", address.getPostcode());
-        }
-        if (address.getCityName() != null) {
-            tags.put("addr:city", address.getCityName());
-        }
-    }
-
 }

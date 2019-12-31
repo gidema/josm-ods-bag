@@ -1,11 +1,12 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
-import java.util.Map;
-
+import org.openstreetmap.josm.plugins.ods.bag.osm.build.address.AddressConversionAlgorithms;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
+
+import java.util.Map;
 
 public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<OdBuilding> {
 
@@ -28,9 +29,8 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
     @Override
     protected void buildTags(OdBuilding building, Map<String, String> tags) {
         OdAddress address = building.getAddress();
-        if (address != null) {
-            createAddressTags(address, tags);
-        }
+        AddressConversionAlgorithms.bagToOsm(address, tags::put);
+
         tags.put("source", "BAG");
         tags.put("source:date", building.getSourceDate());
         tags.put("ref:bag", building.getReferenceId().toString());
