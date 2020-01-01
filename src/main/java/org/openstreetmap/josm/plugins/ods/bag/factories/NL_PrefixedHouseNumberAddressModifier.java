@@ -243,7 +243,7 @@ public class NL_PrefixedHouseNumberAddressModifier implements OdAddressModifier<
 
     @Override
     public void modify(NL_Address address) {
-        if (!isApplicable(address.getPostcode(), address.getStreetName(), address.getHouseNumber().getHouseNumber())) return;
+        if (!isApplicable(address)) return;
         String street = address.getStreetName();
         String prefix = street.substring(street.length() -1);
         address.setStreetName(street.substring(0, street.length() - 2));
@@ -257,17 +257,18 @@ public class NL_PrefixedHouseNumberAddressModifier implements OdAddressModifier<
                 hnr.getHouseNumberExtra()));
     }
 
-    private boolean isApplicable(String postcode6, String street, Integer houseNumber) {
+    private boolean isApplicable(NL_Address address) {
+        String postcode6 = address.getPostcode();
         if (postcode6 == null) return false;
 
         // The 1234 part of 1234AB.
         String postcode4 = postcode6.substring(0, 4);
 
         if (applicablePostcodes4.contains(postcode4) || applicablePostcodes6.contains(postcode6)) {
-            return street != null &&
+            return address.getStreetName() != null &&
                     // Ignore addresses on streets that do not end in a single capital letter.
-                    street.matches(".+ [A-Z]") &&
-                    houseNumber != null;
+                    address.getStreetName().matches(".+ [A-Z]") &&
+                    address.getHouseNumber() != null;
         }
         return false;
     }
