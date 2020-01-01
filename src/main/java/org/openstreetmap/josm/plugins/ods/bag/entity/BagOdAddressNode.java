@@ -7,8 +7,8 @@ public class BagOdAddressNode extends AbstractOdAddressNode {
     private Double area;
 
     @Override
-    public BagOdAddress getAddress() {
-        return (BagOdAddress) super.getAddress();
+    public NL_Address getAddress() {
+        return (NL_Address) super.getAddress();
     }
 
     public NL_HouseNumber getHouseNumber() {

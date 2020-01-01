@@ -106,7 +106,7 @@ public class NL_HouseNumberImpl implements NL_HouseNumber {
             i++;
         }
         if (i > start) {
-            components.houseNumber = Integer.valueOf(s.substring(0, i));
+            components.houseNumber = Integer.valueOf(s.substring(start, i));
         }
         if (i >= s.length()) return components;
         if (Character.isAlphabetic(s.charAt(i))) {

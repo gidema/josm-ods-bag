@@ -1,18 +1,19 @@
 package org.openstreetmap.josm.plugins.ods.bag.gt.build;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagOdBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.factories.NL_AddressFactoryFactory;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.BuildingType;
+import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
-import org.openstreetmap.josm.plugins.ods.pdok.bag.wfs.v1_1.NL_HouseNumberFactory;
+import org.openstreetmap.josm.plugins.ods.od.OdAddressFactory;
 
 public class BagGtBuildingBuilder extends BagGtEntityBuilder<OdBuilding> {
-    private NL_HouseNumberFactory hnrFactory = new NL_HouseNumberFactory();
+    private OdAddressFactory addressFactory = NL_AddressFactoryFactory.create();
 
     public BagGtBuildingBuilder(CRSUtil crsUtil) {
         super(crsUtil);
@@ -31,8 +32,7 @@ public class BagGtBuildingBuilder extends BagGtEntityBuilder<OdBuilding> {
             building.setAantalVerblijfsobjecten(FeatureUtil.getLong(feature, "aantal_verblijfsobjecten"));
         }
         else {
-            BagOdAddress address = new BagOdAddress();
-            address.setHouseNumber(hnrFactory.create(feature));
+            OdAddress address = addressFactory.create(feature);
             address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
             address.setCityName(FeatureUtil.getString(feature, "woonplaats"));
             address.setPostcode(FeatureUtil.getString(feature, "postcode"));

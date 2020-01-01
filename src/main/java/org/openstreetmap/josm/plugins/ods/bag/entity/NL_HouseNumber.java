@@ -35,4 +35,5 @@ public interface NL_HouseNumber extends HouseNumber {
      */
     public String getHouseNumberExtra();
 
+    
 }
