@@ -5,7 +5,6 @@
   <artifactId>josm-ods-bag</artifactId>
   <version>0.6.19</version>
   <build>
-    <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
