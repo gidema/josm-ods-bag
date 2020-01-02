@@ -17,7 +17,7 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
     public void createPrimitive(OdBuilding building) {
         // Ignore buildings with status "Bouwvergunning verleend"
         // Make an exception for buildings that already exist in OSM. In that case, the building permit is for reconstruction
-        if ("Bouwvergunning verleend".equals(building.getStatus())
+        if (building.getStatus() == EntityStatus.PLANNED
                 && building.getMatch() == null) {
             return;
         }
@@ -37,7 +37,7 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
         if (building.getStartDate() != null) {
             tags.put("start_date", building.getStartDate());
         }
-        if ("Sloopvergunning verleend".equals(building.getStatus())) {
+        if (building.getStatus() == EntityStatus.REMOVAL_DUE) {
             tags.put("note", "Sloopvergunning verleend");
         }
         String type = "yes";
