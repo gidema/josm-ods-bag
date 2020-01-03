@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.ods.bag.factories;
+package org.openstreetmap.josm.plugins.ods.bag.modifiers;
 
 import java.util.Arrays;
 import java.util.HashSet;
