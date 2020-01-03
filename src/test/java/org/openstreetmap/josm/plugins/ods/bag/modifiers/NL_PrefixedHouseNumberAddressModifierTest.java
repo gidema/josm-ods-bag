@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.modifiers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -8,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_Address;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_HouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_HouseNumberImpl;
-import org.openstreetmap.josm.plugins.ods.od.OdAddressModifier;
+import org.openstreetmap.josm.plugins.ods.entities.EntityModifier;
 
 public class NL_PrefixedHouseNumberAddressModifierTest {
-    OdAddressModifier<NL_Address> modifier;
+    EntityModifier<NL_Address> modifier;
 
     @BeforeEach
     public void setup() {
@@ -27,9 +28,7 @@ public class NL_PrefixedHouseNumberAddressModifierTest {
         address.setPostcode("1234AB");
         address.setCityName("Stad");
 
-        modifier.modify(address);
-        assertEquals(hnr, address.getHouseNumber());
-        assertEquals("Straat", address.getStreetName());
+        assertFalse(modifier.isApplicable(address));
     }
 
     @Test
@@ -41,6 +40,7 @@ public class NL_PrefixedHouseNumberAddressModifierTest {
         address.setPostcode("9663RC");
         address.setCityName("Nieuwe Pekela");
 
+        assertTrue(modifier.isApplicable(address));
         modifier.modify(address);
         assertEquals("C52", address.getHouseNumber().getFullHouseNumber());
         assertEquals("Dominee Sicco Tjadenstraat", address.getStreetName());

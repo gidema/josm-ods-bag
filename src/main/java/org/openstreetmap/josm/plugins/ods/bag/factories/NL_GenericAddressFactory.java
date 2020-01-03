@@ -8,18 +8,18 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.NL_Address;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_HouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_HouseNumberImpl;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
+import org.openstreetmap.josm.plugins.ods.entities.EntityModifier;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.od.OdAddressFactory;
-import org.openstreetmap.josm.plugins.ods.od.OdAddressModifier;
 
 public class NL_GenericAddressFactory implements OdAddressFactory {
-    private List<OdAddressModifier<NL_Address>> modifiers = new LinkedList<>();
+    private List<EntityModifier<NL_Address>> modifiers = new LinkedList<>();
     
     @SuppressWarnings("unchecked")
     @Override
-    public void addModifier(OdAddressModifier<?> modifier) {
+    public void addModifier(EntityModifier<?> modifier) {
         if (modifier.getTargetType().equals(NL_Address.class)) {
-            modifiers.add((OdAddressModifier<NL_Address>) modifier);
+            modifiers.add((EntityModifier<NL_Address>) modifier);
         }
     }
 
@@ -30,7 +30,11 @@ public class NL_GenericAddressFactory implements OdAddressFactory {
         address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
         address.setCityName(FeatureUtil.getString(feature, "woonplaats"));
         address.setPostcode(FeatureUtil.getString(feature, "postcode"));
-        modifiers.forEach(m -> m.modify(address));
+        modifiers.forEach(m -> {
+            if (m.isApplicable(address)) {
+                m.modify(address);
+            }
+        });
         return address;
     }
     

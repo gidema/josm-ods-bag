@@ -4,12 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.openstreetmap.josm.plugins.ods.bag.entity.NL_Address;
+import org.openstreetmap.josm.plugins.ods.entities.EntityModifier;
 import org.openstreetmap.josm.plugins.ods.od.OdAddressFactory;
-import org.openstreetmap.josm.plugins.ods.od.OdAddressModifier;
 
 public class NL_AddressFactoryFactory {
     static private List<OdAddressFactory> factories = new LinkedList<>();
-    static private List<OdAddressModifier<?>> modifiers = new LinkedList<>();
+    static private List<EntityModifier<NL_Address>> modifiers = new LinkedList<>();
    
     static {
         loadModifiers();
@@ -27,9 +28,13 @@ public class NL_AddressFactoryFactory {
     
     private static void loadModifiers() {
         @SuppressWarnings("rawtypes")
-        ServiceLoader<OdAddressModifier> serviceLoader = ServiceLoader.load(OdAddressModifier.class);
-        serviceLoader.forEach(modifier -> {
-            modifiers.add(modifier);
+        ServiceLoader<EntityModifier> serviceLoader = ServiceLoader.load(EntityModifier.class);
+        serviceLoader.forEach(m -> {
+            if (m.getTargetType().equals(NL_Address.class)) {
+                @SuppressWarnings("unchecked")
+                EntityModifier<NL_Address> modifier = m;
+                modifiers.add(modifier);
+            }
         });
     }
     

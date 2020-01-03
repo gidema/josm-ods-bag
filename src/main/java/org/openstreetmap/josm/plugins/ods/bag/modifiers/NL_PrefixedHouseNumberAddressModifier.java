@@ -7,7 +7,7 @@ import java.util.Set;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_Address;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_HouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_HouseNumberImpl;
-import org.openstreetmap.josm.plugins.ods.od.OdAddressModifier;
+import org.openstreetmap.josm.plugins.ods.entities.EntityModifier;
 
 /**
  * <p>
@@ -46,7 +46,7 @@ import org.openstreetmap.josm.plugins.ods.od.OdAddressModifier;
  */
 
 
-public class NL_PrefixedHouseNumberAddressModifier implements OdAddressModifier<NL_Address> {
+public class NL_PrefixedHouseNumberAddressModifier implements EntityModifier<NL_Address> {
     static final Set<String> applicablePostcodes4;
     static final Set<String> applicablePostcodes6;
 
@@ -243,7 +243,6 @@ public class NL_PrefixedHouseNumberAddressModifier implements OdAddressModifier<
 
     @Override
     public void modify(NL_Address address) {
-        if (!isApplicable(address)) return;
         String street = address.getStreetName();
         String prefix = street.substring(street.length() -1);
         address.setStreetName(street.substring(0, street.length() - 2));
@@ -257,7 +256,8 @@ public class NL_PrefixedHouseNumberAddressModifier implements OdAddressModifier<
                 hnr.getHouseNumberExtra()));
     }
 
-    private boolean isApplicable(NL_Address address) {
+    @Override
+    public boolean isApplicable(NL_Address address) {
         String postcode6 = address.getPostcode();
         if (postcode6 == null) return false;
 
