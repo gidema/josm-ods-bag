@@ -28,7 +28,7 @@ import org.openstreetmap.josm.plugins.ods.matching.OpenDataAddressNodeToBuilding
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
-    private static WFSHost wfsHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs?VERSION=2.0.0", 1000, 1000, 60000);
+    private static WFSHost wfsHost = new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs/v1_1?request=getCapabilities&service=WFS&version=1.1.0", 1000, 1000, 60000);
     private final OdsModule module;
     private final OdLayerManager layerManager;
     private final BagPrimitiveBuilder primitiveBuilder;

@@ -24,7 +24,8 @@ public abstract class BagGtEntityBuilder<T extends OdEntity> implements OdEntity
 
     @SuppressWarnings("static-method")
     public Object getReferenceId(SimpleFeature feature) {
-        return FeatureUtil.getLong(feature, "identificatie");
+        String id = FeatureUtil.getString(feature, "identificatie");
+        return Long.valueOf(id);
     }
 
     protected void parse(SimpleFeature feature, OdEntity entity, DownloadResponse response) {

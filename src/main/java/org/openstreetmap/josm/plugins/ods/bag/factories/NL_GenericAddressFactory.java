@@ -35,7 +35,7 @@ public class NL_GenericAddressFactory implements OdAddressFactory {
     }
     
     public NL_HouseNumber createHouseNumber(SimpleFeature feature) {
-        Integer number = FeatureUtil.getBigDecimal(feature, "huisnummer").intValue();
+        Integer number = Integer.valueOf(FeatureUtil.getString(feature, "huisnummer"));
         Character houseLetter = FeatureUtil.getCharacter(feature, "huisletter");
         String houseNumberExtra = FeatureUtil.getString(feature, "toevoeging");
         return new NL_HouseNumberImpl(null, number, houseLetter, houseNumberExtra);
