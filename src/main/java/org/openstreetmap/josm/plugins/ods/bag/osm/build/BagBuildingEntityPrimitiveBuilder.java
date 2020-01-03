@@ -73,9 +73,6 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
         case SUBSTATION:
             tags.put("power", "substation");
             break;
-        case OTHER:
-            type = building.getBuildingType().getSubType();
-            break;
         default:
             type = "yes";
             break;

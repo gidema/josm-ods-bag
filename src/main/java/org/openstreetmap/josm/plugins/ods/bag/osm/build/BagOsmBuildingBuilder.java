@@ -103,7 +103,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding>
             }
             return BuildingType.UNCLASSIFIED;
         default:
-            return BuildingType.OTHER(type);
+            return BuildingType.OTHER;
         }
     }
 
