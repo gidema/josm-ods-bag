@@ -20,12 +20,24 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <junit.jupiter.version>5.5.2</junit.jupiter.version>
+    <mockito.version>3.2.4</mockito.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>josm-plugins</groupId>
       <artifactId>opendataservices</artifactId>
       <version>0.6.19</version>
+    </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${junit.jupiter.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${mockito.version}</version>
     </dependency>
   </dependencies>
 </project>
