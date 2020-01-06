@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 
 import org.opengis.feature.type.FeatureType;
 import org.openstreetmap.josm.plugins.ods.InitializationException;
-import org.openstreetmap.josm.plugins.ods.Normalisation;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.bag.gt.DistributeAddressNodes;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BuildingTypeEnricher;
@@ -97,10 +96,6 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
                 featureSource.getFeatureType().getName(), OdBuilding.class);
         FeatureDownloader downloader = new GtDownloader<OdBuilding>(dataSource, module.getCrsUtil(), entityBuilder,
                 layerManager.getEntityStore(OdBuilding.class));
-        // The original BAG import partially normalised the building geometries,
-        // by making the (outer) rings clockwise. For fast comparison of geometries,
-        // I choose to override the default normalisation here.
-        downloader.setNormalisation(Normalisation.CLOCKWISE);
         return downloader;
     }
 
@@ -120,10 +115,6 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
                 featureSource.getFeatureType().getName(), OdBuilding.class);
         FeatureDownloader downloader = new GtDownloader<OdBuilding>(dataSource, module.getCrsUtil(), entityBuilder,
                 layerManager.getEntityStore(OdBuilding.class));
-        // The original BAG import partially normalised the building geometries,
-        // by making the (outer) rings clockwise. For fast comparison of geometries,
-        // I choose to override the default normalisation here.
-        downloader.setNormalisation(Normalisation.CLOCKWISE);
         return downloader;
     }
 
@@ -143,10 +134,6 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
                 featureSource.getFeatureType().getName(), OdBuilding.class);
         FeatureDownloader downloader = new GtDownloader<OdBuilding>(dataSource, module.getCrsUtil(), entityBuilder,
                 layerManager.getEntityStore(OdBuilding.class));
-        // The original BAG import partially normalised the building geometries,
-        // by making the (outer) rings clockwise. For fast comparison of geometries,
-        // I choose to override the default normalisation here.
-        downloader.setNormalisation(Normalisation.CLOCKWISE);
         return downloader;
     }
 
