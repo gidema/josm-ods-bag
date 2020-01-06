@@ -2,15 +2,13 @@ package org.openstreetmap.josm.plugins.ods.bag;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Consumer;
 
+import org.opengis.feature.type.FeatureType;
 import org.openstreetmap.josm.plugins.ods.InitializationException;
 import org.openstreetmap.josm.plugins.ods.Normalisation;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
 import org.openstreetmap.josm.plugins.ods.bag.gt.DistributeAddressNodes;
-import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtAddressNodeBuilder;
-import org.openstreetmap.josm.plugins.ods.bag.gt.build.BagGtBuildingBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.gt.build.BuildingTypeEnricher;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
@@ -22,9 +20,11 @@ import org.openstreetmap.josm.plugins.ods.entities.opendata.OpenDataLayerDownloa
 import org.openstreetmap.josm.plugins.ods.geotools.GtDataSource;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDatasourceBuilder;
 import org.openstreetmap.josm.plugins.ods.geotools.GtDownloader;
+import org.openstreetmap.josm.plugins.ods.geotools.GtEntityFactory;
 import org.openstreetmap.josm.plugins.ods.geotools.GtFeatureSource;
 import org.openstreetmap.josm.plugins.ods.geotools.InvalidQueryException;
 import org.openstreetmap.josm.plugins.ods.matching.OpenDataAddressNodeToBuildingMatcher;
+import org.openstreetmap.josm.plugins.ods.od.GtEntityFactoryFactory;
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
@@ -62,27 +62,10 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         }
     }
 
-    private FeatureDownloader createPandDownloader() throws InitializationException {
-        List<String> properties = Arrays.asList("identificatie", "bouwjaar", "status", "aantal_verblijfsobjecten", "geometrie");
-        return createBuildingDownloader("bag:pand", properties);
-    }
-
-    private FeatureDownloader createLigplaatsDownloader() throws InitializationException {
-        List<String> properties = Arrays.asList("identificatie", "status", "openbare_ruimte", "huisnummer",
-                "huisletter", "toevoeging", "postcode", "woonplaats", "geometrie");
-        return createBuildingDownloader("bag:ligplaats", properties);
-    }
-
-    private FeatureDownloader createStandplaatsDownloader() throws InitializationException {
-        List<String> properties = Arrays.asList("identificatie", "status", "openbare_ruimte", "huisnummer",
-                "huisletter", "toevoeging", "postcode", "woonplaats", "geometrie");
-        return createBuildingDownloader("bag:standplaats", properties);
-    }
-
     private FeatureDownloader createVerblijfsobjectDownloader() throws InitializationException {
-        BagGtAddressNodeBuilder entityBuilder = new BagGtAddressNodeBuilder(module.getCrsUtil());
         GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:verblijfsobject", "identificatie");
         featureSource.initialize();
+        FeatureType featureType = featureSource.getFeatureType();
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
         builder.setProperties(Arrays.asList("identificatie", "oppervlakte", "status", "gebruiksdoel",
@@ -92,23 +75,73 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         builder.setPageSize(1000);
         //      Query query = new GroupByQuery(featureSource, properties, );
         GtDataSource dataSource = builder.build();
+        GtEntityFactory<OdAddressNode> entityBuilder = GtEntityFactoryFactory.create(
+             featureType.getName(), OdAddressNode.class);
         return new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder,
                 layerManager.getEntityStore(OdAddressNode.class));
     }
 
-    private FeatureDownloader createBuildingDownloader(String featureType, List<String> properties) throws InvalidQueryException, InitializationException {
-        BagGtBuildingBuilder entityBuilder = new BagGtBuildingBuilder(module.getCrsUtil());
-        GtFeatureSource featureSource = new GtFeatureSource(wfsHost, featureType, "identificatie");
+    private FeatureDownloader createPandDownloader() throws InvalidQueryException, InitializationException {
+        GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:pand", "identificatie");
         featureSource.initialize();
         GtDatasourceBuilder builder = new GtDatasourceBuilder();
         builder.setFeatureSource(featureSource);
-        builder.setProperties(properties);
+        builder.setProperties(Arrays.asList("identificatie", "bouwjaar", "status", "aantal_verblijfsobjecten",
+                "geometrie"));
         builder.setUniqueKey("identificatie");
         builder.setPageSize(1000);
 
         //       Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie"));
         GtDataSource dataSource = builder.build();
-        FeatureDownloader downloader = new GtDownloader<>(dataSource, module.getCrsUtil(), entityBuilder,
+        GtEntityFactory<OdBuilding> entityBuilder = GtEntityFactoryFactory.create(
+                featureSource.getFeatureType().getName(), OdBuilding.class);
+        FeatureDownloader downloader = new GtDownloader<OdBuilding>(dataSource, module.getCrsUtil(), entityBuilder,
+                layerManager.getEntityStore(OdBuilding.class));
+        // The original BAG import partially normalised the building geometries,
+        // by making the (outer) rings clockwise. For fast comparison of geometries,
+        // I choose to override the default normalisation here.
+        downloader.setNormalisation(Normalisation.CLOCKWISE);
+        return downloader;
+    }
+
+    private FeatureDownloader createLigplaatsDownloader() throws InvalidQueryException, InitializationException {
+        GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:ligplaats", "identificatie");
+        featureSource.initialize();
+        GtDatasourceBuilder builder = new GtDatasourceBuilder();
+        builder.setFeatureSource(featureSource);
+        builder.setProperties(Arrays.asList("identificatie", "status", "openbare_ruimte", "huisnummer",
+                "huisletter", "toevoeging", "postcode", "woonplaats", "geometrie"));
+        builder.setUniqueKey("identificatie");
+        builder.setPageSize(1000);
+
+        //       Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie"));
+        GtDataSource dataSource = builder.build();
+        GtEntityFactory<OdBuilding> entityBuilder = GtEntityFactoryFactory.create(
+                featureSource.getFeatureType().getName(), OdBuilding.class);
+        FeatureDownloader downloader = new GtDownloader<OdBuilding>(dataSource, module.getCrsUtil(), entityBuilder,
+                layerManager.getEntityStore(OdBuilding.class));
+        // The original BAG import partially normalised the building geometries,
+        // by making the (outer) rings clockwise. For fast comparison of geometries,
+        // I choose to override the default normalisation here.
+        downloader.setNormalisation(Normalisation.CLOCKWISE);
+        return downloader;
+    }
+
+    private FeatureDownloader createStandplaatsDownloader() throws InvalidQueryException, InitializationException {
+        GtFeatureSource featureSource = new GtFeatureSource(wfsHost, "bag:standplaats", "identificatie");
+        featureSource.initialize();
+        GtDatasourceBuilder builder = new GtDatasourceBuilder();
+        builder.setFeatureSource(featureSource);
+        builder.setProperties(Arrays.asList("identificatie", "status", "openbare_ruimte", "huisnummer",
+                "huisletter", "toevoeging", "postcode", "woonplaats", "geometrie"));
+        builder.setUniqueKey("identificatie");
+        builder.setPageSize(1000);
+
+        //       Query query = new GroupByQuery(featureSource, properties, Arrays.asList("identificatie"));
+        GtDataSource dataSource = builder.build();
+        GtEntityFactory<OdBuilding> entityBuilder = GtEntityFactoryFactory.create(
+                featureSource.getFeatureType().getName(), OdBuilding.class);
+        FeatureDownloader downloader = new GtDownloader<OdBuilding>(dataSource, module.getCrsUtil(), entityBuilder,
                 layerManager.getEntityStore(OdBuilding.class));
         // The original BAG import partially normalised the building geometries,
         // by making the (outer) rings clockwise. For fast comparison of geometries,

@@ -1,44 +1,49 @@
 package org.openstreetmap.josm.plugins.ods.bag.factories;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.geotools.feature.type.Types;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.Name;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_Address;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_HouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NL_HouseNumberImpl;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
-import org.openstreetmap.josm.plugins.ods.entities.EntityModifier;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
-import org.openstreetmap.josm.plugins.ods.od.OdAddressFactory;
+import org.openstreetmap.josm.plugins.ods.geotools.impl.ModifiableGtEntityFactory;
+import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
-public class NL_GenericAddressFactory implements OdAddressFactory {
-    private List<EntityModifier<NL_Address>> modifiers = new LinkedList<>();
+public class NL_GenericAddressFactory extends ModifiableGtEntityFactory<NL_Address> {
+    private static String NS = "http://bag.geonovum.nl";
+    private static Set<Name> featureTypes = new HashSet<>(Arrays.asList(
+            Types.typeName(NS, "bag:verblijfsobject"),
+            Types.typeName(NS, "bag:ligplaats"),
+            Types.typeName(NS, "bag:standplaats")));
     
-    @SuppressWarnings("unchecked")
     @Override
-    public void addModifier(EntityModifier<?> modifier) {
-        if (modifier.getTargetType().equals(NL_Address.class)) {
-            modifiers.add((EntityModifier<NL_Address>) modifier);
-        }
+    public Class<NL_Address> getTargetType() {
+        return NL_Address.class;
     }
 
     @Override
-    public OdAddress create(SimpleFeature feature) {
+    public boolean isApplicable(Name name,
+            Class<?> entityType) {
+        return entityType.equals(NL_Address.class) && 
+                featureTypes.contains(name);
+    }
+
+    @Override
+    public NL_Address createEntity(SimpleFeature feature, DownloadResponse response) {
         NL_Address address = new NL_Address();
         address.setHouseNumber(createHouseNumber(feature));
         address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
         address.setCityName(FeatureUtil.getString(feature, "woonplaats"));
         address.setPostcode(FeatureUtil.getString(feature, "postcode"));
-        modifiers.forEach(m -> {
-            if (m.isApplicable(address)) {
-                m.modify(address);
-            }
-        });
         return address;
     }
     
-    public NL_HouseNumber createHouseNumber(SimpleFeature feature) {
+    private NL_HouseNumber createHouseNumber(SimpleFeature feature) {
         Integer number = Integer.valueOf(FeatureUtil.getString(feature, "huisnummer"));
         Character houseLetter = FeatureUtil.getCharacter(feature, "huisletter");
         String houseNumberExtra = FeatureUtil.getString(feature, "toevoeging");
