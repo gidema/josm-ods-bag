@@ -16,12 +16,12 @@ import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 
 public class NL_GenericAddressFactoryTest {
     private static SimpleFeatureType verblijfsobjectType;
-    
+
     @BeforeAll
     private static void createFeatureTypes() {
         verblijfsobjectType = createVerblijfsobjectType();
     }
-    
+
     private static SimpleFeatureType createVerblijfsobjectType() {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName("verblijfsobject");
@@ -43,21 +43,22 @@ public class NL_GenericAddressFactoryTest {
         builder.add("rdf_seealso", String.class);
         return builder.buildFeatureType();
     }
-    
+
+    @SuppressWarnings("static-method")
     @Test
     void createAddressTest() {
-        SimpleFeature vbo = SimpleFeatureBuilder.build(verblijfsobjectType, 
-             new Object[] {null, 0, "0", 0, "dummy", "woonfunctie", "Straat",
-                     "12", "A", "hoog", "1234AB", "Plaats", "2000", 
-                     null, null, null}, "");
+        SimpleFeature vbo = SimpleFeatureBuilder.build(verblijfsobjectType,
+                new Object[] {null, 0, "0", 0, "dummy", "woonfunctie", "Straat",
+                        "12", "A", "hoog", "1234AB", "Plaats", "2000",
+                        null, null, null}, "");
         NL_GenericAddressFactory factory = new NL_GenericAddressFactory();
         DownloadResponse response = Mockito.mock(DownloadResponse.class);
-        NL_Address address = (NL_Address) factory.create(vbo, response);
+        NL_Address address = factory.create(vbo, response);
         assertEquals("Straat", address.getStreetName());
         assertEquals("1234AB", address.getPostcode());
         assertEquals("Plaats", address.getCityName());
-        assertEquals(12, address.getHouseNumber().getMainHouseNumber());
-        assertEquals('A', address.getHouseNumber().getHouseLetter());
+        assertEquals((Integer)12, address.getHouseNumber().getMainHouseNumber());
+        assertEquals((Character)'A', address.getHouseNumber().getHouseLetter());
         assertEquals("hoog", address.getHouseNumber().getHouseNumberExtra());
         assertEquals("12A-hoog", address.getHouseNumber().getFullHouseNumber());
     }
