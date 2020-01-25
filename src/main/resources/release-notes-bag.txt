@@ -1,5 +1,17 @@
 See also the release notes for the opendataservices plug-in.
 
+Version 0.6.19
+==============
+- Built with Josm 15628
+- Switched to PDOK BAG WFS v1_1
+- Added support for house letters preceding the house number. Thanks to Jeroen Hoek
+
+Version 0.6.18
+==============
+Fixed a crash when sorting addresses without a postcode.
+Followed geotools plug-in by switching to geotools library 22.0 and JTS 1.16.1
+Fixed incompatibilities with Josm 15390
+
 Version 0.6.17
 ==============
 - Fixed incompatibilities with Josm versions >= 14178
