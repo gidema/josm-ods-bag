@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>josm-ods-bag</groupId>
   <artifactId>josm-ods-bag</artifactId>
-  <version>0.6.19</version>
+  <version>0.6.20-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -28,7 +28,7 @@
     <dependency>
       <groupId>josm-plugins</groupId>
       <artifactId>opendataservices</artifactId>
-      <version>0.6.19</version>
+      <version>0.6.20-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>org.junit.jupiter</groupId>
