@@ -15,12 +15,14 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
 
     @Override
     public void createPrimitive(OdBuilding building) {
-        // Ignore buildings with status "Bouwvergunning verleend"
-        // Make an exception for buildings that already exist in OSM. In that case, the building permit is for reconstruction
-        if (building.getStatus() == EntityStatus.PLANNED
-                && building.getMatch() == null) {
-            return;
-        }
+        //// Ignore buildings with status "Bouwvergunning verleend"
+        //// Make an exception for buildings that already exist in OSM. In that case, the building permit is for reconstruction
+        // Don't skip proposed as municipalities often are behind in administration and reports from the field often indicate 
+        // building has started or even completed, which cannot be honored with these buildings missing in the ODS layer!
+        //if (building.getStatus() == EntityStatus.PLANNED
+        //        && building.getMatch() == null) {
+        //    return;
+        //}
         super.createPrimitive(building);
     }
 
