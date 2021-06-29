@@ -55,7 +55,7 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         WFSHostFactory factory = new WFSHostFactory();
         ParameterSet parameters = new ParameterSet()
                 .put(Host.HOST_NAME, "BAG_WFS")
-                .put(Host.BASE_URL, "http://geodata.nationaalgeoregister.nl/bag/wfs/v1_1")
+                .put(Host.BASE_URL, "https://geodata.nationaalgeoregister.nl/bag/wfs/v1_1")
                 .put(WFSHost.WFS_VERSION, new Version("1.1.0"))
                 .put(Host.PAGE_SIZE, 500)
                 .put(WFSHost.STRATEGY, "mapserver")
