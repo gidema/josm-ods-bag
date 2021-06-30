@@ -32,6 +32,10 @@ import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHostFactory;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
+    private static final String DEFAULT_WFS_URL = "https://geodata.nationaalgeoregister.nl/bag/wfs/v1_1";
+    private static final Integer DEFAULT_WFS_INIT_TIMEOUT = 1000;
+    private static final Integer DEFAULT_WFS_DATA_TIMEOUT = 10000;
+
     private final WFSHost wfsHost;
     private final OdsModule module;
     private final OdLayerManager layerManager;
@@ -55,17 +59,17 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         WFSHostFactory factory = new WFSHostFactory();
         ParameterSet parameters = new ParameterSet()
                 .put(Host.HOST_NAME, "BAG_WFS")
-                .put(Host.BASE_URL, "https://geodata.nationaalgeoregister.nl/bag/wfs/v1_1")
+                .put(Host.BASE_URL, getBaseWfsUrl())
                 .put(WFSHost.WFS_VERSION, new Version("1.1.0"))
                 .put(Host.PAGE_SIZE, 500)
                 .put(WFSHost.STRATEGY, "mapserver")
                 .put(WFSHost.PROTOCOL, false)
-                .put(OdsDataSource.INIT_TIMEOUT, 1000)
-                .put(OdsDataSource.DATA_TIMEOUT, 10000);
+                .put(OdsDataSource.INIT_TIMEOUT, getInitTimeout())
+                .put(OdsDataSource.DATA_TIMEOUT, getDataTimeout());
         return factory.create(parameters);
     }
 
-    //new WFSHost("BAG WFS", "http://geodata.nationaalgeoregister.nl/bag/wfs/v1_1?request=getCapabilities&service=WFS&version=1.1.0", 1000, 1000, 60000);
+    //new WFSHost("BAG WFS", "https://geodata.nationaalgeoregister.nl/bag/wfs/v1_1?request=getCapabilities&service=WFS&version=1.1.0", 1000, 1000, 60000);
     @Override
     public void process() {
         try {
@@ -185,5 +189,24 @@ public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
         OpenDataBuildingStore buildingStore = (OpenDataBuildingStore) layerManager.getEntityStore(OdBuilding.class);
         Consumer<OdBuilding> enricher = new BuildingTypeEnricher();
         buildingStore.forEach(enricher);
+    }
+    
+    private static String getBaseWfsUrl() {
+        if (BagProperties.WFS_URL.isSet()) {
+          return BagProperties.WFS_URL.get();
+        }
+        return DEFAULT_WFS_URL;
+    }
+    private static Integer getInitTimeout() {
+        if (BagProperties.WFS_INIT_TIMEOUT.isSet()) {
+          return BagProperties.WFS_INIT_TIMEOUT.get();
+        }
+        return DEFAULT_WFS_INIT_TIMEOUT;
+    }
+    private static Integer getDataTimeout() {
+        if (BagProperties.WFS_DATA_TIMEOUT.isSet()) {
+          return BagProperties.WFS_DATA_TIMEOUT.get();
+        }
+        return DEFAULT_WFS_DATA_TIMEOUT;
     }
 }
