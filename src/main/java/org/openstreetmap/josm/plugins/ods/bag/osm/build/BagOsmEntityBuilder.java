@@ -78,12 +78,8 @@ public abstract class BagOsmEntityBuilder {
         }
     }
 
-    private static Long getReferenceId(String s) {
+    private static String getReferenceId(String s) {
         if (s == null || s.length() == 0) return null;
-        int i=0;
-        while (i<s.length() && Character.isDigit(s.charAt(i))) {
-            i++;
-        }
-        return Long.valueOf(s.substring(0, i));
+        return s;
     }
 }
