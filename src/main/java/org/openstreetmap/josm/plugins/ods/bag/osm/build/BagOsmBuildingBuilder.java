@@ -47,11 +47,6 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding>
 
     public static void normalizeTags(OsmPrimitive primitive) {
         BagOsmEntityBuilder.normalizeTags(primitive);
-        String bouwjaar = primitive.get("bag:bouwjaar");
-        if (bouwjaar != null) {
-            primitive.put("start_date", bouwjaar);
-            primitive.remove("bag:bouwjaar");
-        }
     }
 
     private static void parseKeys(BaseOsmBuilding building, Map<String, String> tags) {
