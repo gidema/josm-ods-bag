@@ -32,7 +32,7 @@ import org.openstreetmap.josm.plugins.ods.wfs.WFSHost;
 import org.openstreetmap.josm.plugins.ods.wfs.WFSHostFactory;
 
 public class BagWfsLayerDownloader extends OpenDataLayerDownloader {
-    private static final String DEFAULT_WFS_URL = "https://geodata.nationaalgeoregister.nl/bag/wfs/v1_1";
+    private static final String DEFAULT_WFS_URL = "https://service.pdok.nl/lv/bag/wfs/v2_0";
     private static final Integer DEFAULT_WFS_INIT_TIMEOUT = 1000;
     private static final Integer DEFAULT_WFS_DATA_TIMEOUT = 10000;
 
