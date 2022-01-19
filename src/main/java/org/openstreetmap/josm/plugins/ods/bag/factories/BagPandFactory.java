@@ -55,6 +55,8 @@ public class BagPandFactory extends ModifiableGtEntityFactory<OdBuilding> {
         case "Bouwvergunning verleend":
             return EntityStatus.PLANNED;
         case "Bouw gestart":
+        case "Verbouwing pand":
+            // Reconstruction is a specialized version of construction
             return EntityStatus.CONSTRUCTION;
         case "Pand in gebruik":
         case "Pand buiten gebruik":
@@ -67,8 +69,6 @@ public class BagPandFactory extends ModifiableGtEntityFactory<OdBuilding> {
             return EntityStatus.REMOVAL_DUE;
         case "Pand gesloopt":
             return EntityStatus.REMOVED;
-        case "Verbouwing pand":
-            return EntityStatus.RECONSTRUCTION;
         default:
             return EntityStatus.UNKNOWN;
         }
