@@ -38,7 +38,7 @@ public class BagPandFactory extends ModifiableGtEntityFactory<OdBuilding> {
             building.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
         }
         String id = FeatureUtil.getString(feature, "identificatie");
-        building.setReferenceId(Long.valueOf(id));
+        building.setReferenceId(id);
         building.setPrimaryId(feature.getID());
         building.setSource("BAG");
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");
@@ -55,6 +55,8 @@ public class BagPandFactory extends ModifiableGtEntityFactory<OdBuilding> {
         case "Bouwvergunning verleend":
             return EntityStatus.PLANNED;
         case "Bouw gestart":
+        case "Verbouwing pand":
+            // Reconstruction is a specialized version of construction
             return EntityStatus.CONSTRUCTION;
         case "Pand in gebruik":
         case "Pand buiten gebruik":
