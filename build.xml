@@ -136,3 +136,4 @@
     <copy file="${plugin.debug.jar}" todir="${josm.plugins.dir}" />
   </target>
 </project>
+
