@@ -1,2 +1,2 @@
-org.openstreetmap.josm.plugins.ods.bag.modifiers.NL_PrefixedHouseNumberAddressModifier
+org.openstreetmap.josm.plugins.ods.bag.modifiers.NlPrefixedHouseNumberAddressModifier
 org.openstreetmap.josm.plugins.ods.bag.modifiers.NormalizeBuildingModifier

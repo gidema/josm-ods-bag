@@ -1,42 +1,62 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
+import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Complete;
+
 import java.util.Map;
 
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddress;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
+import org.openstreetmap.josm.plugins.ods.ODS;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagDemolishedBuildingStore;
+import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 
-public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<OdBuilding> {
+public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<BagBuilding> {
 
-    public BagBuildingEntityPrimitiveBuilder(OdLayerManager dataLayer) {
-        super(dataLayer);
+    public BagBuildingEntityPrimitiveBuilder() {
+        super();
     }
 
+    
     @Override
-    public void createPrimitive(OdBuilding building) {
+    public void run(OdsContext context) {
+        OdLayerManager layerManager = context.getComponent(OdLayerManager.class);
+        BagBuildingStore buildingStore = context.getComponent(BagBuildingStore.class);
+        buildingStore.forEach(building -> {
+            if (building.getPrimitive() == null && building.getCompleteness() == Complete) {
+                 createPrimitive(building, layerManager);
+            }
+        });
+        BagDemolishedBuildingStore demolishedBuildingStore = context.getComponent(BagDemolishedBuildingStore.class);
+        demolishedBuildingStore.forEach(building -> {
+            if (building.getPrimitive() == null && building.getCompleteness() == Complete) {
+                 createPrimitive(building, layerManager);
+            }
+        });
+    }
+
+
+    @Override
+    public void createPrimitive(BagBuilding building, OdLayerManager layerManager) {
         // Ignore buildings with status "Bouwvergunning verleend"
         // Make an exception for buildings that already exist in OSM. In that case, the building permit is for reconstruction
-        if (building.getStatus() == EntityStatus.PLANNED
-                && building.getMatch() == null) {
+        if (building.getStatus() == EntityStatus.PLANNED && building.getMatch() == null) {
             return;
         }
-        super.createPrimitive(building);
+        super.createPrimitive(building, layerManager);
     }
 
 
     @Override
-    protected void buildTags(OdBuilding building, Map<String, String> tags) {
-        OdAddress address = building.getAddress();
-        if (address != null) {
-            createAddressTags(address, tags);
-        }
+    protected void buildTags(BagBuilding building, Map<String, String> tags) {
         tags.put("source", "BAG");
         tags.put("source:date", building.getSourceDate());
-        tags.put("ref:bag", building.getReferenceId().toString());
+        tags.put("ref:bag", building.getBuildingId().toString());
         if (building.getStartDate() != null) {
             tags.put("start_date", building.getStartDate());
         }
+        tags.put(ODS.KEY.STATUS, building.getStatus().toString());
         if (building.getStatus() == EntityStatus.REMOVAL_DUE) {
             tags.put("note", "Sloopvergunning verleend");
         }

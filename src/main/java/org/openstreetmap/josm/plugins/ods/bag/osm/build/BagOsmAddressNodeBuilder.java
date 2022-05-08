@@ -2,22 +2,25 @@ package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
 import java.util.Map;
 
+import org.locationtech.jts.geom.Point;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.plugins.ods.OdsModule;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagOsmAddress;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmAddress;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmAddressNode;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.BaseOsmAddressNode;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmNlAddressNode;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.BagOsmAddress;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmAddress;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmAddressNode;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
-
-import org.locationtech.jts.geom.Point;
 
 public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<OsmAddressNode> {
 
-    public BagOsmAddressNodeBuilder(OdsModule module) {
-        super(module, OsmAddressNode.class);
+    private final OdsContext context;
+
+    public BagOsmAddressNodeBuilder(OdsContext context) {
+        super(context, OsmAddressNode.class);
+        this.context = context;
     }
 
     @Override
@@ -25,9 +28,10 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<OsmAddres
         return OsmAddressNode.class;
     }
 
-    @Override
-    public boolean canHandle(OsmPrimitive primitive) {
-        return OsmAddressNode.IsAddressNode(primitive);
+    private boolean canHandle(OsmPrimitive primitive) {
+        boolean validTagging = primitive.hasKey("addr:housenumber");
+        boolean validGeometry = primitive.getDisplayType() == OsmPrimitiveType.NODE;
+        return validTagging && validGeometry;
     }
 
     @Override
@@ -36,8 +40,7 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<OsmAddres
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeKeys(primitive);
                 OsmAddress address = new BagOsmAddress();
-                BaseOsmAddressNode addressNode = new BaseOsmAddressNode();
-                addressNode.setPrimaryId(primitive.getUniqueId());
+                OsmNlAddressNode addressNode = new OsmNlAddressNode();
                 addressNode.setPrimitive(primitive);
                 addressNode.setAddress(address);
                 Map<String, String> tags = primitive.getKeys();
@@ -55,8 +58,10 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<OsmAddres
         BagOsmEntityBuilder.normalizeTags(primitive);
     }
 
-    private static void parseKeys(BaseOsmAddressNode addressNode, Map<String, String> tags) {
+    private static void parseKeys(OsmNlAddressNode addressNode, Map<String, String> tags) {
         BagOsmEntityBuilder.parseKeys(addressNode, tags);
+        addressNode.setAddressableId(BagOsmEntityBuilder.getReferenceId(tags.remove("ref:bag")));
+
     }
 
     private Point buildGeometry(OsmPrimitive primitive) {
@@ -64,5 +69,10 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<OsmAddres
             return getGeoUtil().toPoint((Node) primitive);
         }
         return null;
+    }
+
+    @Override
+    public OsmAddressNodeStore getEntityStore() {
+        return context.getComponent(OsmAddressNodeStore.class);
     }
 }

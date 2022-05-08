@@ -4,9 +4,9 @@ import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagOsmCity;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.BagOsmCity;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmCityStore;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
-import org.openstreetmap.josm.plugins.ods.domains.places.impl.OsmCityStore;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 
@@ -27,16 +27,17 @@ public class BagOsmCityBuilder implements OsmEntityBuilder<OsmCity> {
         return OsmCity.class;
     }
 
-    @Override
-    public boolean canHandle(OsmPrimitive primitive) {
-        return OsmCity.isCity(primitive);
+    private boolean canHandle(OsmPrimitive primitive) {
+        boolean validTagging = "administrative".equals(primitive.get("boundary"))
+            && "10".equals(primitive.get("admin_level"));
+        boolean validGeometry = primitive.getType().equals(OsmPrimitiveType.RELATION)
+            || primitive.getType().equals(OsmPrimitiveType.CLOSEDWAY);
+        return validTagging && validGeometry;
     }
 
     @Override
     public void buildOsmEntity(OsmPrimitive primitive) {
-        if (primitive.getType() == OsmPrimitiveType.RELATION &&
-                "administrative".equals(primitive.get("boundary")) &&
-                "8".equals(primitive.get("admin_level"))) {
+        if (canHandle(primitive)) {
             normalizeKeys(primitive);
             BagOsmCity city = new BagOsmCity();
             Map<String, String> tags = primitive.getKeys();

@@ -31,14 +31,7 @@ public abstract class BagOsmEntityBuilder {
                 }
             }
         }
-        primitive.remove("bag:status");
-        primitive.remove("bag:begindatum");
         normalizeReference(primitive, "ref:bag");
-        normalizeReference(primitive, "ref:bagid");
-        normalizeReference(primitive, "bag:id");
-        normalizeReference(primitive, "bag:pand_id");
-        normalizeReference(primitive, "ref:vbo_id");
-        normalizeBagExtract(primitive);
     }
 
     private static void normalizeReference(OsmPrimitive primitive, String key) {
@@ -55,22 +48,7 @@ public abstract class BagOsmEntityBuilder {
         }
     }
 
-    private static void normalizeBagExtract(OsmPrimitive primitive) {
-        String value = primitive.get("bag:extract");
-        if (value == null) return;
-        primitive.remove("bag:extract");
-        if (value.startsWith("9999PND") ||
-                value.startsWith("9999LIG") || value.startsWith("9999STA")) {
-            StringBuilder sb = new StringBuilder(10);
-            sb.append(value.substring(11, 15)).append("-")
-            .append(value.substring(9, 11)).append("-")
-            .append(value.substring(7, 9));
-            primitive.put("source:date", sb.toString());
-        }
-    }
-
     public static void parseKeys(OsmEntity entity, Map<String, String> tags) {
-        entity.setReferenceId(getReferenceId(tags.remove("ref:bag")));
         entity.setSource(tags.remove("source"));
         String sourceDate = tags.remove("source:date");
         if (sourceDate != null) {
@@ -78,7 +56,7 @@ public abstract class BagOsmEntityBuilder {
         }
     }
 
-    private static Long getReferenceId(String s) {
+    public static Long getReferenceId(String s) {
         if (s == null || s.length() == 0) return null;
         int i=0;
         while (i<s.length() && Character.isDigit(s.charAt(i))) {

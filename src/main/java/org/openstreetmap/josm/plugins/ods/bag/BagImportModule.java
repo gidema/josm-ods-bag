@@ -10,67 +10,102 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.OdsModule;
+import org.openstreetmap.josm.plugins.ods.ParameterType;
+import org.openstreetmap.josm.plugins.ods.bag.enrichment.BuildingCompletenessEnricher;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduseStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagMooringStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuildingStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNode2BuildingPairStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnit2BuildingPairStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnitStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagDemolishedBuildingStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMissingAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMissingBuildingStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMooringParcelStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagStaticCaravanParcelStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagWithdrawnAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.bag.factories.BagBuildingFactory;
+import org.openstreetmap.josm.plugins.ods.bag.factories.BagMooringParcelFactory;
+import org.openstreetmap.josm.plugins.ods.bag.factories.BagStaticCaravanParcelFactory;
+import org.openstreetmap.josm.plugins.ods.bag.factories.BuildingUnitToBuildingRelationFactory;
+import org.openstreetmap.josm.plugins.ods.bag.factories.BagBuildingUnitFactory;
+import org.openstreetmap.josm.plugins.ods.bag.importing.BagImportContext;
+import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatcher;
+import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatcher;
+import org.openstreetmap.josm.plugins.ods.bag.match.MooringMatcher;
+import org.openstreetmap.josm.plugins.ods.bag.match.OsmAddressNodeToBuildingConnector;
+import org.openstreetmap.josm.plugins.ods.bag.match.StaticCaravanSiteMatcher;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmAddressNodeBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmBuildingBuilder;
+import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmLanduseBuilder;
+import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmMooringBuilder;
+import org.openstreetmap.josm.plugins.ods.bag.pdok.BagPdok;
+import org.openstreetmap.josm.plugins.ods.bag.process.BuildingTypeEnricher;
+import org.openstreetmap.josm.plugins.ods.bag.process.DistributeAddressNodes;
+import org.openstreetmap.josm.plugins.ods.bag.relate.BagBuildingUnit2BuildingConnector;
+import org.openstreetmap.josm.plugins.ods.bag.tools4osm.BagTools4Osm;
+import org.openstreetmap.josm.plugins.ods.bag.tools4osm.factories.BagAddressNodeToBuildingRelationFactory;
+import org.openstreetmap.josm.plugins.ods.bag.tools4osm.factories.BagDemolishedBuildingFactory;
+import org.openstreetmap.josm.plugins.ods.bag.tools4osm.factories.BagMissingAddressFactory;
+import org.openstreetmap.josm.plugins.ods.bag.tools4osm.factories.BagMissingBuildingFactory;
+import org.openstreetmap.josm.plugins.ods.bag.tools4osm.factories.BagWithdrawnAddressFactory;
+import org.openstreetmap.josm.plugins.ods.context.ContextJobList;
+import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtilProj4j;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OdAddressNode;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmAddressNode;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OsmBuilding;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OpenDataAddressNodeStore;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OpenDataBuildingStore;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OsmAddressNodeStore;
-import org.openstreetmap.josm.plugins.ods.domains.buildings.impl.OsmBuildingStore;
+import org.openstreetmap.josm.plugins.ods.entities.OdEntityFactories;
+import org.openstreetmap.josm.plugins.ods.entities.impl.OdEntityFactoriesImpl;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
+import org.openstreetmap.josm.plugins.ods.entities.osm.OsmEntityBuilders;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
+import org.openstreetmap.josm.plugins.ods.entities.storage.ModifiedEntityStores;
+import org.openstreetmap.josm.plugins.ods.gui.MenuActions;
 import org.openstreetmap.josm.plugins.ods.gui.OdsDownloadAction;
 import org.openstreetmap.josm.plugins.ods.gui.OdsResetAction;
 import org.openstreetmap.josm.plugins.ods.gui.OdsUpdateAction;
 import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
+import org.openstreetmap.josm.plugins.ods.io.OpenDataLayerDownloader;
+import org.openstreetmap.josm.plugins.ods.io.OsmLayerDownloader;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
+import org.openstreetmap.josm.plugins.ods.matching.Matchers;
+import org.openstreetmap.josm.plugins.ods.matching.update.OdsImportContext;
+import org.openstreetmap.josm.plugins.ods.wfs.WfsFeatureSource;
+import org.openstreetmap.josm.plugins.ods.wfs.WfsFeatureSourceBuilder;
+import org.openstreetmap.josm.plugins.ods.wfs.WfsFeatureSources;
+import org.openstreetmap.josm.plugins.ods.wfs.WfsHost;
+import org.openstreetmap.josm.plugins.ods.wfs.WfsHostBuilder;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 
 public class BagImportModule extends OdsModule {
+    public final static ParameterType<Double> BuildingAlignmentTolerance = new ParameterType<>(
+            Double.class);
+
     // Boundary of the Netherlands
-    private final static Bounds BOUNDS = new Bounds(50.734, 3.206, 53.583, 7.245);
-    private final MainDownloader mainDownloader;
-    private final GeoUtil geoUtil = new GeoUtil();
-    private final CRSUtil crsUtil = new CRSUtilProj4j();
+    private final static Bounds BOUNDS = new Bounds(50.734, 3.206, 53.583,
+            7.245);
 
     public BagImportModule() {
-        this.mainDownloader = new BagDownloader(this);
     }
 
     @Override
     public void initialize() throws Exception {
         super.initialize();
-        mainDownloader.initialize();
-        addOsmEntityBuilder(new BagOsmBuildingBuilder(this));
-        addOsmEntityBuilder(new BagOsmAddressNodeBuilder(this));
-        addAction(new OdsDownloadAction(this));
-        //        addAction(new RemoveAssociatedStreetsAction(this));
-        //        addAction(new OdsImportAction(this));
-        addAction(new OdsUpdateAction(this));
-        addAction(new OdsResetAction(this));
     }
 
     @Override
     protected OsmLayerManager createOsmLayerManager() {
-        OsmLayerManager manager = new OsmLayerManager(this, "BAG OSM");
-        manager.addEntityStore(OsmBuilding.class, new OsmBuildingStore());
-        manager.addEntityStore(OsmAddressNode.class, new OsmAddressNodeStore());
-        return manager;
+        return new OsmLayerManager("BAG OSM");
     }
 
     @Override
     protected OdLayerManager createOpenDataLayerManager() {
-        OdLayerManager manager = new OdLayerManager("BAG ODS");
-        manager.addEntityStore(OdBuilding.class, new OpenDataBuildingStore());
-        manager.addEntityStore(OdAddressNode.class, new OpenDataAddressNodeStore());
-        return manager;
+        return new OdLayerManager("BAG ODS");
     }
 
     @Override
@@ -78,30 +113,15 @@ public class BagImportModule extends OdsModule {
         return "BAG";
     }
 
-
     @Override
     public String getDescription() {
-        return I18n.tr("ODS module to import buildings and addresses in the Netherlands");
-    }
-
-    @Override
-    public GeoUtil getGeoUtil() {
-        return geoUtil;
-    }
-
-    @Override
-    public CRSUtil getCrsUtil() {
-        return crsUtil;
+        return I18n.tr(
+                "ODS module to import buildings and addresses in the Netherlands");
     }
 
     @Override
     public Bounds getBounds() {
         return BOUNDS;
-    }
-
-    @Override
-    public MainDownloader getDownloader() {
-        return mainDownloader;
     }
 
     @Override
@@ -112,11 +132,14 @@ public class BagImportModule extends OdsModule {
     @SuppressWarnings("unused")
     @Override
     public boolean activate() {
-        if (false && !checkUser()) { // Disabled, but kept the code in case we need it
-            int answer = JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
-                    "Je gebruikersnaam eindigt niet op _BAG en is daarom niet geschikt " +
-                            "voor de BAG import.\nWeet je zeker dat je door wilt gaan?",
-                            I18n.tr("Invalid user"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        if (false && !checkUser()) { // Disabled, but kept the code in case we
+                                     // need it
+            int answer = JOptionPane.showConfirmDialog(
+                    MainApplication.getMainFrame(),
+                    "Je gebruikersnaam eindigt niet op _BAG en is daarom niet geschikt "
+                            + "voor de BAG import.\nWeet je zeker dat je door wilt gaan?",
+                    I18n.tr("Invalid user"), JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE);
             if (answer == JOptionPane.CANCEL_OPTION) {
                 return false;
             }
@@ -125,18 +148,251 @@ public class BagImportModule extends OdsModule {
     }
 
     @Override
-    public Double getTolerance() {
-        return 1e-5;
+    protected void configureContext() {
+        OdsContext context = getContext();
+        context.setParameter(BuildingAlignmentTolerance, 0.1d);
+        context.setParameter(ODS.OPERATION_MODE, "Import");
+//        context.setParameter(ODS.OPERATION_MODE, "Update");
+
+        context.register(OdsModule.class, this);
+
+        context.register(GeoUtil.class, GeoUtil.getInstance());
+        context.register(CRSUtil.class, new CRSUtilProj4j());
+
+        registerEntityStores(context);
+        
+        // Register WFS Hosts and featureSources
+        createHosts(context);
+        createWfsFeatureSources(context);
+
+        createOdEntityFactories(context);
+        
+        // Create Osm entity builder
+        createOsmEntityBuilders(context);
+        
+        context.register(OdsImportContext.class, new BagImportContext());
+
+        context.register(OpenDataLayerDownloader.class,
+                new OpenDataLayerDownloader());
+        context.register(new OsmLayerDownloader());
+
+        context.register(Matchers.class, createMatchers(context));
+
+        context.register(new MainDownloader(context));
+
+        // Register post-download jobs
+        ContextJobList  postDownloadJobs = ContextJobList.of(
+            new BagBuildingUnit2BuildingConnector(),
+            new BuildingCompletenessEnricher(),
+            new DistributeAddressNodes(),
+            new BuildingTypeEnricher(),
+            new BagPrimitiveBuilder(),
+            new OsmAddressNodeToBuildingConnector());
+        context.register(postDownloadJobs, "postDownloadJobs");
+
+        getContext().register(createMenuActions(context));
+    }
+
+    private void registerEntityStores(OdsContext context) {
+        // Register BAG Full load entity stores
+        context.register(new BagBuildingStore());
+        context.register(new BagBuildingUnitStore());
+        context.register(new BagMooringParcelStore());
+        context.register(new BagStaticCaravanParcelStore());
+        context.register(new BagAddressNodeStore());
+        context.register(new BagBuildingUnit2BuildingPairStore());
+        context.register(new BagAddressNode2BuildingPairStore());
+        
+        // Register BAG modified entity stores
+        ModifiedEntityStores modifiedEntityStores = new ModifiedEntityStores(
+            new BagMissingAddressNodeStore(),
+            new BagMissingBuildingStore(),
+            new BagWithdrawnAddressNodeStore(),
+            new BagDemolishedBuildingStore());
+        context.register(modifiedEntityStores);
+        modifiedEntityStores.forEach(context::register);
+
+        // Register OSM entity Stores
+        context.register(new OsmBuildingStore());
+        context.register(new OsmAddressNodeStore());
+        context.register(new OsmBagMooringStore());
+        context.register(new OsmBagLanduseStore());
+
+    }
+
+    private void createOdEntityFactories(OdsContext context) {
+        OdEntityFactories factories = new OdEntityFactoriesImpl(
+            new BagBuildingFactory(context),
+            new BagBuildingUnitFactory(context),
+            new BagMooringParcelFactory(context),
+            new BagStaticCaravanParcelFactory(context),
+            new BagMissingAddressFactory(context),
+            new BagMissingBuildingFactory(context),
+            new BagDemolishedBuildingFactory(context),
+            new BagWithdrawnAddressFactory(context),
+            new BuildingUnitToBuildingRelationFactory(context),
+            new BagAddressNodeToBuildingRelationFactory(context));
+        context.register(OdEntityFactories.class, factories);
+    }
+
+    private void createOsmEntityBuilders(OdsContext context) {
+        OsmEntityBuilders entityBuilders = new OsmEntityBuilders(
+                new BagOsmBuildingBuilder(context),
+                new BagOsmAddressNodeBuilder(context),
+                new BagOsmMooringBuilder(context),
+                new BagOsmLanduseBuilder(context));
+        context.register(entityBuilders);
+    }
+    private Matchers createMatchers(OdsContext context) {
+        return new Matchers(
+                new BuildingMatcher(context),
+                new AddressNodeMatcher(context),
+                new MooringMatcher(context),
+                new StaticCaravanSiteMatcher(context));
+    }
+
+    private MenuActions createMenuActions(OdsContext context) {
+        MenuActions actions = new MenuActions();
+        actions.addAction(new OdsDownloadAction(context));
+        // addAction(new RemoveAssociatedStreetsAction(this));
+        // addAction(new OdsImportAction(this));
+        actions.addAction(new OdsUpdateAction(context));
+        actions.addAction(new OdsResetAction(context));
+        return actions;
+    }
+
+    private void createHosts(OdsContext context) {
+        // Create the default BAG Host
+        WfsHostBuilder builder = new WfsHostBuilder(BagPdok.HOST_NAME, BagPdok.URL,
+                   BagPdok.NS_BAG, "bag", "geom", 28992L, 10000);
+            builder.setPageSize(500);
+        WfsHost host = builder.build();
+        context.register(WfsHost.class, host, host.getName());
+        
+        builder = new WfsHostBuilder(BagTools4Osm.HOST_NAME, BagTools4Osm.URL,
+                BagTools4Osm.NS_TOOSL4OSM, "bag", "", 28992L, 10000);
+            builder.setPageSize(500);
+            builder.setHttpMethod("GET");
+            builder.setFesFilterCapable(false);
+         host = builder.build();
+         context.register(WfsHost.class, host, host.getName());
+    }
+    
+    private void createWfsFeatureSources(OdsContext context) {
+        WfsFeatureSources featureSources = new WfsFeatureSources(createBuildingFeatureSource(context),
+                createBuildingUnitFeatureSource(context),
+                createMooringParcelFeatureSource(context),
+                createStaticCaravanParcelFeatureSource(context));
+        context.register(featureSources, "Import");
+        featureSources = new WfsFeatureSources(
+//                createMissingSecondaryAddressFeatureSource(context),
+                createMissingAddressFeatureSource(context),
+                createMissingBuildingFeatureSource(context),
+                createDemolishedBuildingFeatureSource(context),
+                createWithdrawnAddressFeatureSource(context));
+        context.register(featureSources, "Update");
+    }
+
+    private WfsFeatureSource createBuildingUnitFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagPdok.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "verblijfsobject");
+        builder.setProperties("identificatie", "oppervlakte", "status", "gebruiksdoel",
+                "openbare_ruimte", "huisnummer", "huisletter", "toevoeging", "postcode", "woonplaats",
+                "geometrie", "pandidentificatie");
+        builder.setSortBy("identificatie", "pandidentificatie");
+        return builder.build();
+    }
+    
+    private WfsFeatureSource createBuildingFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagPdok.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "pand");
+        builder.setProperties("identificatie", "bouwjaar", "status", "aantal_verblijfsobjecten",
+                "geometrie");
+        builder.setPageSize(500);
+        builder.setSortBy("identificatie");
+        return builder.build();
+    }
+
+    private WfsFeatureSource createMooringParcelFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagPdok.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "ligplaats");
+        builder.setProperties("identificatie", "status", "openbare_ruimte", "huisnummer",
+                "huisletter", "toevoeging", "postcode", "woonplaats", "geometrie");
+        builder.setPageSize(500);
+        builder.setSortBy("identificatie");
+        return builder.build();
+    }
+
+    private WfsFeatureSource createStaticCaravanParcelFeatureSource(OdsContext context)  {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagPdok.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "standplaats");
+        builder.setProperties("identificatie", "status", "openbare_ruimte", "huisnummer",
+                "huisletter", "toevoeging", "postcode", "woonplaats", "geometrie");
+        builder.setPageSize(500);
+        builder.setSortBy("identificatie");
+        return builder.build();
+    }
+
+    private WfsFeatureSource createMissingSecondaryAddressFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagTools4Osm.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "SecondaryAddress_Missing");
+        builder.setProperties("identificatie", "status", "openbare_ruimte", "huisnummer",
+                "huisletter", "toevoeging", "postcode", "woonplaats", "geopunt", "pandidentificatie");
+        builder.setSortBy("identificatie", "pandidentificatie");
+        builder.setGeometryProperty("geopunt");
+        return builder.build();
+    }
+
+    private WfsFeatureSource createMissingAddressFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagTools4Osm.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "Address_Missing");
+        builder.setProperties("nummeraanduiding", "straat", "huisnummer",
+                "huisletter", "huisnummertoevoeging", "postcode", "woonplaatscode", "woonplaats", "geopunt", "pandidentificatie",
+                "verblijfsobjectidentificatie", "nevenadres");
+        builder.setSortBy("nummeraanduiding");
+        builder.setGeometryProperty("geopunt");
+        return builder.build();
+    }
+
+    private WfsFeatureSource createMissingBuildingFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagTools4Osm.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "Building_Missing");
+        builder.setProperties("identificatie", "pandstatus", "bouwjaar", "woonplaatscode",
+                "geovlak");
+        builder.setSortBy("identificatie");
+        builder.setGeometryProperty("geovlak");
+        return builder.build();
+    }
+
+    private WfsFeatureSource createDemolishedBuildingFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagTools4Osm.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "Building_Destroyed");
+        builder.setProperties("identificatie","geovlak");
+        builder.setSortBy("identificatie");
+        builder.setGeometryProperty("geovlak");
+        return builder.build();
+    }
+
+    private WfsFeatureSource createWithdrawnAddressFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagTools4Osm.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "Address_Withdrawn");
+        builder.setProperties("nummeraanduiding", "openbare_ruimte", "huisnummer", "huisletter", "toevoeging",
+                "postcode", "woonplaats", "geopunt");
+        builder.setSortBy("nummeraanduiding");
+        builder.setGeometryProperty("geopunt");
+        return builder.build();
     }
 
     private static boolean checkUser() {
         try {
-            final UserInfo userInfo = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE);
+            final UserInfo userInfo = new OsmServerUserInfoReader()
+                    .fetchUserInfo(NullProgressMonitor.INSTANCE);
             String user = userInfo.getDisplayName();
             String suffix = "_BAG";
             return user.endsWith(suffix);
         } catch (OsmTransferException e1) {
-            Logging.warn(tr("Failed to retrieve OSM user details from the server."));
+            Logging.warn(
+                    tr("Failed to retrieve OSM user details from the server."));
             return false;
         }
     }

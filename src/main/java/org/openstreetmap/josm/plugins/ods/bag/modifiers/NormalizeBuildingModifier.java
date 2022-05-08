@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.ods.bag.modifiers;
 
-import org.openstreetmap.josm.plugins.ods.domains.buildings.OdBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.entities.EntityModifier;
 
 /**
@@ -11,20 +11,20 @@ import org.openstreetmap.josm.plugins.ods.entities.EntityModifier;
  * @author gertjan
  *
  */
-public class NormalizeBuildingModifier implements EntityModifier<OdBuilding> {
+public class NormalizeBuildingModifier implements EntityModifier<BagBuilding> {
 
     @Override
-    public void modify(OdBuilding building) {
+    public void modify(BagBuilding building) {
         building.setGeometry(building.getGeometry().norm());
     }
 
     @Override
-    public Class<OdBuilding> getTargetType() {
-        return OdBuilding.class;
+    public Class<BagBuilding> getTargetType() {
+        return BagBuilding.class;
     }
 
     @Override
-    public boolean isApplicable(OdBuilding target) {
+    public boolean isApplicable(BagBuilding target) {
         return true;
     }
 }

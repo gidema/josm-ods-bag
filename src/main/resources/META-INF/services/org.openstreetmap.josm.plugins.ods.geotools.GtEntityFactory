@@ -1,6 +1,0 @@
-org.openstreetmap.josm.plugins.ods.bag.factories.NL_GenericAddressFactory
-org.openstreetmap.josm.plugins.ods.bag.factories.BagGeometryFactory
-org.openstreetmap.josm.plugins.ods.bag.factories.NL_AddressNodeFactory
-org.openstreetmap.josm.plugins.ods.bag.factories.BagPandFactory
-org.openstreetmap.josm.plugins.ods.bag.factories.BagLigplaatsBuildingFactory
-org.openstreetmap.josm.plugins.ods.bag.factories.BagStandplaatsBuildingFactory
