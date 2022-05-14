@@ -376,7 +376,7 @@ public class BagImportModule extends OdsModule {
     private WfsFeatureSource createWithdrawnAddressFeatureSource(OdsContext context) {
         WfsHost wfsHost = context.getComponent(WfsHost.class, BagTools4Osm.HOST_NAME);
         WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "Address_Withdrawn");
-        builder.setProperties("nummeraanduiding", "openbare_ruimte", "huisnummer", "huisletter", "toevoeging",
+        builder.setProperties("nummeraanduiding", "openbare_ruimte", "huisnummer", "huisletter", "huisnummertoevoeging",
                 "postcode", "woonplaats", "geopunt");
         builder.setSortBy("nummeraanduiding");
         builder.setGeometryProperty("geopunt");

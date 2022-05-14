@@ -61,7 +61,7 @@ public class BagWithdrawnAddressFactory implements OdEntityFactory {
     private NlHouseNumber createHouseNumber(WfsFeature feature) {
         Integer number = Integer.valueOf(FeatureUtil.getString(feature, "huisnummer"));
         Character houseLetter = FeatureUtil.getCharacter(feature, "huisletter");
-        String houseNumberExtra = FeatureUtil.getString(feature, "toevoeging");
+        String houseNumberExtra = FeatureUtil.getString(feature, "huisnummertoevoeging");
         return new NlHouseNumberImpl(number, houseLetter, houseNumberExtra);
     }
 }
