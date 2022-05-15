@@ -19,6 +19,7 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduseStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagMooringStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuildingStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNode2BuildingPairStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnit2BuildingPairStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnitStore;
@@ -28,12 +29,11 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMissingBuildingS
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMooringParcelStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagStaticCaravanParcelStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagWithdrawnAddressNodeStore;
-import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.bag.factories.BagBuildingFactory;
+import org.openstreetmap.josm.plugins.ods.bag.factories.BagBuildingUnitFactory;
 import org.openstreetmap.josm.plugins.ods.bag.factories.BagMooringParcelFactory;
 import org.openstreetmap.josm.plugins.ods.bag.factories.BagStaticCaravanParcelFactory;
 import org.openstreetmap.josm.plugins.ods.bag.factories.BuildingUnitToBuildingRelationFactory;
-import org.openstreetmap.josm.plugins.ods.bag.factories.BagBuildingUnitFactory;
 import org.openstreetmap.josm.plugins.ods.bag.importing.BagImportContext;
 import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatcher;
 import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatcher;
@@ -68,9 +68,8 @@ import org.openstreetmap.josm.plugins.ods.gui.MenuActions;
 import org.openstreetmap.josm.plugins.ods.gui.OdsDownloadAction;
 import org.openstreetmap.josm.plugins.ods.gui.OdsResetAction;
 import org.openstreetmap.josm.plugins.ods.gui.OdsUpdateAction;
-import org.openstreetmap.josm.plugins.ods.io.MainDownloader;
-import org.openstreetmap.josm.plugins.ods.io.OpenDataLayerDownloader;
-import org.openstreetmap.josm.plugins.ods.io.OsmLayerDownloader;
+import org.openstreetmap.josm.plugins.ods.io.OsmHost;
+import org.openstreetmap.josm.plugins.ods.io.OverpassHost;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
 import org.openstreetmap.josm.plugins.ods.matching.Matchers;
 import org.openstreetmap.josm.plugins.ods.matching.update.OdsImportContext;
@@ -172,13 +171,9 @@ public class BagImportModule extends OdsModule {
         
         context.register(OdsImportContext.class, new BagImportContext());
 
-        context.register(OpenDataLayerDownloader.class,
-                new OpenDataLayerDownloader());
-        context.register(new OsmLayerDownloader());
+        context.register(OsmHost.class, new OverpassHost());
 
         context.register(Matchers.class, createMatchers(context));
-
-        context.register(new MainDownloader(context));
 
         // Register post-download jobs
         ContextJobList  postDownloadJobs = ContextJobList.of(
@@ -282,7 +277,8 @@ public class BagImportModule extends OdsModule {
         WfsFeatureSources featureSources = new WfsFeatureSources(createBuildingFeatureSource(context),
                 createBuildingUnitFeatureSource(context),
                 createMooringParcelFeatureSource(context),
-                createStaticCaravanParcelFeatureSource(context));
+                createStaticCaravanParcelFeatureSource(context),
+                createMissingSecondaryAddressFeatureSource(context));
         context.register(featureSources, "Import");
         featureSources = new WfsFeatureSources(
 //                createMissingSecondaryAddressFeatureSource(context),
