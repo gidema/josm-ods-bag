@@ -17,7 +17,6 @@ import org.openstreetmap.josm.tools.Logging;
 public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode {
     private Long addressId;
     private NLAddress address;
-    private Long buildingUnitRef;
     private Long buildingRef;
     private BagBuildingUnit buildingUnit;
     private BagBuilding building;
