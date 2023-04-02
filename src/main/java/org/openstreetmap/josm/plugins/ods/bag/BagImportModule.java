@@ -261,6 +261,10 @@ public class BagImportModule extends OdsModule {
         WfsHostBuilder builder = new WfsHostBuilder(BagPdok.HOST_NAME, BagPdok.URL,
                    BagPdok.NS_BAG, "bag", "geom", 28992L, 10000);
             builder.setPageSize(500);
+            // The BAG WFS servers support HTTP POST and simple XML Filters
+            // However, the symantics are hard to grasp. For now, we have to deal with HTTP Get
+            builder.setHttpMethod("GET");
+            builder.setFesFilterCapable(false);
         WfsHost host = builder.build();
         context.register(WfsHost.class, host, host.getName());
         
