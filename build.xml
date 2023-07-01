@@ -128,7 +128,7 @@
    -->
    <target name="install4debug" depends="dist4debug">
      <property environment="env"/>
-     <condition property="josm.plugins.dir" value="${env.APPDATA}/JOSM_ECLIPSE_ODS6/plugins" else="${user.home}/.josm_eclipse_ods6/plugins">
+     <condition property="josm.plugins.dir" value="${env.APPDATA}/JOSM_ECLIPSE_ODS7/plugins" else="${user.home}/.josm_eclipse_ods7/plugins">
        <and>
          <os family="windows"/>
        </and>
