@@ -31,7 +31,7 @@ public class BagStaticCaravanParcelPrimitiveBuilder extends BagEntityPrimitiveBu
         }
         tags.put("source", "BAG");
         tags.put("source:date", standplaats.getSourceDate());
-        tags.put("ref:bag", standplaats.getStandplaatsId().toString());
+        tags.put("ref:bag", BagEntityPrimitiveBuilder.formatBagId(standplaats.getStandplaatsId()));
         // TODO Some municipalities draw the outline of the static caravan itself, whereas other draw the
         // outline of the parcel. There tends to be a shift to the latter, which is more conform the BAG standards.
         // In the beginning, we imported 'Standplaats' objects as building=static_caravan

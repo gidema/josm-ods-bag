@@ -52,7 +52,7 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
     protected void buildTags(BagBuilding building, Map<String, String> tags) {
         tags.put("source", "BAG");
         tags.put("source:date", building.getSourceDate());
-        tags.put("ref:bag", building.getBuildingId().toString());
+        tags.put("ref:bag", BagEntityPrimitiveBuilder.formatBagId(building.getBuildingId()));
         if (building.getStartDate() != null) {
             tags.put("start_date", building.getStartDate());
         }

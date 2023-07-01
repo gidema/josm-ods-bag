@@ -33,7 +33,7 @@ public class BagMooringParcelPrimitiveBuilder extends BagEntityPrimitiveBuilder<
         }
         tags.put("source", "BAG");
         tags.put("source:date", ligplaats.getSourceDate());
-        tags.put("ref:bag", ligplaats.getLigplaatsId().toString());
+        tags.put("ref:bag", BagEntityPrimitiveBuilder.formatBagId(ligplaats.getLigplaatsId()));
         // TODO Some municipalities draw the outline of the houseboat itself, whereas other draw the
         // outline of the parcel. There tends to be a shift to the latter, which is more conform the BAG standards.
         // In the beginning, we imported 'Ligplaats' objects as building=houseboat

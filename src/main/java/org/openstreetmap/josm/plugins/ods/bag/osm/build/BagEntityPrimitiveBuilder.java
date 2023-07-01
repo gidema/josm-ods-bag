@@ -11,6 +11,14 @@ import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 import org.openstreetmap.josm.plugins.ods.osm.DefaultPrimitiveBuilder;
 
+/**
+ * Abstract EntityPrimitiveBuilder for BAG entities. 
+ * This class contains shared functionality for all BAG EntityPrimitiveBuilders. 
+ * 
+ * @author gertjan
+ *
+ * @param <T> The open data primitive type
+ */
 public abstract class BagEntityPrimitiveBuilder<T extends OdEntity>
 implements EntityPrimitiveBuilder<T> {
     private DefaultPrimitiveBuilder primitiveBuilder;
@@ -31,6 +39,15 @@ implements EntityPrimitiveBuilder<T> {
         }
     }
 
+    /**
+     * Format a BAG id with as a 16 positions string with leading zero's if required.
+     * 
+     * @param id The BAG id
+     * @return The formatted id.
+     */
+    protected static String formatBagId(long id) {
+        return String.format("%016d", id);
+    }
     protected abstract void buildTags(T entity, Map<String, String> tags);
 
     public static void createAddressTags(NLAddress address, Map<String, String> tags) {
