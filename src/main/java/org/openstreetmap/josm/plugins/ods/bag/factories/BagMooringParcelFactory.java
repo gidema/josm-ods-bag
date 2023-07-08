@@ -109,7 +109,7 @@ public class BagMooringParcelFactory implements OdEntityFactory {
 
         @Override
         public Match<? extends OsmEntity, ? extends OdEntity> getMatch() {
-            throw new UnsupportedOperationException();
+            return null;
         }
 
         @Override

@@ -30,7 +30,7 @@ public class BuildingCompletenessEnricher implements OdsContextJob {
     @Override
     public void run(OdsContext context) {
         processNormalBuildings(context);
-        processDemolishedBuildings(context);
+//        processDemolishedBuildings(context);
     }
     
     private void processNormalBuildings(OdsContext context) {

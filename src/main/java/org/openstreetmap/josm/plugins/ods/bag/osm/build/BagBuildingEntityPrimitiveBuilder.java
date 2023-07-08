@@ -7,7 +7,6 @@ import java.util.Map;
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
-import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagDemolishedBuildingStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
@@ -28,12 +27,12 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
                  createPrimitive(building, layerManager);
             }
         });
-        BagDemolishedBuildingStore demolishedBuildingStore = context.getComponent(BagDemolishedBuildingStore.class);
-        demolishedBuildingStore.forEach(building -> {
-            if (building.getPrimitive() == null && building.getCompleteness() == Complete) {
-                 createPrimitive(building, layerManager);
-            }
-        });
+//        BagDemolishedBuildingStore demolishedBuildingStore = context.getComponent(BagDemolishedBuildingStore.class);
+//        demolishedBuildingStore.forEach(building -> {
+//            if (building.getPrimitive() == null && building.getCompleteness() == Complete) {
+//                 createPrimitive(building, layerManager);
+//            }
+//        });
     }
 
 
