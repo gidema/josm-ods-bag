@@ -14,11 +14,11 @@ import org.openstreetmap.josm.plugins.ods.matching.update.EntityUpdater;
 
 public class BuildingUpdater implements EntityUpdater {
     //    private final BuildingGeometryUpdater geometryUpdater;
-    //    private final BuildingGeometryUpdaterNg geometryUpdater;
+    //    private final BuildingUpdater geometryUpdater;
 
     public BuildingUpdater(@SuppressWarnings("unused") OdsModule module) {
         super();
-        //        this.geometryUpdater = new BuildingGeometryUpdaterNg(module);
+        //        this.geometryUpdater = new BuildingUpdater(module);
     }
 
     @Override

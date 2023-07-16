@@ -31,6 +31,7 @@ import org.openstreetmap.josm.plugins.ods.bag.factories.BagBuildingUnitFactory;
 import org.openstreetmap.josm.plugins.ods.bag.factories.BagMooringParcelFactory;
 import org.openstreetmap.josm.plugins.ods.bag.factories.BagStaticCaravanParcelFactory;
 import org.openstreetmap.josm.plugins.ods.bag.factories.BuildingUnitToBuildingRelationFactory;
+import org.openstreetmap.josm.plugins.ods.bag.gui.UpdateBuildingGeometryAction;
 import org.openstreetmap.josm.plugins.ods.bag.importing.BagImportContext;
 import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatcher;
 import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatcher;
@@ -239,6 +240,7 @@ public class BagImportModule extends OdsModule {
         // addAction(new OdsImportAction(this));
         actions.addAction(new OdsUpdateAction(context));
         actions.addAction(new OdsResetAction(context));
+        actions.addAction(new UpdateBuildingGeometryAction(context));
         return actions;
     }
 

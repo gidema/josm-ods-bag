@@ -86,7 +86,7 @@ public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("OdBuilding ").append(getBuildingId());
+        sb.append("OsmBuilding ").append(getBuildingId());
         for (OsmAddressNode a :addressNodes) {
             sb.append("\n").append(a.toString());
         }
