@@ -40,8 +40,8 @@ public abstract class BagOsmEntityBuilder {
         primitive.remove(key);
         if (value.length() == 0) return;
         try {
-            Long reference = Long.parseLong(value);
-            primitive.put("ref:bag", reference.toString());
+            long reference = Long.parseLong(value);
+            primitive.put("ref:bag", BagEntityPrimitiveBuilder.formatBagId(reference));
         }
         catch (NumberFormatException e) {
             return;
