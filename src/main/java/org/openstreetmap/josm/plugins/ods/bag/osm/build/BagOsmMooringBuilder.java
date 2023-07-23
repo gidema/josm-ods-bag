@@ -11,7 +11,6 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagMooring;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagMooringImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagMooringStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
 
@@ -24,7 +23,7 @@ public class BagOsmMooringBuilder extends AbstractOsmEntityBuilder<OsmBagMooring
         this.context = context;
     }
 
-    private boolean canHandle(OsmPrimitive primitive) {
+    private static boolean canHandle(OsmPrimitive primitive) {
         boolean taggedAsMooring = primitive.hasKey("mooring") && primitive.hasKey("ref:bag");
         boolean validGeometry = (primitive.getDisplayType() == OsmPrimitiveType.CLOSEDWAY);
         return taggedAsMooring && validGeometry;
@@ -57,7 +56,6 @@ public class BagOsmMooringBuilder extends AbstractOsmEntityBuilder<OsmBagMooring
         Long bagId = BagOsmEntityBuilder.getReferenceId(tags.remove("ref:bag"));
         mooring.setMooringId(bagId);
         tags.remove("mooring");
-        mooring.setStatus(EntityStatus.IN_USE);
         if (tags.containsKey("addr:housenumber")) {
             BagOsmAddress address = new BagOsmAddress();
             BagOsmAddressEntityBuilder.parseKeys(address, tags);

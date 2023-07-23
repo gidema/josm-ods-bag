@@ -6,5 +6,7 @@ import org.openstreetmap.josm.plugins.ods.matching.OdMatch;
 public interface BagStaticCaravanParcel extends OdEntity, NlAddressable {
     public Long getStandplaatsId();
 
+    public ParcelStatus getStatus();
+    
     public void setMatch(OdMatch<BagStaticCaravanParcel> match);
 }

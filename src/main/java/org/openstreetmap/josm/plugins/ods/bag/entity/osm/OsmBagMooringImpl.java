@@ -9,6 +9,7 @@ public class OsmBagMooringImpl extends AbstractOsmEntity implements OsmBagMoorin
     private OsmAddress address;
     private OsmMatch<OsmBagMooring> mooringMatch;
 
+    @Override
     public Long getMooringId() {
         return mooringId;
     }

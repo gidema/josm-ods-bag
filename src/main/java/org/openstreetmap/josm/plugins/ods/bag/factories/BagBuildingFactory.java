@@ -6,11 +6,11 @@ import java.time.format.DateTimeFormatter;
 import javax.xml.namespace.QName;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.BAGBuildingType;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BagBuildingImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
 import org.openstreetmap.josm.plugins.ods.bag.pdok.BagPdok;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntityFactory;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
@@ -49,25 +49,25 @@ public class BagBuildingFactory implements OdEntityFactory {
         buildingStore.add(building);
     }
 
-    public static EntityStatus parseStatus(String status) {
+    public static BuildingStatus parseStatus(String status) {
         switch (status) {
         case "Bouwvergunning verleend":
-            return EntityStatus.PLANNED;
+            return BuildingStatus.PLANNED;
         case "Bouw gestart":
-            return EntityStatus.CONSTRUCTION;
+            return BuildingStatus.CONSTRUCTION;
         case "Pand in gebruik":
         case "Pand buiten gebruik":
-            return EntityStatus.IN_USE;
+            return BuildingStatus.IN_USE;
         case "Pand in gebruik (niet ingemeten)":
-            return EntityStatus.IN_USE_NOT_MEASURED;
+            return BuildingStatus.IN_USE_NOT_MEASURED;
         case "Niet gerealiseerd pand":
-            return EntityStatus.NOT_REALIZED;
+            return BuildingStatus.NOT_CARRIED_THROUGH;
         case "Sloopvergunning verleend":
-            return EntityStatus.REMOVAL_DUE;
+            return BuildingStatus.REMOVAL_DUE;
         case "Pand gesloopt":
-            return EntityStatus.REMOVED;
+            return BuildingStatus.REMOVED;
         default:
-            return EntityStatus.UNKNOWN;
+            return BuildingStatus.UNKNOWN;
         }
     }
 }

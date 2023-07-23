@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
 import org.locationtech.jts.geom.Point;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingUnitStatus;
 import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOsmEntity;
 import org.openstreetmap.josm.tools.I18n;
@@ -10,23 +11,24 @@ public class OsmNlAddressNode extends AbstractOsmEntity implements OsmAddressNod
     private Long addressableId;
     private OsmAddress address;
     private OsmBuilding building;
+    private BuildingUnitStatus status;
     private AddressNodeMatch match;
 
     public OsmNlAddressNode() {
         super();
     }
 
-    
     @Override
     public Long getPrimaryId() {
         return getAddressableId();
     }
 
-
+    @Override
     public Long getAddressableId() {
         return addressableId;
     }
 
+    @Override
     public void setAddressableId(Long addressableId) {
         this.addressableId = addressableId;
     }
@@ -65,8 +67,8 @@ public class OsmNlAddressNode extends AbstractOsmEntity implements OsmAddressNod
             Logging.warn(I18n.tr("The geometry of {0} is not a point", toString()));
             return super.getGeometry().getCentroid();
         }
-    }
-
+    }   
+    
     @Override
     public AddressNodeMatch getMatch() {
         return match;
@@ -80,5 +82,10 @@ public class OsmNlAddressNode extends AbstractOsmEntity implements OsmAddressNod
     @Override
     public String toString() {
         return getAddress().toString();
+    }
+
+    @Override
+    public BuildingUnitStatus getStatus() {
+        return status;
     }
 }

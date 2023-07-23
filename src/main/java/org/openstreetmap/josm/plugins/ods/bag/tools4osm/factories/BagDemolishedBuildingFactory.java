@@ -6,11 +6,11 @@ import java.time.format.DateTimeFormatter;
 import javax.xml.namespace.QName;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.BAGBuildingType;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BagBuildingImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagDemolishedBuildingStore;
 import org.openstreetmap.josm.plugins.ods.bag.tools4osm.BagTools4Osm;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntityFactory;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
@@ -41,7 +41,7 @@ public class BagDemolishedBuildingFactory implements OdEntityFactory {
         building.setSource("BAG");
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");
         building.setStartYear(bouwjaar);
-        building.setStatus(EntityStatus.REMOVED);
+        building.setStatus(BuildingStatus.REMOVED);
         building.setBuildingType(BAGBuildingType.UNCLASSIFIED);
         building.setAantalVerblijfsobjecten(FeatureUtil.getLong(feature, "aantal_verblijfsobjecten"));
         building.setGeometry(feature.getGeometry());

@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.plugins.ods.bag.entity.Building;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
 import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 import org.openstreetmap.josm.plugins.ods.matching.OsmMatch;
@@ -51,6 +52,10 @@ public interface OsmBuilding extends OsmEntity, Building {
      *
      * @return
      */
+
+    public BuildingStatus getStatus();
+
+    public void setStatus(BuildingStatus status);
 
     public void setStartDate(String string);
 

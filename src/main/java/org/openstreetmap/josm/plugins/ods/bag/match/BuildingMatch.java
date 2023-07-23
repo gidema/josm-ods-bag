@@ -1,9 +1,9 @@
 package org.openstreetmap.josm.plugins.ods.bag.match;
 
-import static org.openstreetmap.josm.plugins.ods.entities.EntityStatus.CONSTRUCTION;
-import static org.openstreetmap.josm.plugins.ods.entities.EntityStatus.IN_USE;
-import static org.openstreetmap.josm.plugins.ods.entities.EntityStatus.IN_USE_NOT_MEASURED;
-import static org.openstreetmap.josm.plugins.ods.entities.EntityStatus.PLANNED;
+import static org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus.CONSTRUCTION;
+import static org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus.IN_USE;
+import static org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus.IN_USE_NOT_MEASURED;
+import static org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus.PLANNED;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.COMPARABLE;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.MATCH;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.NO_MATCH;
@@ -12,8 +12,8 @@ import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.combine;
 import java.util.Objects;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.matching.MatchImpl;
 import org.openstreetmap.josm.plugins.ods.matching.MatchStatus;
 import org.locationtech.jts.geom.Point;
@@ -55,8 +55,8 @@ public class BuildingMatch extends MatchImpl<OsmBuilding, BagBuilding> {
     }
 
     private MatchStatus compareStatuses() {
-        EntityStatus osmStatus = getOsmEntity().getStatus();
-        EntityStatus odStatus = getOpenDataEntity().getStatus();
+        BuildingStatus osmStatus = getOsmEntity().getStatus();
+        BuildingStatus odStatus = getOpenDataEntity().getStatus();
         if (osmStatus.equals(odStatus)) {
             return MATCH;
         }

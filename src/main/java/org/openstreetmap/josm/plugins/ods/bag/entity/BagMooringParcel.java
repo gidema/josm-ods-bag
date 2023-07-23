@@ -7,5 +7,7 @@ public interface BagMooringParcel extends OdEntity, NlAddressable {
 
     public Long getLigplaatsId();
     
+    public ParcelStatus getStatus();
+    
     public void setMatch(OdMatch<BagMooringParcel> match);
 }

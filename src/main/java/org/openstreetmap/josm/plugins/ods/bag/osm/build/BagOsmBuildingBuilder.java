@@ -7,13 +7,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingType;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.BagOsmAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuildingStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
 
@@ -26,7 +26,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding>
         this.context = context;
     }
 
-    private boolean canHandle(OsmPrimitive primitive) {
+    private static boolean canHandle(OsmPrimitive primitive) {
         return OsmBuilding.isBuilding(primitive);
     }
 
@@ -61,12 +61,12 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding>
             type = tags.remove("building:part");
         }
         if (type.equals("construction")) {
-            building.setStatus(EntityStatus.CONSTRUCTION);
+            building.setStatus(BuildingStatus.CONSTRUCTION);
             String construction = tags.remove("construction");
             type = (construction == null ? "yes" : construction);
         }
         else {
-            building.setStatus(EntityStatus.IN_USE);
+            building.setStatus(BuildingStatus.IN_USE);
         }
         building.setBuildingType(getBuildingType(type, tags));
         building.setStartDate(tags.remove("start_date"));

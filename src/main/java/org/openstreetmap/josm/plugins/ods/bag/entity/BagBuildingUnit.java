@@ -22,4 +22,6 @@ public interface BagBuildingUnit extends OdEntity {
     public String getGebruiksdoel();
 
     public double getArea();
+
+    public BuildingUnitStatus getStatus();
 }

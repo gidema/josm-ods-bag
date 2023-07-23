@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 
 public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<BagBuilding> {
@@ -40,7 +40,7 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
     public void createPrimitive(BagBuilding building, OdLayerManager layerManager) {
         // Ignore buildings with status "Bouwvergunning verleend"
         // Make an exception for buildings that already exist in OSM. In that case, the building permit is for reconstruction
-        if (building.getStatus() == EntityStatus.PLANNED && building.getMatch() == null) {
+        if (building.getStatus() == BuildingStatus.PLANNED && building.getMatch() == null) {
             return;
         }
         super.createPrimitive(building, layerManager);
@@ -56,7 +56,7 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
             tags.put("start_date", building.getStartDate());
         }
         tags.put(ODS.KEY.STATUS, building.getStatus().toString());
-        if (building.getStatus() == EntityStatus.REMOVAL_DUE) {
+        if (building.getStatus() == BuildingStatus.REMOVAL_DUE) {
             tags.put("note", "Sloopvergunning verleend");
         }
         String type = "yes";
@@ -97,8 +97,8 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
             break;
         }
 
-        if (building.getStatus().equals(EntityStatus.CONSTRUCTION) ||
-                building.getStatus().equals(EntityStatus.PLANNED)) {
+        if (building.getStatus().equals(BuildingStatus.CONSTRUCTION) ||
+                building.getStatus().equals(BuildingStatus.PLANNED)) {
             tags.put("building", "construction");
             tags.put("construction", type);
         }

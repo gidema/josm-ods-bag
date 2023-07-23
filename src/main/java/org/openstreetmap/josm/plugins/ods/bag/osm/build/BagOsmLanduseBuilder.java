@@ -11,7 +11,6 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduse;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduseImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduseStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
 
@@ -24,7 +23,7 @@ public class BagOsmLanduseBuilder extends AbstractOsmEntityBuilder<OsmBagLanduse
         this.context = context;
     }
 
-    private boolean canHandle(OsmPrimitive primitive) {
+    private static boolean canHandle(OsmPrimitive primitive) {
         boolean taggedAsMooring = ("static_caravan".equals(primitive.get("landuse"))) && primitive.hasKey("ref:bag");
         boolean validGeometry = (primitive.getDisplayType() == OsmPrimitiveType.CLOSEDWAY);
         return taggedAsMooring && validGeometry;
@@ -57,7 +56,6 @@ public class BagOsmLanduseBuilder extends AbstractOsmEntityBuilder<OsmBagLanduse
         Long bagId = BagOsmEntityBuilder.getReferenceId(tags.remove("ref:bag"));
         landuse.setBagId(bagId);
         tags.remove("landuse");
-        landuse.setStatus(EntityStatus.IN_USE);
         if (tags.containsKey("addr:housenumber")) {
             BagOsmAddress address = new BagOsmAddress();
             BagOsmAddressEntityBuilder.parseKeys(address, tags);

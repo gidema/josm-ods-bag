@@ -8,12 +8,12 @@ import javax.xml.namespace.QName;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagMooringParcel;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
+import org.openstreetmap.josm.plugins.ods.bag.entity.ParcelStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlAddressImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlHouseNumberImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMooringParcelStore;
 import org.openstreetmap.josm.plugins.ods.bag.pdok.BagPdok;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntityFactory;
 import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
@@ -68,20 +68,21 @@ public class BagMooringParcelFactory implements OdEntityFactory {
         ligplaatsStore.add(ligplaats);
     }
 
-    private static EntityStatus parseStatus(String status) {
+    private static ParcelStatus parseStatus(String status) {
         switch (status) {
         case "Plaats aangewezen":
-            return EntityStatus.IN_USE;
+            return ParcelStatus.PARCEL_ASSIGNED;
         case "Plaats ingetrokken":
-            return EntityStatus.REMOVED;
+            return ParcelStatus.PARCEL_WITHDRAWN;
         default:
-            return EntityStatus.UNKNOWN;
+            return ParcelStatus.UNKNOWN;
         }
     }
     
     public static class BagLigplaatsImpl extends AbstractOdEntity implements BagMooringParcel {
         private Long ligplaatsId;
         private NLAddress address;
+        private ParcelStatus status;
         private OdMatch<BagMooringParcel> match;
 
         public void setAddress(NLAddress address) {
@@ -103,6 +104,19 @@ public class BagMooringParcelFactory implements OdEntityFactory {
         }
 
         @Override
+        public String getStatusTag() {
+            return status.toString();
+        }
+
+        @Override
+        public ParcelStatus getStatus() {
+            return status;
+        }
+
+        public void setStatus(ParcelStatus status) {
+            this.status = status;
+        }
+        @Override
         public Completeness getCompleteness() {
             return Completeness.Complete;
         }
@@ -119,7 +133,7 @@ public class BagMooringParcelFactory implements OdEntityFactory {
 
         @Override
         public boolean readyForImport() {
-            return !(getStatus().equals(EntityStatus.REMOVED));
+            return !(getStatus().equals(ParcelStatus.PARCEL_WITHDRAWN));
         }
     }
 }

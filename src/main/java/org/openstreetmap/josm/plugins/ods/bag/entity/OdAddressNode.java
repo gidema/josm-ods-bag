@@ -20,6 +20,10 @@ public interface OdAddressNode extends OdEntity {
     public BagBuilding getBuilding();
 
     public void setBuilding(BagBuilding building);
+    
+    public BuildingUnitStatus getStatus();
+    
+//    public void setAddressNodeStatus();
 
     public void setMatch(AddressNodeMatch match);
 }

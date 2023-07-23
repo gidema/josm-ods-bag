@@ -5,11 +5,12 @@ import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Un
 import org.locationtech.jts.geom.Point;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuildingUnit;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingUnitStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
@@ -20,6 +21,7 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
     private Long buildingRef;
     private BagBuildingUnit buildingUnit;
     private BagBuilding building;
+    private BuildingUnitStatus status;
     private AddressNodeMatch match;
     private boolean secondary = false;
 
@@ -86,7 +88,7 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
             return true;
         case PLANNED:
             // Import planned addresses if the building is under construction
-            if (building != null && building.getStatus().equals(EntityStatus.CONSTRUCTION)) {
+            if (building != null && building.getStatus().equals(BuildingStatus.CONSTRUCTION)) {
                 return true;
             }
             return false;
@@ -104,6 +106,20 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
             Logging.warn(I18n.tr("The geometry of {0} is not a point", toString()));
             return super.getGeometry().getCentroid();
         }
+    }
+
+    @Override
+    public String getStatusTag() {
+        return getStatus().toString();
+    }
+
+    @Override
+    public BuildingUnitStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BuildingUnitStatus buildingUnitStatus) {
+        this.status = buildingUnitStatus;
     }
 
     @Override

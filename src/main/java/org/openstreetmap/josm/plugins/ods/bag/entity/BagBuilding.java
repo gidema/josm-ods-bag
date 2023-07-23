@@ -39,7 +39,12 @@ public interface BagBuilding extends OdEntity {
 
     public String getStartDate();
 
+    public BuildingStatus getStatus();
+    
+    public void setStatus(BuildingStatus status);
+    
     public BAGBuildingType getBuildingType();
 
+    @Override
     public BuildingMatch getMatch();
 }

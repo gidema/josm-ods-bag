@@ -1,9 +1,5 @@
 package org.openstreetmap.josm.plugins.ods.bag.match;
 
-import static org.openstreetmap.josm.plugins.ods.entities.EntityStatus.CONSTRUCTION;
-import static org.openstreetmap.josm.plugins.ods.entities.EntityStatus.IN_USE;
-import static org.openstreetmap.josm.plugins.ods.entities.EntityStatus.IN_USE_NOT_MEASURED;
-import static org.openstreetmap.josm.plugins.ods.entities.EntityStatus.PLANNED;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.COMPARABLE;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.MATCH;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.NO_MATCH;
@@ -12,7 +8,6 @@ import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.combine;
 import org.locationtech.jts.geom.Point;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagMooringParcel;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagMooring;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.matching.MatchImpl;
 import org.openstreetmap.josm.plugins.ods.matching.MatchStatus;
 
@@ -44,22 +39,7 @@ public class Mooring2MooringMatch extends MatchImpl<OsmBagMooring, BagMooringPar
     }
 
     private MatchStatus compareStatuses() {
-        EntityStatus osmStatus = getOsmEntity().getStatus();
-        EntityStatus odStatus = getOpenDataEntity().getStatus();
-        if (osmStatus.equals(odStatus)) {
-            return MATCH;
-        }
-        if (osmStatus.equals(IN_USE) && odStatus.equals(IN_USE_NOT_MEASURED)) {
-            return MATCH;
-        }
-        if (odStatus.equals(PLANNED) && osmStatus.equals(CONSTRUCTION)) {
-            return COMPARABLE;
-        }
-        if (odStatus.equals(CONSTRUCTION) &&
-                (osmStatus.equals(IN_USE) || osmStatus.equals(IN_USE_NOT_MEASURED))) {
-            return COMPARABLE;
-        }
-        return NO_MATCH;
+        return MATCH;
     }
 
     private MatchStatus compareAreas() {

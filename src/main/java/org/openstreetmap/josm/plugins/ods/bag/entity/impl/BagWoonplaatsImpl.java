@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.impl;
 
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagCityStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagWoonplaats;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
@@ -13,6 +14,7 @@ import org.locationtech.jts.geom.Polygon;
 public class BagWoonplaatsImpl extends AbstractOdEntity implements BagWoonplaats {
     private Long woonplaatsId;
     private String name;
+    private BagCityStatus status;
     private MultiPolygon multiPolygon;
 
     public void setName(String name) {
@@ -31,6 +33,16 @@ public class BagWoonplaatsImpl extends AbstractOdEntity implements BagWoonplaats
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getStatusTag() {
+        return getStatus().toString();
+    }
+
+    @Override
+    public BagCityStatus getStatus() {
+        return status;
     }
 
     @Override

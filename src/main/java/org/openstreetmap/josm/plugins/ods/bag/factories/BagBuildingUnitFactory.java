@@ -7,17 +7,17 @@ import javax.xml.namespace.QName;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuildingUnit;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingUnitStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlAddressImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlHouseNumberImpl;
-import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnitStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNodeStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnitStore;
 import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
 import org.openstreetmap.josm.plugins.ods.bag.pdok.BagPdok;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.entities.EntityStatus;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntityFactory;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
@@ -67,19 +67,23 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
         buildingUnitStore.add(buildingUnit);
     }
 
-    public static EntityStatus parseStatus(String status) {
+    public static BuildingUnitStatus parseStatus(String status) {
         switch (status) {
         case "Verblijfsobject gevormd":
-            return EntityStatus.PLANNED;
+            return BuildingUnitStatus.PLANNED;
         case "Verblijfsobject in gebruik":
         case "Verblijfsobject buiten gebruik":
         case "Verblijfsobject in gebruik (niet ingemeten)":
-            return EntityStatus.IN_USE;
+            return BuildingUnitStatus.IN_USE;
+        case "Verbouwing verblijfsobject":
+            return BuildingUnitStatus.RECONSTRUCTION;
         case "Verblijfsobject ingetrokken":
         case "Niet gerealiseerd verblijfsobject":
-            return EntityStatus.REMOVED;
+            return BuildingUnitStatus.REMOVED;
+        case "Verblijfsobject ten onrechte opgevoerd":
+            return BuildingUnitStatus.INADVERTENTLY_CREATED;
         default:
-            return EntityStatus.IN_USE;
+            return BuildingUnitStatus.IN_USE;
         }
     }
     
@@ -92,7 +96,7 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
         return address;
     }
     
-    private NlHouseNumber createHouseNumber(WfsFeature feature) {
+    private static NlHouseNumber createHouseNumber(WfsFeature feature) {
         Integer number = Integer.valueOf(FeatureUtil.getString(feature, "huisnummer"));
         Character houseLetter = FeatureUtil.getCharacter(feature, "huisletter");
         String houseNumberExtra = FeatureUtil.getString(feature, "toevoeging");
@@ -104,12 +108,23 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
         private double area;
         private String gebruiksdoel;
         private BagBuilding building;
+        private BuildingUnitStatus status;
         private OdAddressNode mainAddressNode;
         
         public void setMainAddressNode(OdAddressNode addressNode) {
             this.mainAddressNode = addressNode;
         }
 
+        @Override
+        public BuildingUnitStatus getStatus() {
+            return status;
+        }
+        
+        public void setStatus(BuildingUnitStatus status) {
+            this.status = status;
+        }
+
+        @Override
         public Long getBuildingUnitId() {
             return buildingUnitId;
         }
@@ -173,6 +188,11 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
             // Building units are not directly related to OSM primitives.
             // This means they cannot be imported to the OSM layer.
             return false;
+        }
+
+        @Override
+        public String getStatusTag() {
+            return status.toString();
         }
     }
 }

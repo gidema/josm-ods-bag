@@ -12,6 +12,7 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BAGBuildingType;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagWoonplaats;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
@@ -24,6 +25,8 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
     private String startDate;
     private final Set<BagBuilding> neighbours = new HashSet<>();
     private BagWoonplaats city;
+    private BuildingStatus status = BuildingStatus.UNKNOWN;
+
     private BuildingMatch match;
     private final Map<Long, BagBuildingUnit> buildingUnits = new HashMap<>();
 
@@ -71,6 +74,7 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
         return buildingType;
     }
 
+    @Override
     public void setBuildingType(BAGBuildingType buildingType) {
         this.buildingType = buildingType;
     }
@@ -93,6 +97,21 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
     @Override
     public Set<BagBuilding> getNeighbours() {
         return neighbours;
+    }
+
+    @Override
+    public String getStatusTag() {
+        return getStatus().toString();
+    }
+
+    @Override
+    public BuildingStatus getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public void setStatus(BuildingStatus status) {
+        this.status = status;
     }
 
     @Override

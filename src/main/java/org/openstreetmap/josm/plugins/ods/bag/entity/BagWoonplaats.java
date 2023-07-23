@@ -11,6 +11,8 @@ public interface BagWoonplaats extends OdEntity {
     public Long getWoonplaatsId();
 
     public String getName();
+    
+    public BagCityStatus getStatus();
 
     @Override
     public MultiPolygon getGeometry();

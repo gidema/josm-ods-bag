@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingType;
 import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
@@ -19,8 +20,10 @@ public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
     private String startDate;
     private final Set<OsmBuilding> neighbours = new HashSet<>();
     private OsmCity city;
+    private BuildingStatus status;
     private OsmMatch<OsmBuilding> buildingMatch;
 
+    @Override
     public Long getBuildingId() {
         return buildingId;
     }
@@ -74,13 +77,23 @@ public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
     }
 
     @Override
+    public BuildingStatus getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(BuildingStatus status) {
+        this.status = status;
+    }
+
+    @Override
     public void setMatch(BuildingMatch buildingMatch) {
         this.buildingMatch = buildingMatch;
     }
 
     @Override
     public BuildingMatch getMatch() {
-        throw new UnsupportedOperationException();
+        return (BuildingMatch) buildingMatch;
     }
 
     @Override

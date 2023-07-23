@@ -9,6 +9,7 @@ public class OsmBagLanduseImpl extends AbstractOsmEntity implements OsmBagLandus
     private OsmAddress address;
     private OsmMatch<OsmBagLanduse> bagLanduseMatch;
 
+    @Override
     public Long getBagId() {
         return bagId;
     }
