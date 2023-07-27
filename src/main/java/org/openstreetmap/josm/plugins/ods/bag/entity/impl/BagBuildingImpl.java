@@ -1,11 +1,11 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.impl;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.BAGBuildingType;
@@ -22,7 +22,7 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
     private Long aantalVerblijfsobjecten;
     private final List<OdAddressNode> addressNodes = new LinkedList<>();
     private BAGBuildingType buildingType = BAGBuildingType.UNCLASSIFIED;
-    private String startDate;
+    private Integer startYear;
     private final Set<BagBuilding> neighbours = new HashSet<>();
     private BagWoonplaats city;
     private BuildingStatus status = BuildingStatus.UNKNOWN;
@@ -61,12 +61,12 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
 
     @Override
     public void setStartYear(Integer year) {
-        this.startDate = year == null ? null : Objects.toString(year);
+        this.startYear = year;
     }
 
     @Override
-    public String getStartDate() {
-        return startDate;
+    public Integer getStartYear() {
+        return startYear;
     }
 
     @Override
@@ -122,6 +122,11 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
     @Override
     public BuildingMatch getMatch() {
         return match;
+    }
+
+    @Override
+    public double getAge() {
+        return LocalDateTime.now().getYear() - getStartYear(); 
     }
 
     @Override

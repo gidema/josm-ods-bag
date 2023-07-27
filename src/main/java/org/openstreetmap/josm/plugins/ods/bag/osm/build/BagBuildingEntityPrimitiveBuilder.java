@@ -52,8 +52,8 @@ public class BagBuildingEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder
         tags.put("source", "BAG");
         tags.put("source:date", building.getSourceDate());
         tags.put("ref:bag", BagEntityPrimitiveBuilder.formatBagId(building.getBuildingId()));
-        if (building.getStartDate() != null) {
-            tags.put("start_date", building.getStartDate());
+        if (building.getStartYear() != null) {
+            tags.put("start_date", building.getStartYear().toString());
         }
         tags.put(ODS.KEY.STATUS, building.getStatus().toString());
         if (building.getStatus() == BuildingStatus.REMOVAL_DUE) {

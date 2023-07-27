@@ -37,13 +37,20 @@ public interface BagBuilding extends OdEntity {
 
     public void setStartYear(Integer year);
 
-    public String getStartDate();
+    public Integer getStartYear();
 
     public BuildingStatus getStatus();
     
     public void setStatus(BuildingStatus status);
     
     public BAGBuildingType getBuildingType();
+    
+    /**
+     * Get the age of the building in years
+     * 
+     * @return
+     */
+    public double getAge();
 
     @Override
     public BuildingMatch getMatch();
