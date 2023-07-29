@@ -4,10 +4,10 @@ import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOsmEntity;
 import org.openstreetmap.josm.plugins.ods.matching.OsmMatch;
 
-public class OsmBagLanduseImpl extends AbstractOsmEntity implements OsmBagLanduse {
+public class OsmBagStaticCaravanPlotImpl extends AbstractOsmEntity implements OsmBagStaticCaravanPlot {
     private Long bagId;
     private OsmAddress address;
-    private OsmMatch<OsmBagLanduse> bagLanduseMatch;
+    private OsmMatch<OsmBagStaticCaravanPlot> bagLanduseMatch;
 
     @Override
     public Long getBagId() {
@@ -40,7 +40,7 @@ public class OsmBagLanduseImpl extends AbstractOsmEntity implements OsmBagLandus
     }
 
     @Override
-    public void setMatch(OsmMatch<OsmBagLanduse> bagLanduseMatch) {
+    public void setMatch(OsmMatch<OsmBagStaticCaravanPlot> bagLanduseMatch) {
         this.bagLanduseMatch = bagLanduseMatch;
     }
 }

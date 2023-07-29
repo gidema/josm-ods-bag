@@ -5,13 +5,13 @@ import java.time.format.DateTimeFormatter;
 
 import javax.xml.namespace.QName;
 
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagStaticCaravanParcel;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagMooringPlot;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
-import org.openstreetmap.josm.plugins.ods.bag.entity.ParcelStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.PlotStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlAddressImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlHouseNumberImpl;
-import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagStaticCaravanParcelStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMooringPlotStore;
 import org.openstreetmap.josm.plugins.ods.bag.pdok.BagPdok;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
@@ -24,31 +24,37 @@ import org.openstreetmap.josm.plugins.ods.matching.Match;
 import org.openstreetmap.josm.plugins.ods.matching.OdMatch;
 import org.openstreetmap.josm.plugins.ods.saxparser.opengis.wfs.WfsFeature;
 
-public class BagStaticCaravanParcelFactory implements OdEntityFactory {
-    private static QName typeName = new QName(BagPdok.NS_BAG, "standplaats");
-    private final BagStaticCaravanParcelStore standplaatsStore;
+public class BagMooringPlotFactory implements OdEntityFactory {
+    private static QName typeName = new QName(BagPdok.NS_BAG, "ligplaats");
+    private BagMooringPlotStore ligplaatsStore;
 
-    public BagStaticCaravanParcelFactory(OdsContext context) {
-        this.standplaatsStore = context.getComponent(BagStaticCaravanParcelStore .class);
+    public BagMooringPlotFactory(OdsContext context) {
+        super();
+        this.ligplaatsStore = context.getComponent(BagMooringPlotStore.class);
     }
 
     @Override
     public boolean appliesTo(QName featureType) {
+        // TODO Auto-generated method stub
         return featureType.equals(typeName);
     }
 
     @Override
     public void process(WfsFeature feature, DownloadResponse response) {
-        BagStandplaatsImpl standplaats = new BagStandplaatsImpl();
+        BagLigplaatsImpl ligplaats = new BagLigplaatsImpl();
         LocalDate date = response.getRequest().getDownloadTime().toLocalDate();
         if (date != null) {
-            standplaats.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
+            ligplaats.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
         }
         String id = FeatureUtil.getString(feature, "identificatie");
-        standplaats.setStandplaatsId(Long.valueOf(id));
-        standplaats.setSource("BAG");
-        standplaats.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
-        standplaats.setGeometry(feature.getGeometry());
+        ligplaats.setLigplaatsId(Long.valueOf(id));
+//        LocalDate date = response.getRequest().getDownloadTime().toLocalDate();
+//        if (date != null) {
+//            entity.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
+//        }
+        ligplaats.setSource("BAG");
+        ligplaats.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
+        ligplaats.setGeometry(feature.getGeometry());
         NlHouseNumber houseNumber = new NlHouseNumberImpl(
             FeatureUtil.getInteger(feature, "huisnummer"),
             FeatureUtil.getCharacter(feature, "huisletter"),
@@ -58,37 +64,38 @@ public class BagStaticCaravanParcelFactory implements OdEntityFactory {
         address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
         address.setCityName(FeatureUtil.getString(feature, "woonplaats"));
         address.setPostcode(FeatureUtil.getString(feature, "postcode"));
-        standplaats.setAddress(address);
-        standplaatsStore.add(standplaats);
+        ligplaats.setAddress(address);
+        ligplaatsStore.add(ligplaats);
     }
 
-    private static ParcelStatus parseStatus(String status) {
+    private static PlotStatus parseStatus(String status) {
         switch (status) {
         case "Plaats aangewezen":
-            return ParcelStatus.PARCEL_ASSIGNED;
+            return PlotStatus.ASSIGNED;
         case "Plaats ingetrokken":
-            return ParcelStatus.PARCEL_WITHDRAWN;
+            return PlotStatus.WITHDRAWN;
         default:
-            return ParcelStatus.UNKNOWN;
+            return PlotStatus.UNKNOWN;
         }
     }
     
-    public static class BagStandplaatsImpl extends AbstractOdEntity implements BagStaticCaravanParcel {
-        private Long standplaatsId;
+    public static class BagLigplaatsImpl extends AbstractOdEntity implements BagMooringPlot {
+        private Long ligplaatsId;
         private NLAddress address;
-        private ParcelStatus status;
-
-        @Override
-        public Long getStandplaatsId() {
-            return standplaatsId;
-        }
-
-        public void setStandplaatsId(Long standplaatsId) {
-            this.standplaatsId = standplaatsId;
-        }
+        private PlotStatus status;
+        private OdMatch<BagMooringPlot> match;
 
         public void setAddress(NLAddress address) {
             this.address = address;
+        }
+
+        @Override
+        public Long getLigplaatsId() {
+            return ligplaatsId;
+        }
+
+        public void setLigplaatsId(Long ligplaatsId) {
+            this.ligplaatsId = ligplaatsId;
         }
 
         @Override
@@ -98,38 +105,35 @@ public class BagStaticCaravanParcelFactory implements OdEntityFactory {
 
         @Override
         public String getStatusTag() {
-            return getStatus().toString();
+            return status.toString();
         }
 
         @Override
-        public ParcelStatus getStatus() {
+        public PlotStatus getStatus() {
             return status;
         }
 
-        public void setStatus(ParcelStatus status) {
+        public void setStatus(PlotStatus status) {
             this.status = status;
         }
-        
         @Override
         public Completeness getCompleteness() {
             return Completeness.Complete;
         }
 
         @Override
-        public void setMatch(OdMatch<BagStaticCaravanParcel> match) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
         public Match<? extends OsmEntity, ? extends OdEntity> getMatch() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
+        public void setMatch(OdMatch<BagMooringPlot> match) {
+            this.match = match;
+        }
+
+        @Override
         public boolean readyForImport() {
-            return !(getStatus().equals(ParcelStatus.PARCEL_WITHDRAWN));
+            return !(getStatus().equals(PlotStatus.WITHDRAWN));
         }
     }
 }

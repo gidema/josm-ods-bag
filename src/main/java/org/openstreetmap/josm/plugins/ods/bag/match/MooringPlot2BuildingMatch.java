@@ -4,26 +4,27 @@ import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.COMPARABLE
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.MATCH;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.NO_MATCH;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.combine;
+import static org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus.*;
+import static org.openstreetmap.josm.plugins.ods.bag.entity.PlotStatus.*;
+
 
 import org.locationtech.jts.geom.Point;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagStaticCaravanParcel;
-import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduse;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagMooringPlot;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.PlotStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.matching.MatchImpl;
 import org.openstreetmap.josm.plugins.ods.matching.MatchStatus;
 
-public class StaticCaravanSite2LanduseMatch extends MatchImpl<OsmBagLanduse, BagStaticCaravanParcel> {
-    /**
-     * A double value indicating the match between the areas of the 2 buildings.
-     *
-     */
+public class MooringPlot2BuildingMatch extends MatchImpl<OsmBuilding, BagMooringPlot> {
     private MatchStatus areaMatch;
     private MatchStatus centroidMatch;
     private MatchStatus statusMatch;
 
-    public StaticCaravanSite2LanduseMatch(OsmBagLanduse landuse, BagStaticCaravanParcel odSite) {
-        super(landuse, odSite);
-        landuse.setMatch(this);
-        odSite.setMatch(this);
+    public MooringPlot2BuildingMatch(OsmBuilding osmBuilding, BagMooringPlot odMooring) {
+        super(osmBuilding, odMooring);
+        osmBuilding.setMatch(this);
+        odMooring.setMatch(this);
     }
 
     //    @Override
@@ -38,8 +39,13 @@ public class StaticCaravanSite2LanduseMatch extends MatchImpl<OsmBagLanduse, Bag
         statusMatch = compareStatuses();
     }
 
-    private static MatchStatus compareStatuses() {
-        return MATCH;
+    private MatchStatus compareStatuses() {
+        BuildingStatus osmStatus = getOsmEntity().getStatus();
+        PlotStatus odStatus = getOpenDataEntity().getStatus();
+        if (osmStatus.equals(IN_USE) && odStatus.equals(ASSIGNED)) {
+            return MATCH;
+        }
+        return NO_MATCH;
     }
 
     private MatchStatus compareAreas() {

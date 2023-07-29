@@ -7,26 +7,35 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.BagOsmAddress;
-import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduse;
-import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduseImpl;
-import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagLanduseStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagStaticCaravanPlot;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagStaticCaravanPlotImpl;
+import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagStaticCaravanPlotStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
 import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
 
-public class BagOsmLanduseBuilder extends AbstractOsmEntityBuilder<OsmBagLanduse> {
+/**
+ * Static caravan plots (Dutch:Standplaats) can be tagged with landuse=static_caravan and/or
+ * (place=plot + plot=static_caravan) in OSM. 
+ * 
+ * @author gertjan
+ *
+ */
+public class BagOsmStaticCaravanPlotBuilder extends AbstractOsmEntityBuilder<OsmBagStaticCaravanPlot> {
 
     private final OdsContext context;
 
-    public BagOsmLanduseBuilder(OdsContext context) {
-        super(context, OsmBagLanduse.class);
+    public BagOsmStaticCaravanPlotBuilder(OdsContext context) {
+        super(context, OsmBagStaticCaravanPlot.class);
         this.context = context;
     }
 
     private static boolean canHandle(OsmPrimitive primitive) {
-        boolean taggedAsMooring = ("static_caravan".equals(primitive.get("landuse"))) && primitive.hasKey("ref:bag");
+        boolean taggedAsStaticCaravanPlot = primitive.hasKey("ref:bag") && (
+            "static_caravan".equals(primitive.get("landuse")) || 
+            ("plot".equals(primitive.get("place")) && "static_caravan".equals(primitive.get("plot"))));
         boolean validGeometry = (primitive.getDisplayType() == OsmPrimitiveType.CLOSEDWAY);
-        return taggedAsMooring && validGeometry;
+        return taggedAsStaticCaravanPlot && validGeometry;
     }
 
     @Override
@@ -34,7 +43,7 @@ public class BagOsmLanduseBuilder extends AbstractOsmEntityBuilder<OsmBagLanduse
         if (canHandle(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeTags(primitive);
-                OsmBagLanduseImpl landuse = new OsmBagLanduseImpl();
+                OsmBagStaticCaravanPlotImpl landuse = new OsmBagStaticCaravanPlotImpl();
                 Map<String, String> tags = primitive.getKeys();
                 parseKeys(landuse, tags);
                 landuse.setOtherTags(tags);
@@ -51,7 +60,7 @@ public class BagOsmLanduseBuilder extends AbstractOsmEntityBuilder<OsmBagLanduse
         BagOsmEntityBuilder.normalizeTags(primitive);
     }
 
-    private static void parseKeys(OsmBagLanduseImpl landuse, Map<String, String> tags) {
+    private static void parseKeys(OsmBagStaticCaravanPlotImpl landuse, Map<String, String> tags) {
         BagOsmEntityBuilder.parseKeys(landuse, tags);
         Long bagId = BagOsmEntityBuilder.getReferenceId(tags.remove("ref:bag"));
         landuse.setBagId(bagId);
@@ -76,7 +85,7 @@ public class BagOsmLanduseBuilder extends AbstractOsmEntityBuilder<OsmBagLanduse
     }
 
     @Override
-    public AbstractGeoEntityStore<OsmBagLanduse> getEntityStore() {
-        return context.getComponent(OsmBagLanduseStore.class);
+    public AbstractGeoEntityStore<OsmBagStaticCaravanPlot> getEntityStore() {
+        return context.getComponent(OsmBagStaticCaravanPlotStore.class);
     }
 }

@@ -4,7 +4,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 import org.openstreetmap.josm.plugins.ods.matching.OsmMatch;
 
-public interface OsmBagLanduse extends OsmEntity {
+public interface OsmBagStaticCaravanPlot extends OsmEntity {
 
     public Long getBagId();
 
@@ -18,5 +18,5 @@ public interface OsmBagLanduse extends OsmEntity {
      */
     public OsmAddress getAddress();
 
-    public void setMatch(OsmMatch<OsmBagLanduse> bagLanduseMatch);
+    public void setMatch(OsmMatch<OsmBagStaticCaravanPlot> bagLanduseMatch);
 }

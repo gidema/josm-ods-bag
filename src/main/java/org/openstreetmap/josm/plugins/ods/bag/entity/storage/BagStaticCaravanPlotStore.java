@@ -3,7 +3,7 @@ package org.openstreetmap.josm.plugins.ods.bag.entity.storage;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagStaticCaravanParcel;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagStaticCaravanPlot;
 import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
 import org.openstreetmap.josm.plugins.ods.entities.storage.GeoIndex;
 import org.openstreetmap.josm.plugins.ods.entities.storage.GeoIndexImpl;
@@ -19,32 +19,32 @@ import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
  * @author Gertjan Idema <mail@gertjanidema.nl>
  *
  */
-public class BagStaticCaravanParcelStore extends AbstractGeoEntityStore<BagStaticCaravanParcel> {
-    private final PrimaryIndex<BagStaticCaravanParcel> primaryIndex = new UniqueIndexImpl<>(BagStaticCaravanParcel::getStandplaatsId);
-    private final GeoIndex<BagStaticCaravanParcel> geoIndex = new GeoIndexImpl<>(BagStaticCaravanParcel.class, "geometry");
-    private final List<Index<BagStaticCaravanParcel>> allIndexes = Arrays.asList(primaryIndex, geoIndex);
+public class BagStaticCaravanPlotStore extends AbstractGeoEntityStore<BagStaticCaravanPlot> {
+    private final PrimaryIndex<BagStaticCaravanPlot> primaryIndex = new UniqueIndexImpl<>(BagStaticCaravanPlot::getStandplaatsId);
+    private final GeoIndex<BagStaticCaravanPlot> geoIndex = new GeoIndexImpl<>(BagStaticCaravanPlot.class, "geometry");
+    private final List<Index<BagStaticCaravanPlot>> allIndexes = Arrays.asList(primaryIndex, geoIndex);
 
-    public BagStaticCaravanParcelStore() {
+    public BagStaticCaravanPlotStore() {
         super();
     }
 
     @Override
-    public PrimaryIndex<BagStaticCaravanParcel> getPrimaryIndex() {
+    public PrimaryIndex<BagStaticCaravanPlot> getPrimaryIndex() {
         return primaryIndex;
     }
 
-    public PrimaryIndex<BagStaticCaravanParcel> getStandplaaatsIdIndex() {
+    public PrimaryIndex<BagStaticCaravanPlot> getStandplaaatsIdIndex() {
         return primaryIndex;
     }
 
 
     @Override
-    public GeoIndex<BagStaticCaravanParcel> getGeoIndex() {
+    public GeoIndex<BagStaticCaravanPlot> getGeoIndex() {
         return geoIndex;
     }
 
     @Override
-    public List<Index<BagStaticCaravanParcel>> getAllIndexes() {
+    public List<Index<BagStaticCaravanPlot>> getAllIndexes() {
         return allIndexes;
     }
     

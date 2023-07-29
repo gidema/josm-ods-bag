@@ -1,22 +1,21 @@
 package org.openstreetmap.josm.plugins.ods.bag.match;
 
+import static org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus.IN_USE;
+import static org.openstreetmap.josm.plugins.ods.bag.entity.PlotStatus.ASSIGNED;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.COMPARABLE;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.MATCH;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.NO_MATCH;
 import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.combine;
-import static org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus.*;
-import static org.openstreetmap.josm.plugins.ods.bag.entity.ParcelStatus.*;
-
 
 import org.locationtech.jts.geom.Point;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagMooringParcel;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagStaticCaravanPlot;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
-import org.openstreetmap.josm.plugins.ods.bag.entity.ParcelStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.PlotStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.matching.MatchImpl;
 import org.openstreetmap.josm.plugins.ods.matching.MatchStatus;
 
-public class Mooring2BuildingMatch extends MatchImpl<OsmBuilding, BagMooringParcel> {
+public class StaticCaravanPlot2BuildingMatch extends MatchImpl<OsmBuilding, BagStaticCaravanPlot> {
     /**
      * A double value indicating the match between the areas of the 2 buildings.
      *
@@ -25,10 +24,10 @@ public class Mooring2BuildingMatch extends MatchImpl<OsmBuilding, BagMooringParc
     private MatchStatus centroidMatch;
     private MatchStatus statusMatch;
 
-    public Mooring2BuildingMatch(OsmBuilding osmBuilding, BagMooringParcel odMooring) {
-        super(osmBuilding, odMooring);
+    public StaticCaravanPlot2BuildingMatch(OsmBuilding osmBuilding, BagStaticCaravanPlot odPlot) {
+        super(osmBuilding, odPlot);
         osmBuilding.setMatch(this);
-        odMooring.setMatch(this);
+        odPlot.setMatch(this);
     }
 
     //    @Override
@@ -45,8 +44,8 @@ public class Mooring2BuildingMatch extends MatchImpl<OsmBuilding, BagMooringParc
 
     private MatchStatus compareStatuses() {
         BuildingStatus osmStatus = getOsmEntity().getStatus();
-        ParcelStatus odStatus = getOpenDataEntity().getStatus();
-        if (osmStatus.equals(IN_USE) && odStatus.equals(PARCEL_ASSIGNED)) {
+        PlotStatus odStatus = getOpenDataEntity().getStatus();
+        if (osmStatus.equals(IN_USE) && odStatus.equals(ASSIGNED)) {
             return MATCH;
         }
         return NO_MATCH;

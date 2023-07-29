@@ -3,11 +3,11 @@ package org.openstreetmap.josm.plugins.ods.bag.entity;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.matching.OdMatch;
 
-public interface BagMooringParcel extends OdEntity, NlAddressable {
+public interface BagMooringPlot extends OdEntity, NlAddressable {
 
     public Long getLigplaatsId();
     
-    public ParcelStatus getStatus();
+    public PlotStatus getStatus();
     
-    public void setMatch(OdMatch<BagMooringParcel> match);
+    public void setMatch(OdMatch<BagMooringPlot> match);
 }
