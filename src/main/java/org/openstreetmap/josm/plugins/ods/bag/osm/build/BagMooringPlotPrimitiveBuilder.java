@@ -27,13 +27,13 @@ public class BagMooringPlotPrimitiveBuilder extends BagEntityPrimitiveBuilder<Ba
 
     @Override
     protected void buildTags(BagMooringPlot ligplaats, Map<String, String> tags) {
-        NLAddress address = ligplaats.getAddress();
+        NLAddress address = ligplaats.getMainAddress();
         if (address != null) {
             createAddressTags(address, tags);
         }
         tags.put("source", "BAG");
         tags.put("source:date", ligplaats.getSourceDate());
-        tags.put("ref:bag", BagEntityPrimitiveBuilder.formatBagId(ligplaats.getLigplaatsId()));
+        tags.put("ref:bag", BagEntityPrimitiveBuilder.formatBagId(ligplaats.getId()));
         // TODO Some municipalities draw the outline of the houseboat itself, whereas other draw the
         // outline of the plot. There tends to be a shift to the latter, which is more conform the BAG standards.
         // In the beginning, we imported 'Ligplaats' objects as building=houseboat

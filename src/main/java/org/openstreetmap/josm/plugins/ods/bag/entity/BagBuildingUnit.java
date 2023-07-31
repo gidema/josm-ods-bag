@@ -1,10 +1,8 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
 import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
-import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 
-public interface BagBuildingUnit extends OdEntity {
-    public Long getBuildingUnitId();
+public interface BagBuildingUnit extends BagAddressableObject {
     
     @Override
     public AddressNodeMatch getMatch();

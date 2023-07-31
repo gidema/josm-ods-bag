@@ -29,12 +29,22 @@ public class AddressNodeMatch extends MatchImpl<OsmAddressNode, OdAddressNode> {
     }
 
     @Override
+    public OsmAddressNode getOsmEntity() {
+        return super.getOsmEntity();
+    }
+
+    @Override
+    public OdAddressNode getOpenDataEntity() {
+        return super.getOpenDataEntity();
+    }
+
+    @Override
     public MatchStatus getGeometryMatch() {
-        // If the addressNodes are in the same building, we don't look at
+        // If the addressNodes are in the same addressable object, we don't look at
         // their exact location
-        if (getOsmEntity().getBuilding() != null && getOpenDataEntity().getBuilding() != null) {
+        if (getOsmEntity().getBuilding() != null && getOpenDataEntity().getAddressableObject() != null) {
             return MatchStatus.match(getOsmEntity().getBuilding().getBuildingId(),
-                getOpenDataEntity().getBuilding().getBuildingId());
+                getOpenDataEntity().getAddressableObject().getId());
         }
         return MatchStatus.NO_MATCH;
     }

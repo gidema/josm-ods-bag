@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
+import org.openstreetmap.josm.plugins.ods.bag.entity.AddressableObjectStatus;
 import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOsmEntity;
 import org.openstreetmap.josm.plugins.ods.matching.OsmMatch;
@@ -23,7 +24,7 @@ public class OsmBagStaticCaravanPlotImpl extends AbstractOsmEntity implements Os
     }
 
     @Override
-    public OsmAddress getAddress() {
+    public OsmAddress getMainAddress() {
         return address;
     }
 
@@ -32,15 +33,20 @@ public class OsmBagStaticCaravanPlotImpl extends AbstractOsmEntity implements Os
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("BAG static caravan landuse ").append(getBagId());
-        return sb.toString();
-    }
 
     @Override
     public void setMatch(OsmMatch<OsmBagStaticCaravanPlot> bagLanduseMatch) {
         this.bagLanduseMatch = bagLanduseMatch;
+    }
+
+    @Override
+    public AddressableObjectStatus getAddressableStatus() {
+        return AddressableObjectStatus.IN_USE;
+    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("BAG static caravan plot ").append(getBagId());
+        return sb.toString();
     }
 }

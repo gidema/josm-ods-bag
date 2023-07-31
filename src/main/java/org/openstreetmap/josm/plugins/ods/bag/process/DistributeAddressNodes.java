@@ -79,12 +79,12 @@ public class DistributeAddressNodes implements OdsContextJob {
     private void distribute(AddressNodeGroup group, GeoUtil geoUtil) {
         List<OdAddressNode> nodes = group.getAddressNodes();
         Collections.sort(nodes, comparator.reversed());
-        if (group.getBuilding().getGeometry().isEmpty()) {
+        if (group.getAddressableObject().getGeometry().isEmpty()) {
             // Happens rarely,
             // for now return to prevent null pointer Exception
             return;
         }
-        Point center = group.getBuilding().getGeometry().getCentroid();
+        Point center = group.getAddressableObject().getGeometry().getCentroid();
         LineSegment ls = new LineSegment(group.getGeometry().getCoordinate(),
                 center.getCoordinate());
         double angle = ls.angle();

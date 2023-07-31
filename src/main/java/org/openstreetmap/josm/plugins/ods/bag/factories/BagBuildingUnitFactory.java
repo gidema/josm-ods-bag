@@ -5,9 +5,11 @@ import java.time.format.DateTimeFormatter;
 
 import javax.xml.namespace.QName;
 
+import org.openstreetmap.josm.plugins.ods.bag.entity.AddressableObjectStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingUnitStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BagOdAddressNode;
@@ -47,47 +49,26 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
             buildingUnit.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
         }
         String id = FeatureUtil.getString(feature, "identificatie");
-        buildingUnit.setBuildingUnitId(Long.valueOf(id));
+        buildingUnit.setId(Long.valueOf(id));
         buildingUnit.setSource("BAG");
         buildingUnit.setGeometry(feature.getGeometry());
         NlAddressImpl address = createAddress(feature);
         BagOdAddressNode addressNode = new BagOdAddressNode();
         addressNode.setAddress(address);
         addressNode.setGeometry(buildingUnit.getGeometry());
-        addressNode.setAddressId(buildingUnit.getBuildingUnitId());
-        addressNode.setBuilding(buildingUnit.getBuilding());
+        addressNode.setAddressId(buildingUnit.getId());
+        addressNode.setAddressableObject(buildingUnit);
         addressNodeStore.add(addressNode);
-        addressNode.setBuildingUnit(buildingUnit);
         addressNode.setSourceDate(buildingUnit.getSourceDate());
         buildingUnit.setMainAddressNode(addressNode);
-        buildingUnit.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
-        addressNode.setStatus(buildingUnit.getStatus());
+        buildingUnit.setStatus(BuildingUnitStatus.parse(FeatureUtil.getString(feature, "status")));
+//        addressNode.setStatus(buildingUnit.getStatus());
         buildingUnit.setGebruiksdoel(FeatureUtil.getString(feature, "gebruiksdoel"));
         buildingUnit.setArea(FeatureUtil.getBigInteger(feature, "oppervlakte").doubleValue());
         buildingUnitStore.add(buildingUnit);
     }
 
-    public static BuildingUnitStatus parseStatus(String status) {
-        switch (status) {
-        case "Verblijfsobject gevormd":
-            return BuildingUnitStatus.PLANNED;
-        case "Verblijfsobject in gebruik":
-        case "Verblijfsobject buiten gebruik":
-        case "Verblijfsobject in gebruik (niet ingemeten)":
-            return BuildingUnitStatus.IN_USE;
-        case "Verbouwing verblijfsobject":
-            return BuildingUnitStatus.RECONSTRUCTION;
-        case "Verblijfsobject ingetrokken":
-        case "Niet gerealiseerd verblijfsobject":
-            return BuildingUnitStatus.REMOVED;
-        case "Verblijfsobject ten onrechte opgevoerd":
-            return BuildingUnitStatus.INADVERTENTLY_CREATED;
-        default:
-            return BuildingUnitStatus.IN_USE;
-        }
-    }
-    
-    public NlAddressImpl createAddress(WfsFeature feature) {
+    public static NlAddressImpl createAddress(WfsFeature feature) {
         NlAddressImpl address = new NlAddressImpl();
         address.setHouseNumber(createHouseNumber(feature));
         address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
@@ -104,7 +85,7 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
     }
 
     static class BagVerblijfsobjectImpl extends AbstractOdEntity implements BagBuildingUnit {
-        private Long buildingUnitId;
+        private Long id;
         private double area;
         private String gebruiksdoel;
         private BagBuilding building;
@@ -116,21 +97,45 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
         }
 
         @Override
+        public Long getId() {
+            return id;
+        }
+
+        @Override
         public BuildingUnitStatus getStatus() {
             return status;
         }
         
+        @Override
+        public AddressableObjectStatus getAddressableStatus() {
+            switch (getStatus()) {
+            case CONSTRUCTION:
+                return AddressableObjectStatus.CONSTRUCTION;
+            case INADVERTENTLY_CREATED:
+                return AddressableObjectStatus.INADVERTENTLY_CREATED;
+            case IN_USE:
+                return AddressableObjectStatus.IN_USE;
+            case IN_USE_NOT_MEASURED:
+                return AddressableObjectStatus.IN_USE_NOT_MEASURED;
+            case NOT_REALIZED:
+                return AddressableObjectStatus.NOT_CARRIED_THROUGH;
+            case PLANNED:
+                return AddressableObjectStatus.PLANNED;
+            case RECONSTRUCTION:
+                return AddressableObjectStatus.RECONSTRUCTION;
+            case WITHDRAWN:
+                return AddressableObjectStatus.WITHDRAWN;
+            default:
+                return AddressableObjectStatus.UNKNOWN;
+            }
+        }
+
         public void setStatus(BuildingUnitStatus status) {
             this.status = status;
         }
 
-        @Override
-        public Long getBuildingUnitId() {
-            return buildingUnitId;
-        }
-
-        public void setBuildingUnitId(Long buildingUnitId) {
-            this.buildingUnitId = buildingUnitId;
+        public void setId(Long buildingUnitId) {
+            this.id = buildingUnitId;
         }
 
         public void setArea(double area) {
@@ -157,11 +162,14 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
             return null;
         }
 
-//        @Override
-//        public NLAddress getAddress() {
-//            return address;
-//        }
-//
+        @Override
+        public NLAddress getMainAddress() {
+            if (getMainAddressNode() != null) {
+                return getMainAddressNode().getAddress();
+            }
+            return null;
+        }
+
         @Override
         public BagBuilding getBuilding() {
             return building;

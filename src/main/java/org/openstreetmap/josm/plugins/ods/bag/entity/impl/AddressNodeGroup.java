@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.locationtech.jts.geom.Point;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressableObject;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
 
 public class AddressNodeGroup {
     private final Point geometry;
     private final List<OdAddressNode> addressNodes = new ArrayList<>();
-    private final BagBuilding building;
+    private final BagAddressableObject addressableObject;
 
     public AddressNodeGroup(OdAddressNode addressNode) {
         geometry = addressNode.getGeometry();
         addressNodes.add(addressNode);
-        building = addressNode.getBuilding();
+        addressableObject = addressNode.getAddressableObject();
     }
 
     public void addAddressNode(OdAddressNode node) {
@@ -30,7 +30,7 @@ public class AddressNodeGroup {
         return geometry;
     }
 
-    public BagBuilding getBuilding() {
-        return building;
+    public BagAddressableObject getAddressableObject() {
+        return addressableObject;
     }
 }

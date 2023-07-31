@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import javax.xml.namespace.QName;
 
+import org.openstreetmap.josm.plugins.ods.bag.entity.AddressableObjectStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagMooringPlot;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
@@ -47,7 +48,7 @@ public class BagMooringPlotFactory implements OdEntityFactory {
             ligplaats.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
         }
         String id = FeatureUtil.getString(feature, "identificatie");
-        ligplaats.setLigplaatsId(Long.valueOf(id));
+        ligplaats.setId(Long.valueOf(id));
 //        LocalDate date = response.getRequest().getDownloadTime().toLocalDate();
 //        if (date != null) {
 //            entity.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
@@ -80,7 +81,7 @@ public class BagMooringPlotFactory implements OdEntityFactory {
     }
     
     public static class BagLigplaatsImpl extends AbstractOdEntity implements BagMooringPlot {
-        private Long ligplaatsId;
+        private Long id;
         private NLAddress address;
         private PlotStatus status;
         private OdMatch<BagMooringPlot> match;
@@ -90,16 +91,16 @@ public class BagMooringPlotFactory implements OdEntityFactory {
         }
 
         @Override
-        public Long getLigplaatsId() {
-            return ligplaatsId;
+        public Long getId() {
+            return id;
         }
 
-        public void setLigplaatsId(Long ligplaatsId) {
-            this.ligplaatsId = ligplaatsId;
+        public void setId(Long id) {
+            this.id = id;
         }
 
         @Override
-        public NLAddress getAddress() {
+        public NLAddress getMainAddress() {
             return address;
         }
 
@@ -111,6 +112,18 @@ public class BagMooringPlotFactory implements OdEntityFactory {
         @Override
         public PlotStatus getStatus() {
             return status;
+        }
+
+        @Override
+        public AddressableObjectStatus getAddressableStatus() {
+            switch (getStatus()) {
+            case ASSIGNED:
+                return AddressableObjectStatus.ASSIGNED;
+            case WITHDRAWN:
+                return AddressableObjectStatus.WITHDRAWN;
+            default:
+                return AddressableObjectStatus.UNKNOWN;
+            }
         }
 
         public void setStatus(PlotStatus status) {

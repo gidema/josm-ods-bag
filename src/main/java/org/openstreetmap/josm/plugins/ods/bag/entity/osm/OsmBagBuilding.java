@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.openstreetmap.josm.plugins.ods.bag.entity.AddressableObjectStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingType;
 import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
@@ -57,12 +58,12 @@ public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
         return city;
     }
 
-    public void setAddress(OsmAddress address) {
+    public void setMainAddress(OsmAddress address) {
         this.address = address;
     }
 
     @Override
-    public OsmAddress getAddress() {
+    public OsmAddress getMainAddress() {
         return address;
     }
 
@@ -84,6 +85,21 @@ public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
     @Override
     public void setStatus(BuildingStatus status) {
         this.status = status;
+    }
+    @Override
+    public AddressableObjectStatus getAddressableStatus() {
+        switch (getStatus()) {
+        case CONSTRUCTION:
+            return AddressableObjectStatus.CONSTRUCTION;
+        case IN_USE:
+            return AddressableObjectStatus.IN_USE;
+        case PLANNED:
+            return AddressableObjectStatus.PLANNED;
+        case REMOVAL_DUE:
+            return AddressableObjectStatus.REMOVAL_DUE;
+        default:
+            return AddressableObjectStatus.UNKNOWN;
+        }
     }
 
     @Override

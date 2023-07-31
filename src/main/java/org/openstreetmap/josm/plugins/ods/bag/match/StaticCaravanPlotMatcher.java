@@ -50,7 +50,7 @@ public class StaticCaravanPlotMatcher implements Matcher {
     }
     
     private boolean matchToBuilding(BagStaticCaravanPlot plot) {
-        Long id = plot.getStandplaatsId();
+        Long id = plot.getId();
         StaticCaravanPlot2BuildingMatch match = plot2BuildingMatches.get(id);
         if (match != null) {
             match.addOpenDataEntity(plot);
@@ -72,7 +72,7 @@ public class StaticCaravanPlotMatcher implements Matcher {
     }
 
     private boolean matchToLanduse(BagStaticCaravanPlot plot) {
-        Long id = plot.getStandplaatsId();
+        Long id = plot.getId();
         StaticCaravanPlot2LanduseMatch match = plot2LanduseMatches.get(id);
         if (match != null) {
             match.addOpenDataEntity(plot);

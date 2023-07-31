@@ -17,13 +17,11 @@ public interface OdAddressNode extends OdEntity {
 
     public Object getBuildingRef();
 
-    public BagBuilding getBuilding();
+    public BagAddressableObject getAddressableObject();
 
-    public void setBuilding(BagBuilding building);
+    public void setAddressableObject(BagAddressableObject object);
     
-    public BuildingUnitStatus getStatus();
+    public AddressableObjectStatus getStatus();
     
-//    public void setAddressNodeStatus();
-
     public void setMatch(AddressNodeMatch match);
 }

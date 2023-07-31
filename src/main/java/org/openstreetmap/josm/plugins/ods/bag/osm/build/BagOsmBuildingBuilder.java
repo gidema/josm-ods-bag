@@ -73,7 +73,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding>
         if (tags.containsKey("addr:housenumber")) {
             BagOsmAddress address = new BagOsmAddress();
             BagOsmAddressEntityBuilder.parseKeys(address, tags);
-            building.setAddress(address);
+            building.setMainAddress(address);
         }
         return;
     }

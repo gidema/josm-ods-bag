@@ -14,7 +14,6 @@ public class BagAddressNodeEntityPrimitiveBuilder extends BagEntityPrimitiveBuil
         super();
     }
 
-    
     @Override
     public void run(OdsContext context) {
         OdLayerManager layerManager = context.getComponent(OdLayerManager.class);

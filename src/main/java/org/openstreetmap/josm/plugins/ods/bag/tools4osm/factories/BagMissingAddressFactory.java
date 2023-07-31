@@ -11,7 +11,6 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BagMissingAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlAddressImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlHouseNumberImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMissingAddressNodeStore;
-import org.openstreetmap.josm.plugins.ods.bag.factories.BagBuildingUnitFactory;
 import org.openstreetmap.josm.plugins.ods.bag.tools4osm.BagTools4Osm;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntityFactory;
@@ -45,7 +44,6 @@ public class BagMissingAddressFactory implements OdEntityFactory {
         addressNode.setGeometry(feature.getGeometry());
         NLAddress address = createAddress(feature);
         addressNode.setAddress(address);
-        addressNode.setStatus(BagBuildingUnitFactory.parseStatus("Verblijfsobject in gebruik"));
         addressNode.setSecondary(FeatureUtil.getString(feature, "nevenadres").equals("true"));
         addressNode.setBuildingUnitId(Long.valueOf(FeatureUtil.getString(feature, "verblijfsobjectidentificatie")));
         addressNode.setBuildingRef(Long.valueOf(FeatureUtil.getString(feature, "pandidentificatie")));
@@ -61,7 +59,7 @@ public class BagMissingAddressFactory implements OdEntityFactory {
         return address;
     }
     
-    private NlHouseNumber createHouseNumber(WfsFeature feature) {
+    private static NlHouseNumber createHouseNumber(WfsFeature feature) {
         Integer number = Integer.valueOf(FeatureUtil.getString(feature, "huisnummer"));
         Character houseLetter = FeatureUtil.getCharacter(feature, "huisletter");
         String houseNumberExtra = FeatureUtil.getString(feature, "huisnummertoevoeging");

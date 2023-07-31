@@ -5,12 +5,17 @@ import java.time.format.DateTimeFormatter;
 
 import javax.xml.namespace.QName;
 
+import org.openstreetmap.josm.plugins.ods.bag.BagImportPlugin;
+import org.openstreetmap.josm.plugins.ods.bag.BagPreferences;
+import org.openstreetmap.josm.plugins.ods.bag.entity.AddressableObjectStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagStaticCaravanPlot;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.PlotStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BagOdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlAddressImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlHouseNumberImpl;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagStaticCaravanPlotStore;
 import org.openstreetmap.josm.plugins.ods.bag.pdok.BagPdok;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
@@ -25,11 +30,15 @@ import org.openstreetmap.josm.plugins.ods.matching.OdMatch;
 import org.openstreetmap.josm.plugins.ods.saxparser.opengis.wfs.WfsFeature;
 
 public class BagStaticCaravanPlotFactory implements OdEntityFactory {
+    private final BagPreferences preferences;
     private static QName typeName = new QName(BagPdok.NS_BAG, "standplaats");
     private final BagStaticCaravanPlotStore standplaatsStore;
+    private final BagAddressNodeStore addressNodeStore;
 
     public BagStaticCaravanPlotFactory(OdsContext context) {
+        this.preferences = BagImportPlugin.getPreferences();
         this.standplaatsStore = context.getComponent(BagStaticCaravanPlotStore .class);
+        this.addressNodeStore = context.getComponent(BagAddressNodeStore.class);
     }
 
     @Override
@@ -45,7 +54,7 @@ public class BagStaticCaravanPlotFactory implements OdEntityFactory {
             standplaats.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
         }
         String id = FeatureUtil.getString(feature, "identificatie");
-        standplaats.setStandplaatsId(Long.valueOf(id));
+        standplaats.setId(Long.valueOf(id));
         standplaats.setSource("BAG");
         standplaats.setStatus(parseStatus(FeatureUtil.getString(feature, "status")));
         standplaats.setGeometry(feature.getGeometry());
@@ -58,7 +67,20 @@ public class BagStaticCaravanPlotFactory implements OdEntityFactory {
         address.setStreetName(FeatureUtil.getString(feature, "openbare_ruimte"));
         address.setCityName(FeatureUtil.getString(feature, "woonplaats"));
         address.setPostcode(FeatureUtil.getString(feature, "postcode"));
-        standplaats.setAddress(address);
+        if (preferences.isStaticCaravanAddressNode()) {
+            BagOdAddressNode addressNode = new BagOdAddressNode();
+            addressNode.setAddress(address);
+            addressNode.setGeometry(standplaats.getGeometry().getCentroid());
+            addressNode.setAddressId(standplaats.getId());
+            addressNode.setAddressableObject(standplaats);
+            addressNode.setSourceDate(standplaats.getSourceDate());
+            // TODO Consider replacing setBuilding with setAddressable
+//            addressNode.setBuilding(buildingUnit.getBuilding());
+            addressNodeStore.add(addressNode);
+        }
+        else {
+            standplaats.setAddress(address);
+        }
         standplaatsStore.add(standplaats);
     }
 
@@ -74,17 +96,17 @@ public class BagStaticCaravanPlotFactory implements OdEntityFactory {
     }
     
     public static class BagStandplaatsImpl extends AbstractOdEntity implements BagStaticCaravanPlot {
-        private Long standplaatsId;
+        private Long id;
         private NLAddress address;
         private PlotStatus status;
 
         @Override
-        public Long getStandplaatsId() {
-            return standplaatsId;
+        public Long getId() {
+            return id;
         }
 
-        public void setStandplaatsId(Long standplaatsId) {
-            this.standplaatsId = standplaatsId;
+        public void setId(Long id) {
+            this.id = id;
         }
 
         public void setAddress(NLAddress address) {
@@ -92,7 +114,7 @@ public class BagStaticCaravanPlotFactory implements OdEntityFactory {
         }
 
         @Override
-        public NLAddress getAddress() {
+        public NLAddress getMainAddress() {
             return address;
         }
 
@@ -104,6 +126,18 @@ public class BagStaticCaravanPlotFactory implements OdEntityFactory {
         @Override
         public PlotStatus getStatus() {
             return status;
+        }
+
+        @Override
+        public AddressableObjectStatus getAddressableStatus() {
+            switch (getStatus()) {
+            case ASSIGNED:
+                return AddressableObjectStatus.ASSIGNED;
+            case WITHDRAWN:
+                return AddressableObjectStatus.WITHDRAWN;
+            default:
+                return AddressableObjectStatus.UNKNOWN;
+            }
         }
 
         public void setStatus(PlotStatus status) {

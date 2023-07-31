@@ -12,7 +12,7 @@ import org.openstreetmap.josm.plugins.ods.entities.storage.PrimaryIndex;
 import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
 
 public class BagBuildingUnitStore extends AbstractGeoEntityStore<BagBuildingUnit> {
-    private final PrimaryIndex<BagBuildingUnit> primaryIndex = new UniqueIndexImpl<BagBuildingUnit>(BagBuildingUnit::getBuildingUnitId);
+    private final PrimaryIndex<BagBuildingUnit> primaryIndex = new UniqueIndexImpl<>(BagBuildingUnit::getId);
     private final GeoIndex<BagBuildingUnit> geoIndex = new GeoIndexImpl<>(BagBuildingUnit.class, "geometry");
     private final List<Index<BagBuildingUnit>> allIndexes = Arrays.asList(primaryIndex, geoIndex);
 

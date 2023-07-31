@@ -6,13 +6,13 @@ import java.util.Set;
 import org.locationtech.jts.geom.Geometry;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.plugins.ods.bag.entity.Building;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingType;
+import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
-import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 import org.openstreetmap.josm.plugins.ods.matching.OsmMatch;
 
-public interface OsmBuilding extends OsmEntity, Building {
+public interface OsmBuilding extends OsmAddressableObject {
     public static boolean isBuilding(OsmPrimitive primitive) {
         boolean taggedAsBuilding = primitive.hasKey("building") || primitive.hasKey("building:part")
                 || primitive.hasKey("no:building");
@@ -22,19 +22,23 @@ public interface OsmBuilding extends OsmEntity, Building {
             return taggedAsBuilding && validGeometry;
     }
 
+    public String getStartDate();
+
+    public BuildingType getBuildingType();
+
+    public void setMatch(BuildingMatch match);
+
+    @Override
+    public BuildingMatch getMatch();
+
+    // Setters
+    public void setBuildingType(BuildingType buildingType);
     public Long getBuildingId();
 
     @Override
     public Geometry getGeometry();
 
     public OsmCity getCity();
-
-    /**
-     * Return the address information associated with this building.
-     *
-     * @return null if no address is associated with the building
-     */
-    public OsmAddress getAddress();
 
     /**
      * Return the address nodes associated with this building.

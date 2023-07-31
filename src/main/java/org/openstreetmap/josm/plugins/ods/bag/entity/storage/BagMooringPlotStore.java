@@ -20,7 +20,7 @@ import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
  *
  */
 public class BagMooringPlotStore extends AbstractGeoEntityStore<BagMooringPlot> {
-    private final PrimaryIndex<BagMooringPlot> primaryIndex = new UniqueIndexImpl<>(BagMooringPlot::getLigplaatsId);
+    private final PrimaryIndex<BagMooringPlot> primaryIndex = new UniqueIndexImpl<>(BagMooringPlot::getId);
     private final GeoIndex<BagMooringPlot> geoIndex = new GeoIndexImpl<>(BagMooringPlot.class, "geometry");
     private final List<Index<BagMooringPlot>> allIndexes = Arrays.asList(primaryIndex, geoIndex);
 

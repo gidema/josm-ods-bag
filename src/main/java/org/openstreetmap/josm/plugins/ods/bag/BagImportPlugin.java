@@ -11,9 +11,10 @@ public class BagImportPlugin extends OdsModulePlugin {
     public BagImportPlugin(PluginInformation info) throws Exception {
         super(info, new BagImportModule());
         OsmValidator.addTest(BAGReferences.class);
+        
     }
 
-    public static BagPreferences getBagpreferences() {
+    public static BagPreferences getPreferences() {
         return bagPreferences;
     }
 }

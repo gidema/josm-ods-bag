@@ -50,7 +50,7 @@ public class MooringMatcher implements Matcher {
     }
     
     private boolean matchToBuilding(BagMooringPlot mooring) {
-        Long id = mooring.getLigplaatsId();
+        Long id = mooring.getId();
         MooringPlot2BuildingMatch match = mooringMatches.get(id);
         if (match != null) {
             match.addOpenDataEntity(mooring);
@@ -72,7 +72,7 @@ public class MooringMatcher implements Matcher {
     }
 
     private boolean matchToMooring(BagMooringPlot mooring) {
-        Long id = mooring.getLigplaatsId();
+        Long id = mooring.getId();
         MooringPlotMatch match = mooring2MooringMatches.get(id);
         if (match != null) {
             match.addOpenDataEntity(mooring);

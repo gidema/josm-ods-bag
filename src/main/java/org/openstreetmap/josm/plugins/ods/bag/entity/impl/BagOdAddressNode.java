@@ -3,10 +3,8 @@ package org.openstreetmap.josm.plugins.ods.bag.entity.impl;
 import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Unknown;
 
 import org.locationtech.jts.geom.Point;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuildingUnit;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
-import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingUnitStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.AddressableObjectStatus;
+import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressableObject;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
@@ -19,9 +17,7 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
     private Long addressId;
     private NLAddress address;
     private Long buildingRef;
-    private BagBuildingUnit buildingUnit;
-    private BagBuilding building;
-    private BuildingUnitStatus status;
+    private BagAddressableObject addressableObject;
     private AddressNodeMatch match;
     private boolean secondary = false;
 
@@ -45,7 +41,7 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
 
     @Override
     public Completeness getCompleteness() {
-        return building == null ? Unknown : building.getCompleteness();
+        return addressableObject == null ? Unknown : addressableObject.getCompleteness();
     }
 
     @Override
@@ -57,22 +53,14 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
         this.buildingRef = buildingRef;
     }
 
-    public BagBuildingUnit getBuildingUnit() {
-        return buildingUnit;
-    }
-
-    public void setBuildingUnit(BagBuildingUnit buildingUnit) {
-        this.buildingUnit = buildingUnit;
+    @Override
+    public void setAddressableObject(BagAddressableObject addressableObject) {
+        this.addressableObject = addressableObject;
     }
 
     @Override
-    public void setBuilding(BagBuilding building) {
-        this.building = building;
-    }
-
-    @Override
-    public BagBuilding getBuilding() {
-        return buildingUnit != null ? buildingUnit.getBuilding() : building;
+    public BagAddressableObject getAddressableObject() {
+        return addressableObject;
     }
 
     public void setGeometry(Point point) {
@@ -84,11 +72,12 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
         switch (getStatus()) {
         case IN_USE:
         case IN_USE_NOT_MEASURED:
+        case ASSIGNED:
         case CONSTRUCTION:
             return true;
         case PLANNED:
             // Import planned addresses if the building is under construction
-            if (building != null && building.getStatus().equals(BuildingStatus.CONSTRUCTION)) {
+            if (addressableObject != null && addressableObject.getAddressableStatus().equals(AddressableObjectStatus.CONSTRUCTION)) {
                 return true;
             }
             return false;
@@ -114,13 +103,41 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
     }
 
     @Override
-    public BuildingUnitStatus getStatus() {
-        return status;
+    public AddressableObjectStatus getStatus() {
+        if (getAddressableObject() == null) {
+            return AddressableObjectStatus.UNKNOWN;
+        }
+        switch (getAddressableObject().getAddressableStatus()) {
+        case CONSTRUCTION:
+            return AddressableObjectStatus.CONSTRUCTION;
+        case INADVERTENTLY_CREATED:
+            return AddressableObjectStatus.INADVERTENTLY_CREATED;
+        case IN_USE:
+            return AddressableObjectStatus.IN_USE;
+        case IN_USE_NOT_MEASURED:
+            return AddressableObjectStatus.IN_USE_NOT_MEASURED;
+        case NOT_CARRIED_THROUGH:
+            return AddressableObjectStatus.NOT_CARRIED_THROUGH;
+        case PLANNED:
+            return AddressableObjectStatus.PLANNED;
+        case RECONSTRUCTION:
+            return AddressableObjectStatus.RECONSTRUCTION;
+        case REMOVAL_DUE:
+            return AddressableObjectStatus.REMOVAL_DUE;
+        case REMOVED:
+            return AddressableObjectStatus.REMOVED;
+        case ASSIGNED:
+            return AddressableObjectStatus.ASSIGNED;
+        case WITHDRAWN:
+            return AddressableObjectStatus.WITHDRAWN;
+        default:
+            return AddressableObjectStatus.UNKNOWN;
+        }
     }
 
-    public void setStatus(BuildingUnitStatus buildingUnitStatus) {
-        this.status = buildingUnitStatus;
-    }
+//    public void setStatus(BuildingUnitStatus buildingUnitStatus) {
+//        this.status = buildingUnitStatus;
+//    }
 
     @Override
     public AddressNodeMatch getMatch() {

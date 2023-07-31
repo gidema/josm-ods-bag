@@ -43,14 +43,14 @@ public class BagOsmStaticCaravanPlotBuilder extends AbstractOsmEntityBuilder<Osm
         if (canHandle(primitive)) {
             if (!getEntityStore().contains(primitive.getId())) {
                 normalizeTags(primitive);
-                OsmBagStaticCaravanPlotImpl landuse = new OsmBagStaticCaravanPlotImpl();
+                OsmBagStaticCaravanPlotImpl plot = new OsmBagStaticCaravanPlotImpl();
                 Map<String, String> tags = primitive.getKeys();
-                parseKeys(landuse, tags);
-                landuse.setOtherTags(tags);
+                parseKeys(plot, tags);
+                plot.setOtherTags(tags);
 
                 Geometry geometry = buildGeometry(primitive);
-                landuse.setGeometry(geometry);
-                register(primitive, landuse);
+                plot.setGeometry(geometry);
+                register(primitive, plot);
             }
         }
         return;
@@ -60,15 +60,17 @@ public class BagOsmStaticCaravanPlotBuilder extends AbstractOsmEntityBuilder<Osm
         BagOsmEntityBuilder.normalizeTags(primitive);
     }
 
-    private static void parseKeys(OsmBagStaticCaravanPlotImpl landuse, Map<String, String> tags) {
-        BagOsmEntityBuilder.parseKeys(landuse, tags);
+    private static void parseKeys(OsmBagStaticCaravanPlotImpl plot, Map<String, String> tags) {
+        BagOsmEntityBuilder.parseKeys(plot, tags);
         Long bagId = BagOsmEntityBuilder.getReferenceId(tags.remove("ref:bag"));
-        landuse.setBagId(bagId);
+        plot.setBagId(bagId);
         tags.remove("landuse");
+        tags.remove("place");
+        tags.remove("plot");
         if (tags.containsKey("addr:housenumber")) {
             BagOsmAddress address = new BagOsmAddress();
             BagOsmAddressEntityBuilder.parseKeys(address, tags);
-            landuse.setAddress(address);
+            plot.setAddress(address);
         }
         return;
     }

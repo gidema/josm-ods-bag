@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 
 import javax.xml.namespace.QName;
 
-import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingUnitStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BagMissingAddress;
@@ -45,11 +44,11 @@ public class BagWithdrawnAddressFactory implements OdEntityFactory {
         addressNode.setGeometry(feature.getGeometry());
         NLAddress address = createAddress(feature);
         addressNode.setAddress(address);
-        addressNode.setStatus(BuildingUnitStatus.REMOVED);
+//        addressNode.setStatus(BuildingUnitStatus.WITHDRAWN);
         addressNode.setSecondary(FeatureUtil.getString(feature, "nevenadres").equals("true"));
         this.addressNodeStore.add(addressNode);
     }
-    public NlAddressImpl createAddress(WfsFeature feature) {
+    public static NlAddressImpl createAddress(WfsFeature feature) {
         NlAddressImpl address = new NlAddressImpl();
         address.setHouseNumber(createHouseNumber(feature));
         address.setStreetName(FeatureUtil.getString(feature, "straat"));
