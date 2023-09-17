@@ -1,0 +1,109 @@
+
+meta
+{
+	title: "ODS";
+	version: "0.7.0";
+	description: "Colouring of buildings and address nodes in colour reflecting the difference between OSM data and imported Open Data";
+	author: "g.idema";
+	watch-modified: true;
+	min-josm-version: "10786";
+}
+
+meta[lang=nl]
+{
+	title: "ODS";
+	description: "Kleuren voor gebouwen en Adressnodes om de verschillen tussen OSM gegevens en geïmporteerd Open Data (BAG) gegevens te tonen.";
+}
+
+/* Create mappaint user settings. */
+setting::display_old_josm {
+  type: boolean;
+  label: tr("Display a message if your JOSM version is too old for this style");
+  default: true;
+}
+
+node[!"|ODS"]
+{
+    symbol-stroke-color: #222222;
+}
+
+*["|ODS"=true] {
+  text-halo-color: black;
+  text-halo-radius: 1;
+	fill-opacity: 0.5;
+}
+
+*["|ODS:idMatch"=false]
+{ 
+	text-color: yellow;
+    fill-color: yellow;
+    color: yellow;
+    width: 2;
+}
+
+*["|ODS:idMatch"=false]["|ODS:status"=planned]
+{ 
+	text-color: #FFFFE8;
+    fill-color: #FFFFE8;
+    color: #FFFFE8;
+    width: 2;
+}
+
+/* Let object with the same, or almost the same geometry/location show up in green */ 
+*["|ODS:geometryMatch"=match],
+*["|ODS:geometryMatch"=comparable]
+{ 
+	fill-color: #00EE00;
+	fill-opacity: 0.5;
+    text-color: #00EE00;
+}
+
+/* Let mapped objects with a different geometry or location show up in orange */
+*["|ODS:geometryMatch"=no_match]
+{ 
+	fill-color: orange;
+	fill-opacity: 0.5;
+    text-color: orange;
+    color: orange;
+    width: 2;
+}
+
+/* Let removed objects show up in purple
+   (not in red, because JOSM uses red for selected objects */
+*["|ODS:status"=removed]
+{
+	fill-color: purple;
+	color: purple;
+	fill-opacity: 0.5;
+	width: 2;
+}
+
+/* Give objects with different attributes a blue lining */
+*["|ODS:statusMatch"=no_match],
+*["|ODS:tagMatch"=no_match]
+{
+  width: 2;  
+  color: blue;
+}
+
+*["|ODS:updated"=true]
+{ 
+	fill-color: #00EE00;
+	fill-opacity: 1.0;
+}
+
+way[!"|ODS"][!construction][building]["ref:bag"]["source:date"][source][start_date][eval(number_of_tags() > 5)],
+way[!"|ODS"][construction][building]["ref:bag"]["source:date"][source][start_date][eval(number_of_tags() > 6)]
+{
+    text: tr("Kijk uit: pand");
+    text-color: red;
+}
+
+node[!"|ODS"]["addr:city"]["addr:housenumber"]["addr:postcode"]["addr:street"]["source:date"][source][eval(number_of_tags() > 6)]
+{
+    text: tr("Kijk uit: adresnode");
+    text-color: red;
+}
+
+
+

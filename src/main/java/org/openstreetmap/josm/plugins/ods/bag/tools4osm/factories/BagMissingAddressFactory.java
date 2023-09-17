@@ -50,7 +50,7 @@ public class BagMissingAddressFactory implements OdEntityFactory {
         this.addressNodeStore.add(addressNode);
     }
 
-    public NlAddressImpl createAddress(WfsFeature feature) {
+    public static NlAddressImpl createAddress(WfsFeature feature) {
         NlAddressImpl address = new NlAddressImpl();
         address.setHouseNumber(createHouseNumber(feature));
         address.setStreetName(FeatureUtil.getString(feature, "straat"));

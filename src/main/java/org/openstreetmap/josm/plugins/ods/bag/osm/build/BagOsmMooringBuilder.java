@@ -12,7 +12,6 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagMooringImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagMooringStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
-import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
 
 public class BagOsmMooringBuilder extends AbstractOsmEntityBuilder<OsmBagMooring> {
 
@@ -76,7 +75,7 @@ public class BagOsmMooringBuilder extends AbstractOsmEntityBuilder<OsmBagMooring
     }
 
     @Override
-    public AbstractGeoEntityStore<OsmBagMooring> getEntityStore() {
+    public OsmBagMooringStore getEntityStore() {
         return context.getComponent(OsmBagMooringStore.class);
     }
 }

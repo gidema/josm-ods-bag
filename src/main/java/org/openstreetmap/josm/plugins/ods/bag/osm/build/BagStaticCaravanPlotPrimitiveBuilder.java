@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.osm.build;
 
+import static org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness.Complete;
+
 import java.util.Map;
 
 import org.openstreetmap.josm.plugins.ods.bag.BagImportPlugin;
@@ -24,7 +26,10 @@ public class BagStaticCaravanPlotPrimitiveBuilder extends BagEntityPrimitiveBuil
         BagStaticCaravanPlotStore standplaatsStore = context.getComponent(BagStaticCaravanPlotStore.class);
         standplaatsStore.stream()
         .filter(standplaats->standplaats.getPrimitive() == null)
-        .forEach(entity -> super.createPrimitive(entity, layerManager));
+        .filter(standplaats->standplaats.getCompleteness() == Complete)
+        .forEach(entity -> {
+                createPrimitive(entity, layerManager);
+        });
     }
 
     @Override

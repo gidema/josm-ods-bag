@@ -6,6 +6,7 @@ import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
+import org.openstreetmap.josm.plugins.ods.entities.Entity.Completeness;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 
 public class BagAddressNodeEntityPrimitiveBuilder extends BagEntityPrimitiveBuilder<OdAddressNode> {
@@ -20,6 +21,7 @@ public class BagAddressNodeEntityPrimitiveBuilder extends BagEntityPrimitiveBuil
         BagAddressNodeStore addressNodeStore =context.getComponent(BagAddressNodeStore.class);
         addressNodeStore.stream()
         .filter(addressNode->addressNode.getPrimitive() == null)
+        .filter(addressNode->addressNode.getCompleteness() == Completeness.Complete)
         .forEach(entity -> super.createPrimitive(entity, layerManager));
 //        BagWithdrawnAddressNodeStore wdAddressNodeStore =context.getComponent(BagWithdrawnAddressNodeStore.class);
 //        wdAddressNodeStore.stream()

@@ -1,15 +1,8 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
-import org.openstreetmap.josm.plugins.ods.entities.storage.GeoIndex;
-import org.openstreetmap.josm.plugins.ods.entities.storage.GeoIndexImpl;
 import org.openstreetmap.josm.plugins.ods.entities.storage.Index;
 import org.openstreetmap.josm.plugins.ods.entities.storage.IndexImpl;
-import org.openstreetmap.josm.plugins.ods.entities.storage.PrimaryIndex;
-import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
+import org.openstreetmap.josm.plugins.ods.entities.storage.OsmEntityStore;
 
 /**
  * Store bag entities for static caravan plots created from osm primitives.
@@ -19,19 +12,11 @@ import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
  * @author Gertjan Idema <mail@gertjanidema.nl>
  *
  */
-public class OsmBagStaticCaravanPlotStore extends AbstractGeoEntityStore<OsmBagStaticCaravanPlot> {
-    private final PrimaryIndex<OsmBagStaticCaravanPlot> primitiveIndex = new UniqueIndexImpl<>(OsmBagStaticCaravanPlot::getPrimitiveId);
+public class OsmBagStaticCaravanPlotStore extends OsmEntityStore<OsmBagStaticCaravanPlot> {
     private final Index<OsmBagStaticCaravanPlot> bagIdIndex = new IndexImpl<>(OsmBagStaticCaravanPlot.class, OsmBagStaticCaravanPlot::getBagId);
-    private final GeoIndex<OsmBagStaticCaravanPlot> geoIndex = new GeoIndexImpl<>(OsmBagStaticCaravanPlotImpl.class, "geometry");
-    private final List<Index<OsmBagStaticCaravanPlot>> allIdexes = Arrays.asList(primitiveIndex, bagIdIndex, geoIndex);
 
     public OsmBagStaticCaravanPlotStore() {
         super();
-    }
-
-    @Override
-    public PrimaryIndex<OsmBagStaticCaravanPlot> getPrimaryIndex() {
-        return primitiveIndex;
     }
 
     public Index<OsmBagStaticCaravanPlot> getBagIdIndex() {
@@ -39,12 +24,19 @@ public class OsmBagStaticCaravanPlotStore extends AbstractGeoEntityStore<OsmBagS
     }
 
     @Override
-    public GeoIndex<OsmBagStaticCaravanPlot> getGeoIndex() {
-        return geoIndex;
+    public void onAdd(OsmBagStaticCaravanPlot entity) {
+        bagIdIndex.insert(entity);
     }
 
     @Override
-    public List<Index<OsmBagStaticCaravanPlot>> getAllIndexes() {
-        return allIdexes;
+    public void onRemove(OsmBagStaticCaravanPlot entity) {
+        bagIdIndex.remove(entity);
     }
+
+    @Override
+    public void beforeClear() {
+        bagIdIndex.clear();
+    }
+    
+    
 }

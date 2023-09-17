@@ -1,14 +1,11 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.AddressableObjectStatus;
-import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOsmEntity;
-import org.openstreetmap.josm.plugins.ods.matching.OsmMatch;
 
 public class OsmBagMooringImpl extends AbstractOsmEntity implements OsmBagMooring {
     private Long mooringId;
     private OsmAddress address;
-    private OsmMatch<OsmBagMooring> mooringMatch;
 
     @Override
     public Long getMooringId() {
@@ -26,16 +23,6 @@ public class OsmBagMooringImpl extends AbstractOsmEntity implements OsmBagMoorin
     @Override
     public OsmAddress getMainAddress() {
         return address;
-    }
-
-    @Override
-    public BuildingMatch getMatch() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setMatch(OsmMatch<OsmBagMooring> mooringMatch) {
-        this.mooringMatch = mooringMatch;
     }
 
     @Override

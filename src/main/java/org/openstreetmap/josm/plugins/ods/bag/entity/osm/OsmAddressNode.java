@@ -2,7 +2,6 @@ package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
 import org.locationtech.jts.geom.Point;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingUnitStatus;
-import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
 import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 
 public interface OsmAddressNode extends OsmEntity {
@@ -24,8 +23,6 @@ public interface OsmAddressNode extends OsmEntity {
 
     @Override
     public Point getGeometry();
-
-    public void setMatch(AddressNodeMatch match);
 
     public void setAddressableId(Long id);
 

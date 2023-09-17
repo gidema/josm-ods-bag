@@ -1,10 +1,10 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
-import org.openstreetmap.josm.plugins.ods.bag.entity.Address;
+import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
 
-public interface OsmAddress extends Address {
+public interface OsmAddress extends NLAddress {
 
     public OsmStreet getStreet();
 

@@ -1,11 +1,11 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.AddressNodeMapping;
 
 public interface BagBuildingUnit extends BagAddressableObject {
     
     @Override
-    public AddressNodeMatch getMatch();
+    public AddressNodeMapping getMapping();
 
     public OdAddressNode getMainAddressNode();
     
@@ -15,7 +15,7 @@ public interface BagBuildingUnit extends BagAddressableObject {
 
     public void setBuilding(BagBuilding building);
 
-    public void setMatch(AddressNodeMatch match);
+    public void setMatch(AddressNodeMapping match);
 
     public String getGebruiksdoel();
 

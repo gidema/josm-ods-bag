@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openstreetmap.josm.plugins.ods.context.OdsContextJob;
-import org.openstreetmap.josm.plugins.ods.matching.OdsMatchingJob;
-import org.openstreetmap.josm.plugins.ods.matching.update.OdsImportContext;
+import org.openstreetmap.josm.plugins.ods.mapping.OdsMappingJob;
+import org.openstreetmap.josm.plugins.ods.mapping.update.OdsImportContext;
 
 // TODO integrate in to normal context
 public class BagImportContext implements OdsImportContext {
@@ -13,7 +13,7 @@ public class BagImportContext implements OdsImportContext {
 
     public BagImportContext() {
         postImportJobs.add(new PrimitiveNeighbourAligner());
-        postImportJobs.add(new OdsMatchingJob());
+        postImportJobs.add(new OdsMappingJob());
     }
 
     @Override

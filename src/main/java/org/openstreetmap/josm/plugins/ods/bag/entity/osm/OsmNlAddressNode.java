@@ -2,7 +2,6 @@ package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
 import org.locationtech.jts.geom.Point;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingUnitStatus;
-import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOsmEntity;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
@@ -12,7 +11,6 @@ public class OsmNlAddressNode extends AbstractOsmEntity implements OsmAddressNod
     private OsmAddress address;
     private OsmBuilding building;
     private BuildingUnitStatus status;
-    private AddressNodeMatch match;
 
     public OsmNlAddressNode() {
         super();
@@ -69,16 +67,6 @@ public class OsmNlAddressNode extends AbstractOsmEntity implements OsmAddressNod
         }
     }   
     
-    @Override
-    public AddressNodeMatch getMatch() {
-        return match;
-    }
-
-    @Override
-    public void setMatch(AddressNodeMatch match) {
-        this.match = match;
-    }
-
     @Override
     public String toString() {
         return getAddress().toString();

@@ -21,9 +21,9 @@ import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
-import org.openstreetmap.josm.plugins.ods.matching.OdMatch;
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 import org.openstreetmap.josm.plugins.ods.saxparser.opengis.wfs.WfsFeature;
+import org.openstreetmap.josm.plugins.ods.update.UpdateTaskType;
 
 public class BagMooringPlotFactory implements OdEntityFactory {
     private static QName typeName = new QName(BagPdok.NS_BAG, "ligplaats");
@@ -84,7 +84,7 @@ public class BagMooringPlotFactory implements OdEntityFactory {
         private Long id;
         private NLAddress address;
         private PlotStatus status;
-        private OdMatch<BagMooringPlot> match;
+        private Mapping<? extends OsmEntity, ? extends OdEntity> mapping;
 
         public void setAddress(NLAddress address) {
             this.address = address;
@@ -135,18 +135,23 @@ public class BagMooringPlotFactory implements OdEntityFactory {
         }
 
         @Override
-        public Match<? extends OsmEntity, ? extends OdEntity> getMatch() {
+        public Mapping<? extends OsmEntity, ? extends OdEntity> getMapping() {
             return null;
         }
 
         @Override
-        public void setMatch(OdMatch<BagMooringPlot> match) {
-            this.match = match;
+        public void setMapping(Mapping<? extends OsmEntity, ? extends OdEntity> mapping) {
+            this.mapping = mapping;
         }
 
         @Override
         public boolean readyForImport() {
             return !(getStatus().equals(PlotStatus.WITHDRAWN));
+        }
+
+        @Override
+        public UpdateTaskType getUpdateTaskType() {
+            return UpdateTaskType.NONE;
         }
     }
 }

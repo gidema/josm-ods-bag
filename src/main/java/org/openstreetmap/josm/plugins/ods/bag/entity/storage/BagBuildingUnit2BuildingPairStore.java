@@ -1,11 +1,10 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.storage;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BuildingUnit_BuildingPair;
-import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractEntityStore;
-import org.openstreetmap.josm.plugins.ods.entities.storage.Index;
+import org.openstreetmap.josm.plugins.ods.entities.storage.EntityStore;
 import org.openstreetmap.josm.plugins.ods.entities.storage.PrimaryIndex;
 import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
 
@@ -17,21 +16,35 @@ import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
  * @author Gertjan Idema <mail@gertjanidema.nl>
  *
  */
-public class BagBuildingUnit2BuildingPairStore extends AbstractEntityStore<BuildingUnit_BuildingPair> {
-    private final PrimaryIndex<BuildingUnit_BuildingPair> primaryIndex = new UniqueIndexImpl<>(BuildingUnit_BuildingPair::getPrimaryId);
-    private final List<Index<BuildingUnit_BuildingPair>> allIndexes = Collections.singletonList(primaryIndex);
+public class BagBuildingUnit2BuildingPairStore implements EntityStore<BuildingUnit_BuildingPair> {
+    private final PrimaryIndex<BuildingUnit_BuildingPair> index = new UniqueIndexImpl<>(BuildingUnit_BuildingPair::getPrimaryId);
     
     public BagBuildingUnit2BuildingPairStore() {
         super();
     }
 
     @Override
-    public PrimaryIndex<BuildingUnit_BuildingPair> getPrimaryIndex() {
-        return primaryIndex;
+    public Iterator<BuildingUnit_BuildingPair> iterator() {
+        return index.iterator();
     }
 
     @Override
-    public List<Index<BuildingUnit_BuildingPair>> getAllIndexes() {
-        return allIndexes;
+    public void add(BuildingUnit_BuildingPair entity) {
+        index.insert(entity);
+    }
+
+    @Override
+    public Stream<BuildingUnit_BuildingPair> stream() {
+        return index.stream();
+    }
+
+    @Override
+    public void remove(BuildingUnit_BuildingPair entity) {
+        index.remove(entity);
+    }
+
+    @Override
+    public void clear() {
+        index.clear();
     }
 }

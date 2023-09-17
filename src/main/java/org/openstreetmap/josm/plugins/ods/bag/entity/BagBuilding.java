@@ -5,12 +5,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.locationtech.jts.geom.Geometry;
-import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 
 public interface BagBuilding extends OdEntity {
-
-    public void setMatch(BuildingMatch match);
 
     public Long getBuildingId();
 
@@ -51,7 +48,4 @@ public interface BagBuilding extends OdEntity {
      * @return
      */
     public double getAge();
-
-    @Override
-    public BuildingMatch getMatch();
 }

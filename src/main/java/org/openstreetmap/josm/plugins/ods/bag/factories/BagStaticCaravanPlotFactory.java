@@ -25,9 +25,9 @@ import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
-import org.openstreetmap.josm.plugins.ods.matching.OdMatch;
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 import org.openstreetmap.josm.plugins.ods.saxparser.opengis.wfs.WfsFeature;
+import org.openstreetmap.josm.plugins.ods.update.UpdateTaskType;
 
 public class BagStaticCaravanPlotFactory implements OdEntityFactory {
     private final BagPreferences preferences;
@@ -99,6 +99,7 @@ public class BagStaticCaravanPlotFactory implements OdEntityFactory {
         private Long id;
         private NLAddress address;
         private PlotStatus status;
+        private Mapping<? extends OsmEntity, ? extends OdEntity> mapping;
 
         @Override
         public Long getId() {
@@ -145,25 +146,23 @@ public class BagStaticCaravanPlotFactory implements OdEntityFactory {
         }
         
         @Override
-        public Completeness getCompleteness() {
-            return Completeness.Complete;
+        public void setMapping(Mapping<? extends OsmEntity, ? extends OdEntity> mapping) {
+            this.mapping = mapping;
         }
 
         @Override
-        public void setMatch(OdMatch<BagStaticCaravanPlot> match) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        public Match<? extends OsmEntity, ? extends OdEntity> getMatch() {
-            // TODO Auto-generated method stub
-            return null;
+        public Mapping<? extends OsmEntity, ? extends OdEntity> getMapping() {
+            return mapping;
         }
 
         @Override
         public boolean readyForImport() {
             return !(getStatus().equals(PlotStatus.WITHDRAWN));
+        }
+
+        @Override
+        public UpdateTaskType getUpdateTaskType() {
+            return UpdateTaskType.NONE;
         }
     }
 }

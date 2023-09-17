@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.ods.bag.match;
+package org.openstreetmap.josm.plugins.ods.bag.mapping;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class OsmAddressNodeToBuildingConnector implements OdsContextJob {
      *
      * @param addressNode
      */
-    private void match(OsmAddressNode addressNode, OsmBuildingStore buildingStore) {
+    private static void match(OsmAddressNode addressNode, OsmBuildingStore buildingStore) {
         GeoIndex<OsmBuilding> geoIndex = buildingStore.getGeoIndex();
         if (addressNode.getBuilding() == null) {
             List<OsmBuilding> buildings = geoIndex.intersection(addressNode.getGeometry());

@@ -25,20 +25,20 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.plugins.ods.bag.BagImportModule;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
-import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
+import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
-import org.openstreetmap.josm.plugins.ods.matching.update.EntityUpdater;
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
+import org.openstreetmap.josm.plugins.ods.mapping.update.EntityUpdater;
 import org.openstreetmap.josm.plugins.ods.osm.NodeDWithinLatLon;
 
 public class BuildingUpdater implements EntityUpdater {
     private final OsmDataLayer osmDataLayer;
     private final OdLayerManager odLayerManager;
     private final NodeDWithinLatLon dWithin;
-    private final List<Match<OsmBuilding, BagBuilding>> matches = new LinkedList<>();
+    private final List<Mapping<? extends OsmEntity, ? extends OdEntity>> matches = new LinkedList<>();
     private final Map<Way, Way> odWays = new HashMap<>();
     private final Set<Way> osmWays = new HashSet<>();
     private final Map<Node, OdNodeDetails> odNodes = new HashMap<>();
@@ -53,7 +53,7 @@ public class BuildingUpdater implements EntityUpdater {
     }
 
     @Override
-    public void update(List<Match<?, ?>> matches) {
+    public void update(List<Mapping<?, ?>> matches) {
         // TODO Auto-generated method stub
         
     }
@@ -63,7 +63,7 @@ public class BuildingUpdater implements EntityUpdater {
             OdEntity odEntity = odLayerManager.getEntity(p);
             if (odEntity instanceof BagBuilding) {
                 BagBuilding building = (BagBuilding) odEntity;
-                BuildingMatch match = building.getMatch();
+                Mapping<? extends OsmEntity, ? extends OdEntity> match = building.getMapping();
                 if (match.getOpenDataEntity().getPrimitive().getDisplayType().equals(OsmPrimitiveType.CLOSEDWAY)
                   && match.getOsmEntity().getPrimitive().getDisplayType().equals(OsmPrimitiveType.CLOSEDWAY)) {
                     matches.add(match);
@@ -94,7 +94,7 @@ public class BuildingUpdater implements EntityUpdater {
      */
     private void collectData() {
         matches.forEach(match -> {
-            BagBuilding bagBuilding = match.getOpenDataEntity();
+            BagBuilding bagBuilding = (BagBuilding) match.getOpenDataEntity();
             Way odWay = null;
             Way osmWay = null;
             if (bagBuilding.getPrimitive().getDisplayType().equals(OsmPrimitiveType.CLOSEDWAY)) {
@@ -103,7 +103,7 @@ public class BuildingUpdater implements EntityUpdater {
                     odNodes.computeIfAbsent(node, n -> new OdNodeDetails(n));
                 });
             }
-            OsmBuilding osmBuilding = match.getOsmEntity();
+            OsmBuilding osmBuilding = (OsmBuilding) match.getOsmEntity();
             if (osmBuilding.getPrimitive().getDisplayType().equals(OsmPrimitiveType.CLOSEDWAY)) {
                 osmWay = (Way) osmBuilding.getPrimitive();
                 osmNodePool.addAll(osmWay.getNodes());

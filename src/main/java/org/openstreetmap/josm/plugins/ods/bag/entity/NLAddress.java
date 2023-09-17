@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
+import java.util.Comparator;
+
 /**
  * Although not supported in the official BAG administration, some house numbers have a non-numeric prefix.
  * These prefixes are used 
@@ -8,6 +10,11 @@ package org.openstreetmap.josm.plugins.ods.bag.entity;
  *
  */
 public interface NLAddress {
+    public static final Comparator<NLAddress> BY_POSTCODE_COMPARATOR = Comparator.nullsFirst(
+            Comparator.comparing(NLAddress::getPostcode, Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(NLAddress::getHouseNumber, NlHouseNumber.DEFAULT_COMPARATOR)
+        );
+    
     /**
      * Get the house number
      * @see NlHouseNumber

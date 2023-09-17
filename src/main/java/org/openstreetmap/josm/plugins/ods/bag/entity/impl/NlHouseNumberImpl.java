@@ -26,6 +26,7 @@ public class NlHouseNumberImpl implements NlHouseNumber {
         this.fullHouseNumber = buildFullHouseNumber();
     }
 
+    @Override
     public String getHouseNumberPrefix() {
         return houseNumberPrefix;
     }
@@ -50,11 +51,6 @@ public class NlHouseNumberImpl implements NlHouseNumber {
         return fullHouseNumber;
     }
 
-    @Override
-    public int compareTo(NlHouseNumber o) {
-        return fullHouseNumber.compareTo(o.getFullHouseNumber());
-    }
-    
     /**
      * Build the FullHousenumber String from the separate components.
      * 

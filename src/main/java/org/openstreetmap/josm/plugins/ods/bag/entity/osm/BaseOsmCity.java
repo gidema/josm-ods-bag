@@ -3,8 +3,7 @@ package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.BagCity;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOsmEntity;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
-
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
@@ -52,7 +51,7 @@ public class BaseOsmCity extends AbstractOsmEntity implements OsmCity {
     }
 
     @Override
-    public Match<OsmCity, BagCity> getMatch() {
+    public Mapping<OsmCity, BagCity> getMapping() {
         return null;
     }
 }

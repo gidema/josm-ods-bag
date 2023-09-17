@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.ods.bag.match;
+package org.openstreetmap.josm.plugins.ods.bag.mapping;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.plugins.ods.Matcher;
+import org.openstreetmap.josm.plugins.ods.Mapper;
 import org.openstreetmap.josm.plugins.ods.ODS;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagStaticCaravanPlot;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagStaticCaravanPlot;
@@ -15,18 +15,18 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuildingStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagStaticCaravanPlotStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 
-public class StaticCaravanPlotMatcher implements Matcher {
-    private final Map<Long, StaticCaravanPlot2BuildingMatch> plot2BuildingMatches = new HashMap<>();
-    private final Map<Long, StaticCaravanPlot2LanduseMatch> plot2LanduseMatches = new HashMap<>();
+public class StaticCaravanPlotMapper implements Mapper {
+    private final Map<Long, StaticCaravanPlot2BuildingMapping> plot2BuildingMappings = new HashMap<>();
+    private final Map<Long, StaticCaravanPlot2LanduseMapping> plot2LanduseMappings = new HashMap<>();
     private final OsmBuildingStore osmBuildingStore;
     private final OsmBagStaticCaravanPlotStore osmBagLanduseStore;
     private final BagStaticCaravanPlotStore bagStaticCaravanPlotStore;
-    private final List<BagStaticCaravanPlot> unmatchedplots = new LinkedList<>();
-    private final List<OsmBuilding> unmatchedOsmBuildings = new LinkedList<>();
+    private final List<BagStaticCaravanPlot> unmappedplots = new LinkedList<>();
+    private final List<OsmBuilding> unmappedOsmBuildings = new LinkedList<>();
 
-    public StaticCaravanPlotMatcher(OdsContext context) {
+    public StaticCaravanPlotMapper(OdsContext context) {
         super();
         osmBuildingStore = context.getComponent(OsmBuildingStore.class);
         osmBagLanduseStore = context.getComponent(OsmBagStaticCaravanPlotStore.class);
@@ -35,8 +35,8 @@ public class StaticCaravanPlotMatcher implements Matcher {
 
     @Override
     public void run() {
-        unmatchedplots.clear();
-        unmatchedOsmBuildings.clear();
+        unmappedplots.clear();
+        unmappedOsmBuildings.clear();
         for (BagStaticCaravanPlot plot : bagStaticCaravanPlotStore) {
             processOpenDataPlot(plot);
         }
@@ -44,69 +44,69 @@ public class StaticCaravanPlotMatcher implements Matcher {
     }
 
     private void processOpenDataPlot(BagStaticCaravanPlot plot) {
-        if (!(matchToBuilding(plot) || matchToLanduse(plot))) {
-            unmatchedplots.add(plot);
+        if (!(mapToBuilding(plot) || mapToLanduse(plot))) {
+            unmappedplots.add(plot);
         }
     }
     
-    private boolean matchToBuilding(BagStaticCaravanPlot plot) {
+    private boolean mapToBuilding(BagStaticCaravanPlot plot) {
         Long id = plot.getId();
-        StaticCaravanPlot2BuildingMatch match = plot2BuildingMatches.get(id);
-        if (match != null) {
-            match.addOpenDataEntity(plot);
-            plot.setMatch(match);
+        StaticCaravanPlot2BuildingMapping mapping = plot2BuildingMappings.get(id);
+        if (mapping != null) {
+            mapping.addOpenDataEntity(plot);
+            plot.setMapping(mapping);
             return true;
         }
         List<OsmBuilding> osmBuildings = osmBuildingStore.getBuildingIdIndex().getAll(id);
         if (osmBuildings.size() > 0) {
-            match = new StaticCaravanPlot2BuildingMatch(osmBuildings.get(0), plot);
+            mapping = new StaticCaravanPlot2BuildingMapping(osmBuildings.get(0), plot);
             for (int i=1; i<osmBuildings.size() ; i++) {
                 OsmBuilding osmBuilding = osmBuildings.get(i);
-                osmBuilding.setMatch(match);
-                match.addOsmEntity(osmBuilding);
+                osmBuilding.setMapping(mapping);
+                mapping.addOsmEntity(osmBuilding);
             }
-            plot2BuildingMatches.put(id, match);
+            plot2BuildingMappings.put(id, mapping);
             return true;
         }
         return false;
     }
 
-    private boolean matchToLanduse(BagStaticCaravanPlot plot) {
+    private boolean mapToLanduse(BagStaticCaravanPlot plot) {
         Long id = plot.getId();
-        StaticCaravanPlot2LanduseMatch match = plot2LanduseMatches.get(id);
-        if (match != null) {
-            match.addOpenDataEntity(plot);
-            plot.setMatch(match);
+        StaticCaravanPlot2LanduseMapping mapping = plot2LanduseMappings.get(id);
+        if (mapping != null) {
+            mapping.addOpenDataEntity(plot);
+            plot.setMapping(mapping);
             return true;
         }
         List<OsmBagStaticCaravanPlot> landuses = osmBagLanduseStore.getBagIdIndex().getAll(id);
         if (landuses.size() > 0) {
-            match = new StaticCaravanPlot2LanduseMatch(landuses.get(0), plot);
+            mapping = new StaticCaravanPlot2LanduseMapping(landuses.get(0), plot);
             for (int i=1; i<landuses.size() ; i++) {
                 OsmBagStaticCaravanPlot landuse = landuses.get(i);
-                landuse.setMatch(match);
-                match.addOsmEntity(landuse);
+                landuse.setMapping(mapping);
+                mapping.addOsmEntity(landuse);
             }
-            plot2LanduseMatches.put(id, match);
+            plot2LanduseMappings.put(id, mapping);
             return true;
         }
         return false;
     }
 
     public void analyze() {
-        for (Match<OsmBuilding, BagStaticCaravanPlot> match : plot2BuildingMatches.values()) {
-            if (match.isSimple()) {
-                match.analyze();
-                match.updateMatchTags();
+        for (Mapping<OsmBuilding, BagStaticCaravanPlot> mapping : plot2BuildingMappings.values()) {
+            if (mapping.isSimple()) {
+                mapping.analyze();
+                mapping.refreshUpdateTags();
             }
         }
-        for (StaticCaravanPlot2LanduseMatch match : plot2LanduseMatches.values()) {
-            if (match.isSimple()) {
-                match.analyze();
-                match.updateMatchTags();
+        for (StaticCaravanPlot2LanduseMapping mapping : plot2LanduseMappings.values()) {
+            if (mapping.isSimple()) {
+                mapping.analyze();
+                mapping.refreshUpdateTags();
             }
         }
-        for (BagStaticCaravanPlot plot: unmatchedplots) {
+        for (BagStaticCaravanPlot plot: unmappedplots) {
             OsmPrimitive osm = plot.getPrimitive();
             if (osm != null) {
                 osm.put(ODS.KEY.IDMATCH, "false");
@@ -117,8 +117,8 @@ public class StaticCaravanPlotMatcher implements Matcher {
 
     @Override
     public void reset() {
-        plot2BuildingMatches.clear();
-        plot2LanduseMatches.clear();
-        unmatchedOsmBuildings.clear();
+        plot2BuildingMappings.clear();
+        plot2LanduseMappings.clear();
+        unmappedOsmBuildings.clear();
     }
 }

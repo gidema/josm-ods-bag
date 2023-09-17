@@ -8,8 +8,12 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygonal;
 import org.locationtech.jts.geom.prep.PreparedPolygon;
+import org.openstreetmap.josm.plugins.ods.bag.entity.DemolishedBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagDemolishedBuildingStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagEntityStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMooringPlotStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagStaticCaravanPlotStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.context.OdsContextJob;
 
@@ -33,19 +37,26 @@ public class BuildingCompletenessEnricher implements OdsContextJob {
 //        processDemolishedBuildings(context);
     }
     
-    private void processNormalBuildings(OdsContext context) {
-        BagBuildingStore buildingStore = context.getComponent(BagBuildingStore.class);
-        Geometry boundary = buildingStore.getBoundary();
+    private static void processNormalBuildings(OdsContext context) {
+        process(context, BagBuildingStore.class);
+        process(context, BagStaticCaravanPlotStore.class);
+        process(context, BagMooringPlotStore.class);
+        process(context, BagDemolishedBuildingStore.class);
+    }
+
+    private static void process(OdsContext context, Class<? extends BagEntityStore<?>> clazz) {
+        BagEntityStore<?> entityStore = context.getComponent(clazz);
+        Geometry boundary = entityStore.getBoundary();
         List<PreparedPolygon> boundaries = new LinkedList<>();
         for (int i=0; i<boundary.getNumGeometries(); i++) {
             Polygonal polygonal = (Polygonal)boundary.getGeometryN(i);
             boundaries.add(new PreparedPolygon(polygonal));
         }
-        buildingStore.forEach(building -> {
-            if (building.getCompleteness() != Complete) {
+        entityStore.forEach(entity -> {
+            if (entity.getCompleteness() != Complete) {
                 for (PreparedPolygon prep : boundaries) {
-                    if (prep.covers(building.getGeometry())) {
-                        building.setCompleteness(Complete);
+                    if (prep.covers(entity.getGeometry())) {
+                        entity.setCompleteness(Complete);
                         break;
                     }
                 }
@@ -53,7 +64,7 @@ public class BuildingCompletenessEnricher implements OdsContextJob {
         });
     }
 
-    private void processDemolishedBuildings(OdsContext context) {
+    private static void processDemolishedBuildings(OdsContext context) {
         BagDemolishedBuildingStore buildingStore = context.getComponent(BagDemolishedBuildingStore.class);
         Geometry boundary = buildingStore.getBoundary();
         List<PreparedPolygon> boundaries = new LinkedList<>();

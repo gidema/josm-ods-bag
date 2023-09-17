@@ -15,7 +15,6 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuildingStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
-import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
 
 public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding> {
 
@@ -126,7 +125,7 @@ public class BagOsmBuildingBuilder extends AbstractOsmEntityBuilder<OsmBuilding>
     }
 
     @Override
-    public AbstractGeoEntityStore<OsmBuilding> getEntityStore() {
+    public OsmBuildingStore getEntityStore() {
         return context.getComponent(OsmBuildingStore.class);
     }
 }

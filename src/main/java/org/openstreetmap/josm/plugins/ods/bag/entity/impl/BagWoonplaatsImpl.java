@@ -5,8 +5,8 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagWoonplaats;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
-
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
+import org.openstreetmap.josm.plugins.ods.update.UpdateTaskType;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
@@ -66,7 +66,7 @@ public class BagWoonplaatsImpl extends AbstractOdEntity implements BagWoonplaats
     }
 
     @Override
-    public Match<? extends OsmEntity, ? extends OdEntity> getMatch() {
+    public Mapping<? extends OsmEntity, ? extends OdEntity> getMapping() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -75,5 +75,10 @@ public class BagWoonplaatsImpl extends AbstractOdEntity implements BagWoonplaats
     public boolean readyForImport() {
         // This plug-in should not be used to import place boundaries 
         return false;
+    }
+
+    @Override
+    public UpdateTaskType getUpdateTaskType() {
+        return UpdateTaskType.NONE;
     }
 }

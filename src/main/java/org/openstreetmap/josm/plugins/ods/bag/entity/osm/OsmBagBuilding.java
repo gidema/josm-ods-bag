@@ -8,10 +8,8 @@ import java.util.Set;
 import org.openstreetmap.josm.plugins.ods.bag.entity.AddressableObjectStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingType;
-import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOsmEntity;
-import org.openstreetmap.josm.plugins.ods.matching.OsmMatch;
 
 public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
     private Long buildingId;
@@ -22,7 +20,6 @@ public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
     private final Set<OsmBuilding> neighbours = new HashSet<>();
     private OsmCity city;
     private BuildingStatus status;
-    private OsmMatch<OsmBuilding> buildingMatch;
 
     @Override
     public Long getBuildingId() {
@@ -103,16 +100,6 @@ public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
     }
 
     @Override
-    public void setMatch(BuildingMatch buildingMatch) {
-        this.buildingMatch = buildingMatch;
-    }
-
-    @Override
-    public BuildingMatch getMatch() {
-        return (BuildingMatch) buildingMatch;
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("OsmBuilding ").append(getBuildingId());
@@ -122,8 +109,8 @@ public class OsmBagBuilding extends AbstractOsmEntity implements OsmBuilding {
         return sb.toString();
     }
 
-    @Override
-    public void setMatch(OsmMatch<OsmBuilding> buildingMatch) {
-        this.buildingMatch = buildingMatch;
-    }
+//    @Override
+//    public void setMatch(Mapping<? extends OsmEntity, ? extends OdEntity> mapping) {
+//        this.buildingMatch = mapping;
+//    }
 }

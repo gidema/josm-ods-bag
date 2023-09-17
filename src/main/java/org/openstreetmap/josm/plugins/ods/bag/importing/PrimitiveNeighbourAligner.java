@@ -7,7 +7,7 @@ import org.openstreetmap.josm.plugins.ods.bag.osm.OsmNeighbourFinder;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.context.OdsContextJob;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
-import org.openstreetmap.josm.plugins.ods.matching.update.OdsImporter.ImportedPrimitives;
+import org.openstreetmap.josm.plugins.ods.mapping.update.OdsImporter.ImportedPrimitives;
 
 public class PrimitiveNeighbourAligner implements OdsContextJob {
 

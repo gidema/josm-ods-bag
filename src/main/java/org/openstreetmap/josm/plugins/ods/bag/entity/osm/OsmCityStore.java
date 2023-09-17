@@ -1,30 +1,15 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
-import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
-import org.openstreetmap.josm.plugins.ods.entities.storage.GeoIndex;
-import org.openstreetmap.josm.plugins.ods.entities.storage.GeoIndexImpl;
 import org.openstreetmap.josm.plugins.ods.entities.storage.Index;
 import org.openstreetmap.josm.plugins.ods.entities.storage.IndexImpl;
-import org.openstreetmap.josm.plugins.ods.entities.storage.PrimaryIndex;
-import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
+import org.openstreetmap.josm.plugins.ods.entities.storage.OsmEntityStore;
 
-public class OsmCityStore extends AbstractGeoEntityStore<OsmCity> {
-    private final PrimaryIndex<OsmCity> primitiveIndex = new UniqueIndexImpl<>(OsmCity::getPrimitiveId);
+public class OsmCityStore extends OsmEntityStore<OsmCity> {
     private final Index<OsmCity> cityIdIndex = new IndexImpl<>(OsmCity.class, OsmCity::getCityId);
-    private final GeoIndex<OsmCity> geoIndex = new GeoIndexImpl<>(OsmCity.class, "geometry");
-    private final List<Index<OsmCity>> allIndexes = Arrays.asList(primitiveIndex, cityIdIndex, geoIndex);
 
     public OsmCityStore() {
         super();
-    }
-
-    @Override
-    public PrimaryIndex<OsmCity> getPrimaryIndex() {
-        return primitiveIndex;
     }
 
     public Index<OsmCity> getCityIdIndex() {
@@ -32,14 +17,21 @@ public class OsmCityStore extends AbstractGeoEntityStore<OsmCity> {
     }
 
     @Override
-    public GeoIndex<OsmCity> getGeoIndex() {
-        return geoIndex;
+    public void onAdd(OsmCity entity) {
+        cityIdIndex.insert(entity);
     }
 
     @Override
-    public List<Index<OsmCity>> getAllIndexes() {
-        return allIndexes;
+    public void onRemove(OsmCity entity) {
+        cityIdIndex.remove(entity);
     }
+
+    @Override
+    public void beforeClear() {
+        cityIdIndex.clear();
+    }
+
+
     
     
 }

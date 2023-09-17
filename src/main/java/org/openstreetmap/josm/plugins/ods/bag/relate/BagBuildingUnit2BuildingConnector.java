@@ -31,6 +31,7 @@ public class BagBuildingUnit2BuildingConnector implements OdsContextJob {
         super();
     }
 
+    @Override
     public void run(OdsContext context) {
         BagBuildingStore buildingStore = context.getComponent(BagBuildingStore.class);
         BagBuildingUnitStore buildingUnitStore = context.getComponent(BagBuildingUnitStore.class);
@@ -38,8 +39,8 @@ public class BagBuildingUnit2BuildingConnector implements OdsContextJob {
         buildingUnit2BuildingPairStore.forEach(pair -> {
             Long buildingUnitId = pair.getBuildingUnitId();
             Long buildingId = pair.getBuildingId();
-            BagBuildingUnit buildingUnit = buildingUnitStore.getPrimaryIndex().get(buildingUnitId);
-            BagBuilding building = buildingStore.getPrimaryIndex().get(buildingId);
+            BagBuildingUnit buildingUnit = buildingUnitStore.get(buildingUnitId);
+            BagBuilding building = buildingStore.get(buildingId);
             if (building != null && buildingUnit != null) {
                 buildingUnit.setBuilding(building);
                 building.getBuildingUnits().put(buildingUnitId, buildingUnit);

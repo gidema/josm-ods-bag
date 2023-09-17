@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.BuildingMapping;
 import org.openstreetmap.josm.plugins.ods.entities.Entity;
 
 public interface Building extends Entity {
@@ -8,10 +8,10 @@ public interface Building extends Entity {
 
     public BuildingType getBuildingType();
 
-    public void setMatch(BuildingMatch match);
+    public void setMatch(BuildingMapping match);
 
     @Override
-    public BuildingMatch getMatch();
+    public BuildingMapping getMapping();
 
     // Setters
     public void setBuildingType(BuildingType buildingType);

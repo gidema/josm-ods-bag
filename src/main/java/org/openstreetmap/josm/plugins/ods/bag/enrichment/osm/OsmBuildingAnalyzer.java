@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 import org.openstreetmap.josm.plugins.ods.osm.update.NodePool;
 import org.openstreetmap.josm.plugins.ods.osm.update.PoolNode.SpecialReferrers;
 
@@ -25,15 +25,15 @@ import org.openstreetmap.josm.plugins.ods.osm.update.PoolNode.SpecialReferrers;
  *
  */
 public class OsmBuildingAnalyzer {
-    private final List<Match<OsmBuilding, BagBuilding>> buildingMatches;
+    private final List<Mapping<OsmBuilding, BagBuilding>> buildingMatches;
     private final NodePool nodePool = new NodePool();
     private final Set<OsmPrimitive> includedPrimitives = new HashSet<>();
-    private final Set<Match<OsmBuilding, BagBuilding>> excludedMatches =new HashSet<>();
+    private final Set<Mapping<OsmBuilding, BagBuilding>> excludedMatches =new HashSet<>();
     private final Set<Node> reuseableNodes = new HashSet<>();
     //    private final Set<Node> taggedNodes = new HashSet<>();
     private final QuadBuckets<Node> reuseableNodeIndex = new QuadBuckets<>();
 
-    public OsmBuildingAnalyzer(List<Match<OsmBuilding, BagBuilding>> buildingMatches) {
+    public OsmBuildingAnalyzer(List<Mapping<OsmBuilding, BagBuilding>> buildingMatches) {
         super();
         this.buildingMatches = buildingMatches;
     }
@@ -44,11 +44,11 @@ public class OsmBuildingAnalyzer {
 
     public void analyze() {
         // Collect the building primitives in a set, so we can look them up
-        for (Match<OsmBuilding, BagBuilding> match : buildingMatches) {
+        for (Mapping<OsmBuilding, BagBuilding> match : buildingMatches) {
             assert match.isSimple();
             includedPrimitives.add(match.getOsmEntity().getPrimitive());
         }
-        for (Match<OsmBuilding, BagBuilding> match : buildingMatches) {
+        for (Mapping<OsmBuilding, BagBuilding> match : buildingMatches) {
             // Focus on Ways. We'll tackle relations later
             OsmPrimitive osm = match.getOsmEntity().getPrimitive();
             if (osm.getDisplayType().equals(OsmPrimitiveType.CLOSEDWAY)) {
@@ -58,7 +58,7 @@ public class OsmBuildingAnalyzer {
                 excludedMatches.add(match);
             }
         }
-        for (Match<OsmBuilding, BagBuilding> match : excludedMatches) {
+        for (Mapping<OsmBuilding, BagBuilding> match : excludedMatches) {
             OsmPrimitive osm = match.getOsmEntity().getPrimitive();
             if (osm.getDisplayType().equals(OsmPrimitiveType.CLOSEDWAY)) {
                 for (Node node : ((Way)osm).getNodes()) {
@@ -71,7 +71,7 @@ public class OsmBuildingAnalyzer {
     }
 
     // Analyse the nodes in the way
-    private void analyseNodes(Way way, Match<OsmBuilding, BagBuilding> match) {
+    private void analyseNodes(Way way, Mapping<OsmBuilding, BagBuilding> match) {
         for (Node node : way.getNodes()) {
             if (!nodePool.contains(node)) {
                 SpecialReferrers specialReferrers = getNodeSpecialReferrers(node);

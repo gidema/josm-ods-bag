@@ -14,8 +14,10 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagWoonplaats;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
-import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.BuildingMapping;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
+import org.openstreetmap.josm.plugins.ods.mapping.MatchStatus;
+import org.openstreetmap.josm.plugins.ods.update.UpdateTaskType;
 
 public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
     private Long buildingId;
@@ -27,7 +29,7 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
     private BagWoonplaats city;
     private BuildingStatus status = BuildingStatus.UNKNOWN;
 
-    private BuildingMatch match;
+    private BuildingMapping match;
     private final Map<Long, BagBuildingUnit> buildingUnits = new HashMap<>();
 
     @Override
@@ -115,16 +117,6 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
     }
 
     @Override
-    public void setMatch(BuildingMatch match) {
-        this.match = match;
-    }
-
-    @Override
-    public BuildingMatch getMatch() {
-        return match;
-    }
-
-    @Override
     public double getAge() {
         return LocalDateTime.now().getYear() - getStartYear(); 
     }
@@ -150,5 +142,18 @@ public class BagBuildingImpl extends AbstractOdEntity implements BagBuilding {
         default:
             return false;
         }
+    }
+
+    @Override
+    public UpdateTaskType getUpdateTaskType() {
+        if (getStatus() == BuildingStatus.REMOVED && !isUpdated()) 
+            return UpdateTaskType.DELETE;
+        if (getMapping().getOsmEntities().isEmpty() && readyForImport()) {
+            return UpdateTaskType.ADD;
+        }
+        if (getGeometryMatch() == MatchStatus.NO_MATCH) {
+            return UpdateTaskType.MODIFY;
+        }
+        return UpdateTaskType.NONE;
     }
 }

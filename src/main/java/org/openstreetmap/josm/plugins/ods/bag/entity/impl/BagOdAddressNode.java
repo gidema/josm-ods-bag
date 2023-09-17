@@ -8,8 +8,9 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagAddressableObject;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
-import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
 import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
+import org.openstreetmap.josm.plugins.ods.update.UpdateTaskType;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -18,7 +19,6 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
     private NLAddress address;
     private Long buildingRef;
     private BagAddressableObject addressableObject;
-    private AddressNodeMatch match;
     private boolean secondary = false;
 
     public void setAddressId(Long addressId) {
@@ -135,21 +135,7 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
         }
     }
 
-//    public void setStatus(BuildingUnitStatus buildingUnitStatus) {
-//        this.status = buildingUnitStatus;
-//    }
-
-    @Override
-    public AddressNodeMatch getMatch() {
-        return match;
-    }
-
-    @Override
-    public void setMatch(AddressNodeMatch match) {
-        this.match = match;
-    }
-
-    public boolean isSecondarys() {
+    public boolean isSecondary() {
         return secondary;
     }
 
@@ -165,6 +151,19 @@ public class BagOdAddressNode extends AbstractOdEntity implements OdAddressNode 
     //    public int compareTo(Address o) {
     //        return getAddress().compareTo(o);
     //    }
+
+    @Override
+    public UpdateTaskType getUpdateTaskType() {
+        if (getMapping().getOsmEntities().isEmpty() && readyForImport()) {
+            return UpdateTaskType.ADD;
+        }
+        return UpdateTaskType.NONE;
+    }
+
+    @Override
+    public void refreshUpdateTags() {
+        super.refreshUpdateTags();
+    }
 
     @Override
     public String toString() {

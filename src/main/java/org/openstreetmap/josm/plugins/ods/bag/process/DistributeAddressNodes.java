@@ -14,6 +14,7 @@ import org.locationtech.jts.geom.Point;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuildingUnit;
 import org.openstreetmap.josm.plugins.ods.bag.entity.NLAddress;
+import org.openstreetmap.josm.plugins.ods.bag.entity.NlHouseNumber;
 import org.openstreetmap.josm.plugins.ods.bag.entity.OdAddressNode;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.AddressNodeGroup;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
@@ -122,7 +123,7 @@ public class DistributeAddressNodes implements OdsContextJob {
                 result = Objects.compare(a2.getStreetName(), a1.getStreetName(), String.CASE_INSENSITIVE_ORDER);
             }
             if (result == 0) {
-                result = a1.getHouseNumber().compareTo(a2.getHouseNumber());
+                result = NlHouseNumber.DEFAULT_COMPARATOR.compare(a1.getHouseNumber(), a2.getHouseNumber());
             }
             return result;
         }

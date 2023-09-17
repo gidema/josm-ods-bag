@@ -1,29 +1,24 @@
-package org.openstreetmap.josm.plugins.ods.bag.match;
+package org.openstreetmap.josm.plugins.ods.bag.mapping;
 
-import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.COMPARABLE;
-import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.MATCH;
-import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.NO_MATCH;
-import static org.openstreetmap.josm.plugins.ods.matching.MatchStatus.combine;
+import static org.openstreetmap.josm.plugins.ods.mapping.MatchStatus.COMPARABLE;
+import static org.openstreetmap.josm.plugins.ods.mapping.MatchStatus.MATCH;
+import static org.openstreetmap.josm.plugins.ods.mapping.MatchStatus.NO_MATCH;
 
 import org.locationtech.jts.geom.Point;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagStaticCaravanPlot;
+import org.openstreetmap.josm.plugins.ods.bag.entity.PlotStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagStaticCaravanPlot;
-import org.openstreetmap.josm.plugins.ods.matching.MatchImpl;
-import org.openstreetmap.josm.plugins.ods.matching.MatchStatus;
+import org.openstreetmap.josm.plugins.ods.mapping.AbstractMapping;
+import org.openstreetmap.josm.plugins.ods.mapping.MatchStatus;
 
-public class StaticCaravanPlot2LanduseMatch extends MatchImpl<OsmBagStaticCaravanPlot, BagStaticCaravanPlot> {
+public class StaticCaravanPlot2LanduseMapping extends AbstractMapping<OsmBagStaticCaravanPlot, BagStaticCaravanPlot> {
     /**
      * A double value indicating the match between the areas of the 2 buildings.
      *
      */
-    private MatchStatus areaMatch;
-    private MatchStatus centroidMatch;
-    private MatchStatus statusMatch;
 
-    public StaticCaravanPlot2LanduseMatch(OsmBagStaticCaravanPlot landuse, BagStaticCaravanPlot odPlot) {
+    public StaticCaravanPlot2LanduseMapping(OsmBagStaticCaravanPlot landuse, BagStaticCaravanPlot odPlot) {
         super(landuse, odPlot);
-        landuse.setMatch(this);
-        odPlot.setMatch(this);
     }
 
     //    @Override
@@ -33,9 +28,16 @@ public class StaticCaravanPlot2LanduseMatch extends MatchImpl<OsmBagStaticCarava
 
     @Override
     public void analyze() {
-        areaMatch = compareAreas();
-        centroidMatch = compareCentroids();
-        statusMatch = compareStatuses();
+        var odEntity = getOpenDataEntity();
+        if (this.isTwoWay() && this.isSimple() && 
+                odEntity.getStatus() != PlotStatus.WITHDRAWN) {
+            var areaMatch = compareAreas();
+            var centroidMatch = compareCentroids();
+            odEntity.setGeometryMatch(MatchStatus.combine(areaMatch, centroidMatch));
+            var statusMatch = compareStatuses();
+            odEntity.setAttributeMatch(statusMatch);
+            odEntity.setStatusMatch(statusMatch);
+        }
     }
 
     private static MatchStatus compareStatuses() {
@@ -46,7 +48,7 @@ public class StaticCaravanPlot2LanduseMatch extends MatchImpl<OsmBagStaticCarava
         double osmArea = getOsmEntity().getGeometry().getArea();
         double odArea = getOpenDataEntity().getGeometry().getArea();
         if (osmArea == 0.0 || odArea == 0.0) {
-            areaMatch = NO_MATCH;
+            return NO_MATCH;
         }
         double match = (osmArea - odArea) / osmArea;
         if (match == 0.0) {
@@ -69,20 +71,5 @@ public class StaticCaravanPlot2LanduseMatch extends MatchImpl<OsmBagStaticCarava
             return COMPARABLE;
         }
         return NO_MATCH;
-    }
-
-    @Override
-    public MatchStatus getGeometryMatch() {
-        return combine(areaMatch, centroidMatch);
-    }
-
-    @Override
-    public MatchStatus getStatusMatch() {
-        return statusMatch;
-    }
-
-    @Override
-    public MatchStatus getAttributeMatch() {
-        return MatchStatus.MATCH;
     }
 }

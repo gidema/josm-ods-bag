@@ -1,6 +1,15 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity;
 
-public interface NlHouseNumber extends Comparable<NlHouseNumber> {
+import java.util.Comparator;
+
+public interface NlHouseNumber {
+    public static final Comparator<NlHouseNumber> DEFAULT_COMPARATOR = Comparator.nullsFirst(
+            Comparator.comparing(NlHouseNumber::getHouseNumber, Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(NlHouseNumber::getHouseLetter, Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(NlHouseNumber::getHouseNumberExtra, Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(NlHouseNumber::getHouseNumberPrefix, Comparator.nullsFirst(Comparator.naturalOrder()))
+        );
+
     /**
      * Some house numbers have a non-numeric prefix.
      * At least in Oude Pekela in The Netherlands

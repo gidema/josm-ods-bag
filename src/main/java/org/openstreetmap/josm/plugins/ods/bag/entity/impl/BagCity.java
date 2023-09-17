@@ -2,8 +2,7 @@ package org.openstreetmap.josm.plugins.ods.bag.entity.impl;
 
 import org.openstreetmap.josm.plugins.ods.bag.entity.BagWoonplaats;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
-import org.openstreetmap.josm.plugins.ods.matching.Match;
-
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
@@ -52,7 +51,7 @@ public class BagCity extends BagWoonplaatsImpl {
     }
 
     @Override
-    public Match<OsmCity, BagWoonplaats> getMatch() {
+    public Mapping<OsmCity, BagWoonplaats> getMapping() {
         return null;
     }
 }

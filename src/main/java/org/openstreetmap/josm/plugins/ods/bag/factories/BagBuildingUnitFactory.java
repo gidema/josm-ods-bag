@@ -17,7 +17,7 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlAddressImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.impl.NlHouseNumberImpl;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNodeStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnitStore;
-import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatch;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.AddressNodeMapping;
 import org.openstreetmap.josm.plugins.ods.bag.pdok.BagPdok;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.OdEntityFactory;
@@ -25,6 +25,7 @@ import org.openstreetmap.josm.plugins.ods.entities.impl.AbstractOdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.opendata.FeatureUtil;
 import org.openstreetmap.josm.plugins.ods.io.DownloadResponse;
 import org.openstreetmap.josm.plugins.ods.saxparser.opengis.wfs.WfsFeature;
+import org.openstreetmap.josm.plugins.ods.update.UpdateTaskType;
 
 public class BagBuildingUnitFactory implements OdEntityFactory {
     private final QName typeName = new QName(BagPdok.NS_BAG, "verblijfsobject");
@@ -105,7 +106,13 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
         public BuildingUnitStatus getStatus() {
             return status;
         }
-        
+
+        @Override
+        public Completeness getCompleteness() {
+            if (getBuilding() == null) return Completeness.Unknown;
+            return getBuilding().getCompleteness();
+        }
+
         @Override
         public AddressableObjectStatus getAddressableStatus() {
             switch (getStatus()) {
@@ -157,7 +164,7 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
         }
 
         @Override
-        public AddressNodeMatch getMatch() {
+        public AddressNodeMapping getMapping() {
             // TODO Auto-generated method stub
             return null;
         }
@@ -181,7 +188,7 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
         }
 
         @Override
-        public void setMatch(AddressNodeMatch match) {
+        public void setMatch(AddressNodeMapping match) {
             // TODO Auto-generated method stub
             
         }
@@ -201,6 +208,11 @@ public class BagBuildingUnitFactory implements OdEntityFactory {
         @Override
         public String getStatusTag() {
             return status.toString();
+        }
+
+        @Override
+        public UpdateTaskType getUpdateTaskType() {
+            return UpdateTaskType.NONE;
         }
     }
 }

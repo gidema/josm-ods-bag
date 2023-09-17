@@ -24,6 +24,7 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagAddressNodeStore
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnit2BuildingPairStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingUnitStore;
+import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagDemolishedBuildingStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagMooringPlotStore;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagStaticCaravanPlotStore;
 import org.openstreetmap.josm.plugins.ods.bag.factories.BagBuildingFactory;
@@ -33,13 +34,14 @@ import org.openstreetmap.josm.plugins.ods.bag.factories.BagStaticCaravanPlotFact
 import org.openstreetmap.josm.plugins.ods.bag.factories.BuildingUnitToBuildingRelationFactory;
 import org.openstreetmap.josm.plugins.ods.bag.gui.UpdateBuildingGeometryAction;
 import org.openstreetmap.josm.plugins.ods.bag.importing.BagImportContext;
-import org.openstreetmap.josm.plugins.ods.bag.match.AddressNodeMatcher;
-import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatcher;
-import org.openstreetmap.josm.plugins.ods.bag.match.MooringMatcher;
-import org.openstreetmap.josm.plugins.ods.bag.match.OsmAddressNodeToBuildingConnector;
-import org.openstreetmap.josm.plugins.ods.bag.match.StaticCaravanPlotMatcher;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.AddressNodeMapper;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.BuildingMapper;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.MooringMapper;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.OsmAddressNodeToBuildingConnector;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.StaticCaravanPlotMapper;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagAddressNodeEntityPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagBuildingEntityPrimitiveBuilder;
+import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagDemolishedBuildingPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagMooringPlotPrimitiveBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmAddressNodeBuilder;
 import org.openstreetmap.josm.plugins.ods.bag.osm.build.BagOsmBuildingBuilder;
@@ -51,6 +53,10 @@ import org.openstreetmap.josm.plugins.ods.bag.process.BuildingTypeEnricher;
 import org.openstreetmap.josm.plugins.ods.bag.process.DistributeAddressNodes;
 import org.openstreetmap.josm.plugins.ods.bag.relate.BagBuildingUnit2BuildingConnector;
 import org.openstreetmap.josm.plugins.ods.bag.tools4osm.BagTools4Osm;
+import org.openstreetmap.josm.plugins.ods.bag.tools4osm.factories.BagDemolishedBuildingFactory;
+import org.openstreetmap.josm.plugins.ods.bag.update.BagAdditionHandler;
+import org.openstreetmap.josm.plugins.ods.bag.update.BagDeletionHandler;
+import org.openstreetmap.josm.plugins.ods.bag.update.BagModificationHandler;
 import org.openstreetmap.josm.plugins.ods.context.ContextJobList;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.crs.CRSUtil;
@@ -67,8 +73,11 @@ import org.openstreetmap.josm.plugins.ods.gui.OdsUpdateAction;
 import org.openstreetmap.josm.plugins.ods.io.OsmHost;
 import org.openstreetmap.josm.plugins.ods.io.OverpassHost;
 import org.openstreetmap.josm.plugins.ods.jts.GeoUtil;
-import org.openstreetmap.josm.plugins.ods.matching.Matchers;
-import org.openstreetmap.josm.plugins.ods.matching.update.OdsImportContext;
+import org.openstreetmap.josm.plugins.ods.mapping.Mappers;
+import org.openstreetmap.josm.plugins.ods.mapping.update.OdsImportContext;
+import org.openstreetmap.josm.plugins.ods.update.AdditionHandler;
+import org.openstreetmap.josm.plugins.ods.update.DeletionHandler;
+import org.openstreetmap.josm.plugins.ods.update.ModificationHandler;
 import org.openstreetmap.josm.plugins.ods.wfs.WfsFeatureSource;
 import org.openstreetmap.josm.plugins.ods.wfs.WfsFeatureSourceBuilder;
 import org.openstreetmap.josm.plugins.ods.wfs.WfsFeatureSources;
@@ -167,7 +176,7 @@ public class BagImportModule extends OdsModule {
 
         context.register(OsmHost.class, new OverpassHost());
 
-        context.register(Matchers.class, createMatchers(context));
+        context.register(Mappers.class, createMatchers(context));
 
         // Register post-download jobs
         ContextJobList  postDownloadJobs = ContextJobList.of(
@@ -179,11 +188,16 @@ public class BagImportModule extends OdsModule {
                 new BagBuildingEntityPrimitiveBuilder(),
                 new BagMooringPlotPrimitiveBuilder(),
                 new BagStaticCaravanPlotPrimitiveBuilder(),
-                new BagAddressNodeEntityPrimitiveBuilder())),
-//            new BagDemolishedBuildingPrimitiveBuilder())),
+                new BagAddressNodeEntityPrimitiveBuilder(),
+                new BagDemolishedBuildingPrimitiveBuilder())),
             new OsmAddressNodeToBuildingConnector());
         context.register(postDownloadJobs, "postDownloadJobs");
-
+        
+        // Register update handlers
+        context.register(DeletionHandler.class, BagDeletionHandler.class);
+        context.register(ModificationHandler.class, BagModificationHandler.class);
+        context.register(AdditionHandler.class, BagAdditionHandler.class);
+        
         getContext().register(createMenuActions(context));
     }
 
@@ -194,6 +208,7 @@ public class BagImportModule extends OdsModule {
         context.register(new BagMooringPlotStore());
         context.register(new BagStaticCaravanPlotStore());
         context.register(new BagAddressNodeStore());
+        context.register(new BagDemolishedBuildingStore());
         context.register(new BagBuildingUnit2BuildingPairStore());
         context.register(new BagAddressNode2BuildingPairStore());
         
@@ -204,13 +219,14 @@ public class BagImportModule extends OdsModule {
         context.register(new OsmBagStaticCaravanPlotStore());
 
     }
-
+    
     private static void createOdEntityFactories(OdsContext context) {
         OdEntityFactories factories = new OdEntityFactoriesImpl(
             new BagBuildingFactory(context),
             new BagBuildingUnitFactory(context),
             new BagMooringPlotFactory(context),
             new BagStaticCaravanPlotFactory(context),
+            new BagDemolishedBuildingFactory(context),
             new BuildingUnitToBuildingRelationFactory(context)
 //            new BagAddressNodeToBuildingRelationFactory(context)
         );
@@ -225,12 +241,12 @@ public class BagImportModule extends OdsModule {
                 new BagOsmStaticCaravanPlotBuilder(context));
         context.register(entityBuilders);
     }
-    private static Matchers createMatchers(OdsContext context) {
-        return new Matchers(
-                new BuildingMatcher(context),
-                new AddressNodeMatcher(context),
-                new MooringMatcher(context),
-                new StaticCaravanPlotMatcher(context));
+    private static Mappers createMatchers(OdsContext context) {
+        return new Mappers(
+                new BuildingMapper(context),
+                new AddressNodeMapper(context),
+                new MooringMapper(context),
+                new StaticCaravanPlotMapper(context));
     }
 
     private static MenuActions createMenuActions(OdsContext context) {
@@ -270,7 +286,7 @@ public class BagImportModule extends OdsModule {
                 createBuildingUnitFeatureSource(context),
                 createMooringPlotFeatureSource(context),
                 createStaticCaravanPlotFeatureSource(context),
-                createMissingSecondaryAddressFeatureSource(context));
+                createDemolishedBuildingFeatureSource(context));
         context.register(featureSources);
 //        featureSources = new WfsFeatureSources(
 ////                createMissingSecondaryAddressFeatureSource(context),
@@ -324,11 +340,21 @@ public class BagImportModule extends OdsModule {
 
     private static WfsFeatureSource createMissingSecondaryAddressFeatureSource(OdsContext context) {
         WfsHost wfsHost = context.getComponent(WfsHost.class, BagTools4Osm.HOST_NAME);
-        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "SecondaryAddress_Missing");
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "bag:SecondaryAddress_Missing");
         builder.setProperties("identificatie", "status", "openbare_ruimte", "huisnummer",
                 "huisletter", "toevoeging", "postcode", "woonplaats", "geopunt", "pandidentificatie");
         builder.setSortBy("identificatie", "pandidentificatie");
         builder.setGeometryProperty("geopunt");
+        return builder.build();
+    }
+
+    private static WfsFeatureSource createDemolishedBuildingFeatureSource(OdsContext context) {
+        WfsHost wfsHost = context.getComponent(WfsHost.class, BagTools4Osm.HOST_NAME);
+        WfsFeatureSourceBuilder builder = new WfsFeatureSourceBuilder(wfsHost, "Building_Destroyed");
+        builder.setProperties("identificatie", "geovlak");
+        builder.setGeometryProperty("geovlak");
+        builder.setPageSize(500);
+        builder.setSortBy("identificatie");
         return builder.build();
     }
 

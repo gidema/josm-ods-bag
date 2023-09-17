@@ -12,7 +12,6 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagStaticCaravanPlot
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBagStaticCaravanPlotStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.osm.AbstractOsmEntityBuilder;
-import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
 
 /**
  * Static caravan plots (Dutch:Standplaats) can be tagged with landuse=static_caravan and/or
@@ -87,7 +86,7 @@ public class BagOsmStaticCaravanPlotBuilder extends AbstractOsmEntityBuilder<Osm
     }
 
     @Override
-    public AbstractGeoEntityStore<OsmBagStaticCaravanPlot> getEntityStore() {
+    public OsmBagStaticCaravanPlotStore getEntityStore() {
         return context.getComponent(OsmBagStaticCaravanPlotStore.class);
     }
 }

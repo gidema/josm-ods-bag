@@ -28,7 +28,7 @@ public class BagOsmAddressNodeBuilder extends AbstractOsmEntityBuilder<OsmAddres
         return OsmAddressNode.class;
     }
 
-    private boolean canHandle(OsmPrimitive primitive) {
+    private static boolean canHandle(OsmPrimitive primitive) {
         boolean validTagging = primitive.hasKey("addr:housenumber");
         boolean validGeometry = primitive.getDisplayType() == OsmPrimitiveType.NODE;
         return validTagging && validGeometry;

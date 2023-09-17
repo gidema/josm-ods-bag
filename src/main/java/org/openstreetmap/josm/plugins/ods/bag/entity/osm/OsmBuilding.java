@@ -8,9 +8,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingStatus;
 import org.openstreetmap.josm.plugins.ods.bag.entity.BuildingType;
-import org.openstreetmap.josm.plugins.ods.bag.match.BuildingMatch;
+import org.openstreetmap.josm.plugins.ods.bag.mapping.BuildingMapping;
 import org.openstreetmap.josm.plugins.ods.domains.places.OsmCity;
-import org.openstreetmap.josm.plugins.ods.matching.OsmMatch;
+import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
+import org.openstreetmap.josm.plugins.ods.entities.OsmEntity;
+import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 
 public interface OsmBuilding extends OsmAddressableObject {
     public static boolean isBuilding(OsmPrimitive primitive) {
@@ -25,11 +27,6 @@ public interface OsmBuilding extends OsmAddressableObject {
     public String getStartDate();
 
     public BuildingType getBuildingType();
-
-    public void setMatch(BuildingMatch match);
-
-    @Override
-    public BuildingMatch getMatch();
 
     // Setters
     public void setBuildingType(BuildingType buildingType);
@@ -62,6 +59,4 @@ public interface OsmBuilding extends OsmAddressableObject {
     public void setStatus(BuildingStatus status);
 
     public void setStartDate(String string);
-
-    public void setMatch(OsmMatch<OsmBuilding> buildingMatch);
 }

@@ -1,15 +1,8 @@
 package org.openstreetmap.josm.plugins.ods.bag.entity.osm;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.openstreetmap.josm.plugins.ods.entities.storage.AbstractGeoEntityStore;
-import org.openstreetmap.josm.plugins.ods.entities.storage.GeoIndex;
-import org.openstreetmap.josm.plugins.ods.entities.storage.GeoIndexImpl;
 import org.openstreetmap.josm.plugins.ods.entities.storage.Index;
 import org.openstreetmap.josm.plugins.ods.entities.storage.IndexImpl;
-import org.openstreetmap.josm.plugins.ods.entities.storage.PrimaryIndex;
-import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
+import org.openstreetmap.josm.plugins.ods.entities.storage.OsmEntityStore;
 
 /**
  * Store bag mooring entities for houseboats created from osm primitives.
@@ -19,19 +12,11 @@ import org.openstreetmap.josm.plugins.ods.entities.storage.UniqueIndexImpl;
  * @author Gertjan Idema <mail@gertjanidema.nl>
  *
  */
-public class OsmBagMooringStore extends AbstractGeoEntityStore<OsmBagMooring> {
-    private final PrimaryIndex<OsmBagMooring> primitiveIndex = new UniqueIndexImpl<>(OsmBagMooring::getPrimitiveId);
+public class OsmBagMooringStore extends OsmEntityStore<OsmBagMooring> {
     private final Index<OsmBagMooring> mooringIdIndex = new IndexImpl<>(OsmBagMooring.class, OsmBagMooring::getMooringId);
-    private final GeoIndex<OsmBagMooring> geoIndex = new GeoIndexImpl<>(OsmBagMooringImpl.class, "geometry");
-    private final List<Index<OsmBagMooring>> allIdexes = Arrays.asList(primitiveIndex, mooringIdIndex, geoIndex);
 
     public OsmBagMooringStore() {
         super();
-    }
-
-    @Override
-    public PrimaryIndex<OsmBagMooring> getPrimaryIndex() {
-        return primitiveIndex;
     }
 
     public Index<OsmBagMooring> getMooringIdIndex() {
@@ -39,12 +24,23 @@ public class OsmBagMooringStore extends AbstractGeoEntityStore<OsmBagMooring> {
     }
 
     @Override
-    public GeoIndex<OsmBagMooring> getGeoIndex() {
-        return geoIndex;
+    public void onAdd(OsmBagMooring entity) {
+        mooringIdIndex.insert(entity);
     }
 
     @Override
-    public List<Index<OsmBagMooring>> getAllIndexes() {
-        return allIdexes;
+    public void onRemove(OsmBagMooring entity) {
+        mooringIdIndex.remove(entity);
     }
+
+    @Override
+    public void beforeClear() {
+        mooringIdIndex.clear();
+    }
+
+//    @Override
+//    public GeoIndex<OsmBagMooring> getGeoIndex() {
+//        return geoIndex;
+//    }
+
 }
