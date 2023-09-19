@@ -32,13 +32,14 @@ public class BagBuildingFactory implements OdEntityFactory {
 
     @Override
     public void process(WfsFeature feature, DownloadResponse response) {
+        var id = FeatureUtil.getLong(feature, "identificatie");
+        if (buildingStore.get(id) != null) return;
         BagBuildingImpl building = new BagBuildingImpl();
         LocalDate date = response.getRequest().getDownloadTime().toLocalDate();
         if (date != null) {
             building.setSourceDate(DateTimeFormatter.ISO_LOCAL_DATE.format(date));
         }
-        String id = FeatureUtil.getString(feature, "identificatie");
-        building.setBuildingId(Long.valueOf(id));
+        building.setBuildingId(id);
         building.setSource("BAG");
         Integer bouwjaar = FeatureUtil.getInteger(feature, "bouwjaar");
         building.setStartYear(bouwjaar);
