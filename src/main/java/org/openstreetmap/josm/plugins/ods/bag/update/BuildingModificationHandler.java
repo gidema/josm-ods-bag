@@ -28,11 +28,11 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.mapping.BuildingMapping;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
-import org.openstreetmap.josm.plugins.ods.osm.NodeDWithinLatLon;
+import org.openstreetmap.josm.plugins.ods.osm.GCBufferOps;
 
 public class BuildingModificationHandler {
     private final OsmDataLayer osmDataLayer;
-    private final NodeDWithinLatLon dWithin;
+    private final GCBufferOps dWithin;
     private final Map<Way, Way> odWays = new HashMap<>();
     private final Set<Way> osmWays = new HashSet<>();
     private final Map<Node, OdNodeDetails> odNodes = new HashMap<>();
@@ -43,7 +43,7 @@ public class BuildingModificationHandler {
         super();
         this.osmDataLayer = context.getComponent(OsmLayerManager.class).getOsmDataLayer();
         Double tolerance = context.getParameter(BagImportModule.BuildingAlignmentTolerance);
-        this.dWithin = new NodeDWithinLatLon(tolerance);
+        this.dWithin = new GCBufferOps(tolerance);
     }
 
     public void handle(List<BuildingMapping> buildingMatches) {

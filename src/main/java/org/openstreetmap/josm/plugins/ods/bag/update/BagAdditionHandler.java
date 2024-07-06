@@ -27,19 +27,21 @@ import org.openstreetmap.josm.plugins.ods.entities.OdEntity;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
 import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 import org.openstreetmap.josm.plugins.ods.mapping.update.AdditionsCommand;
-import org.openstreetmap.josm.plugins.ods.osm.NodeDWithinLatLon;
+import org.openstreetmap.josm.plugins.ods.osm.GCBufferOps;
+import org.openstreetmap.josm.plugins.ods.osm.alignment.NodeToLineSnapper;
 import org.openstreetmap.josm.plugins.ods.update.AdditionHandler;
 
 public class BagAdditionHandler implements AdditionHandler {
     private final OdsContext context; 
     private final OsmDataLayer osmDataLayer;
-    private final NodeDWithinLatLon dWithin;
+    private final GCBufferOps dWithin;
     private final Set<Way> odWays = new HashSet<>();
     private final Set<Way> newOsmWays = new HashSet<>();
     private final Set<Node> newOsmNodes = new HashSet<>();
     private final Map<Node, OdNodeDetails> odNodes = new HashMap<>();
     private final Set<Node> osmNodePool = new HashSet<>();
     private final Set<OdEntity> affectedEntities = new HashSet<>();
+    private final List<Command> alignCommands = new LinkedList<>();
     private Command command;
 
     public BagAdditionHandler(OdsContext context) {
@@ -47,7 +49,7 @@ public class BagAdditionHandler implements AdditionHandler {
         this.context = context;
         this.osmDataLayer = context.getComponent(OsmLayerManager.class).getOsmDataLayer();
         Double tolerance = context.getParameter(BuildingAlignmentTolerance);
-        this.dWithin = new NodeDWithinLatLon(tolerance);
+        this.dWithin = new GCBufferOps(tolerance);
     }
 
     @Override
@@ -55,6 +57,7 @@ public class BagAdditionHandler implements AdditionHandler {
         collectData(mappings);
         analyseOdNodes();
         processUnmatchedOdNodes();
+        alignNewWays();
         buildCommand();
         affectedEntities.forEach(entity -> {
             entity.getMapping().getOpenDataEntities().forEach(
@@ -111,6 +114,16 @@ public class BagAdditionHandler implements AdditionHandler {
         });       
     }
 
+    private void alignNewWays() {
+        odWays.forEach(way -> {
+            var snapper = new NodeToLineSnapper(way, dWithin);
+            snapper.run();
+            var cmd = snapper.getCommand();
+            if (cmd != null) {
+                alignCommands.add(cmd);
+            }
+        });
+    }
 
     @Override
     public Optional<Command> getCommand() {
@@ -153,6 +166,7 @@ public class BagAdditionHandler implements AdditionHandler {
         commands.addAll(newNodeCommands);
         commands.addAll(moveNodeCommands);
         commands.addAll(newWayCommands);
+        commands.addAll(alignCommands);
         if (commands.isEmpty()) {
             this.command = null;
         }

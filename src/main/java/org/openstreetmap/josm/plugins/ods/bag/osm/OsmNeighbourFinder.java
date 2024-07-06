@@ -41,7 +41,6 @@ public class OsmNeighbourFinder {
     }
 
     public void findWayNeighbourBuildings(Way way1) {
-        // TODO get the tolerance from the context
         BBox bbox = extend(way1.getBBox(), context.getParameter(BagImportModule.BuildingAlignmentTolerance));
         for (Way way2 : way1.getDataSet().searchWays(bbox)) {
             if (way2.equals(way1)) {

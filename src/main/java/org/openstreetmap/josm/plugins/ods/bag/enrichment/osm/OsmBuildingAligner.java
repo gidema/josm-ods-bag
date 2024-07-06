@@ -12,36 +12,36 @@ import org.openstreetmap.josm.plugins.ods.bag.BagImportModule;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.osm.OsmBuildingStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
-import org.openstreetmap.josm.plugins.ods.osm.NodeDWithin;
-import org.openstreetmap.josm.plugins.ods.osm.NodeDWithinLatLon;
+import org.openstreetmap.josm.plugins.ods.osm.BufferOps;
+import org.openstreetmap.josm.plugins.ods.osm.GCBufferOps;
 import org.openstreetmap.josm.plugins.ods.osm.WayAligner;
 
 public class OsmBuildingAligner {
-    private final NodeDWithin dWithin;
+    private final BufferOps dWithin;
     private boolean undoable;
     private final OsmBuildingStore buildingStore;
 
     public OsmBuildingAligner(OdsContext context) {
         this.buildingStore = context.getComponent(OsmBuildingStore.class);
         Double tolerance = context.getParameter(BagImportModule.BuildingAlignmentTolerance);
-        this.dWithin = new NodeDWithinLatLon(tolerance);
+        this.dWithin = new GCBufferOps(tolerance);
     }
 
-    public void align(OsmBuilding building) {
-        for (OsmBuilding candidate : buildingStore.getGeoIndex().intersection(building.getGeometry())) {
-            if (candidate == building) {
-                continue;
-            }
-            if (building.getNeighbours().contains(candidate)) continue;
-            building.getNeighbours().add(candidate);
-            candidate.getNeighbours().add(building);
-            align(building, candidate);
-        }
-    }
+//    public void align(OsmBuilding building) {
+//        for (OsmBuilding candidate : buildingStore.getGeoIndex().intersection(building.getGeometry())) {
+//            if (candidate == building) {
+//                continue;
+//            }
+//            if (building.getNeighbours().contains(candidate)) continue;
+//            building.getNeighbours().add(candidate);
+//            candidate.getNeighbours().add(building);
+//            align(building, candidate);
+//        }
+//    }
 
-    public void align(OsmBuilding b1, OsmBuilding b2) {
-        align(b1.getPrimitive(), b2.getPrimitive());
-    }
+//    public void align(OsmBuilding b1, OsmBuilding b2) {
+//        align(b1.getPrimitive(), b2.getPrimitive());
+//    }
 
     public void align(OsmPrimitive osm1, OsmPrimitive osm2) {
         if (osm1 == null || osm2 == null) return;

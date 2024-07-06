@@ -13,8 +13,8 @@ import org.openstreetmap.josm.plugins.ods.bag.entity.BagBuilding;
 import org.openstreetmap.josm.plugins.ods.bag.entity.storage.BagBuildingStore;
 import org.openstreetmap.josm.plugins.ods.context.OdsContext;
 import org.openstreetmap.josm.plugins.ods.context.OdsContextJob;
-import org.openstreetmap.josm.plugins.ods.osm.NodeDWithin;
-import org.openstreetmap.josm.plugins.ods.osm.NodeDWithinLatLon;
+import org.openstreetmap.josm.plugins.ods.osm.BufferOps;
+import org.openstreetmap.josm.plugins.ods.osm.GCBufferOps;
 import org.openstreetmap.josm.plugins.ods.osm.WayAligner;
 
 public class OdBuildingAligner implements OdsContextJob {
@@ -24,13 +24,13 @@ public class OdBuildingAligner implements OdsContextJob {
     @Override
     public void run(OdsContext context) {
         BagBuildingStore buildingStore = context.getComponent(BagBuildingStore.class);
-        NodeDWithin dWithin = new NodeDWithinLatLon(context.getParameter(BagImportModule.BuildingAlignmentTolerance));
+        BufferOps dWithin = new GCBufferOps(context.getParameter(BagImportModule.BuildingAlignmentTolerance));
         buildingStore.forEach(building -> {
             OdBuildingAligner.align(building, buildingStore, dWithin);
         });
     }
     
-    private static void align(BagBuilding building, BagBuildingStore buildingStore, NodeDWithin dWithin) {
+    private static void align(BagBuilding building, BagBuildingStore buildingStore, BufferOps dWithin) {
         for (BagBuilding candidate : buildingStore.getGeoIndex().intersection(building.getGeometry())) {
             if (candidate == building) {
                 continue;
@@ -42,7 +42,7 @@ public class OdBuildingAligner implements OdsContextJob {
         }
     }
 
-    private static void align(OsmPrimitive osm1, OsmPrimitive osm2, BagBuildingStore buildingStore, NodeDWithin dWithin) {
+    private static void align(OsmPrimitive osm1, OsmPrimitive osm2, BagBuildingStore buildingStore, BufferOps dWithin) {
         if (osm1 == null || osm2 == null) return;
         Way outerWay1 = getOuterWay(osm1);
         Way outerWay2 = getOuterWay(osm2);

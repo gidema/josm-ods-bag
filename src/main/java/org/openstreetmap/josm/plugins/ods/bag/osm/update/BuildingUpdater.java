@@ -32,12 +32,12 @@ import org.openstreetmap.josm.plugins.ods.entities.opendata.OdLayerManager;
 import org.openstreetmap.josm.plugins.ods.entities.osm.OsmLayerManager;
 import org.openstreetmap.josm.plugins.ods.mapping.Mapping;
 import org.openstreetmap.josm.plugins.ods.mapping.update.EntityUpdater;
-import org.openstreetmap.josm.plugins.ods.osm.NodeDWithinLatLon;
+import org.openstreetmap.josm.plugins.ods.osm.GCBufferOps;
 
 public class BuildingUpdater implements EntityUpdater {
     private final OsmDataLayer osmDataLayer;
     private final OdLayerManager odLayerManager;
-    private final NodeDWithinLatLon dWithin;
+    private final GCBufferOps dWithin;
     private final List<Mapping<? extends OsmEntity, ? extends OdEntity>> matches = new LinkedList<>();
     private final Map<Way, Way> odWays = new HashMap<>();
     private final Set<Way> osmWays = new HashSet<>();
@@ -49,7 +49,7 @@ public class BuildingUpdater implements EntityUpdater {
         this.osmDataLayer = context.getComponent(OsmLayerManager.class).getOsmDataLayer();
         this.odLayerManager = context.getComponent(OdLayerManager.class);
         Double tolerance = context.getParameter(BagImportModule.BuildingAlignmentTolerance);
-        this.dWithin = new NodeDWithinLatLon(tolerance);
+        this.dWithin = new GCBufferOps(tolerance);
     }
 
     @Override
